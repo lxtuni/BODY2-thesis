@@ -1,0 +1,186 @@
+\chapter{Introduction}
+\label{ch:intro}
+
+\section{Motivation}
+
+Legged robots move well on land, and many of the places where they are useful, such as shorelines, flooded
+areas, ponds and river banks, also contain open water. A quadruped that crosses such water needs some way to
+propel itself when its feet no longer touch the ground. Adding thrusters is one option \cite{Yao2023}, but
+thrusters add mass, volume and actuators that are useless on land. The alternative is to swim with the legs
+themselves \cite{Li2019,Qu2025,Han2025,Wang2025}. Then no extra hardware is needed, and swimming becomes a
+question of how the existing joints are moved and what the feet look like.
+
+Animals that swim with legs use two different physical principles \cite{Fish1996}. A dog, a muskrat or a duck
+\emph{paddles}. It pushes water backwards with a foot oriented normal to its motion and then brings the foot
+forward again \cite{Fish1984,Fish2021DogPaddle}. The thrust comes from drag on the foot during the power
+stroke, and the recovery stroke unavoidably costs some thrust. Dolphins, sea turtles and many fish instead
+\emph{flap} a fin or fluke across the swimming direction. The fin meets the oncoming water at a small angle of
+attack and produces lift, whose forward component is the thrust. Drag-based paddling is simple, works at rest
+and accelerates well. Lift-based flapping is two to three times more efficient at cruising speed
+\cite{Fish1996,Walker2000}. Mammals that became fully aquatic changed over from the first principle to the
+second.
+
+Most swimming legged robots use the first principle, because a walking foot is already a paddle. This thesis
+studies whether that choice is right for a small amphibious quadruped, BODY2, and how the leg should move for
+each principle. The robot's legs were designed for walking. Each is a planar two-degree-of-freedom linkage
+driven by two hobby servos, and the foot is a fan-shaped paddle that folds during the recovery stroke. Its
+current swimming gait was taken from video of the robot and has not been designed for thrust. Whether this
+paddle can be made efficient, or whether a small lift-producing fluke on the same leg would be better, cannot
+be decided from the literature alone, because the answer depends on the leg geometry, the actuator limits and
+the swimming speed.
+
+\section{Problem Statement and Scope}
+
+The problem is to find, for a given leg and given actuators, the propulsor and the periodic leg motion that
+propel the robot most effectively, and to quantify how the answer depends on swimming speed. Three
+properties make the problem difficult.
+
+First, the flow is unsteady and separated. A paddle starts and stops twice per cycle, sheds a vortex at every
+stop, and meets its own wake. A flapping fluke works at Reynolds numbers of $10^3$--$10^4$, where
+leading-edge vortices and the phase between heave and pitch decide the thrust
+\cite{Triantafyllou1991,Anderson1998}. Quasi-steady models capture trends but not the magnitudes of these
+effects \cite{Kim2011}.
+
+Second, the answer depends on speed. At rest, a paddle pushes water that is not moving and produces thrust
+over most of its power stroke. At speed, the oncoming flow reduces the relative velocity during the power
+stroke and increases it during the recovery. A lift-based foil behaves in the opposite way: its angle of
+attack is set by the ratio of heave velocity to swimming speed, so it depends on speed through the kinematics.
+A comparison at a single speed can therefore favour either principle.
+
+Third, no single model is both accurate and cheap. A three-dimensional CFD simulation of one leg takes hours to
+days and cannot be placed inside an optimizer that needs thousands of evaluations. A reduced-order model can,
+but its coefficients are not calibrated and its lift model is a textbook flat plate.
+
+Three simulation tools are therefore used, each for a different question, and none is expected to reproduce the
+numbers of the others:
+\begin{itemize}
+  \item a \emph{reduced-order} whole-robot model in MuJoCo with CMA-ES gait optimization answers a question of
+        \emph{mechanism}: which propulsion principle does an optimizer select under actuator and stability constraints? Its
+        coefficients are not calibrated, so it is used for direction, not for magnitude;
+  \item \emph{single-leg CFD} of the real BODY2 leg geometry in OpenFOAM with overset grids answers the questions of
+        \emph{magnitude}: how much thrust and power each propulsor produces across forward speed, and where one overtakes the
+        other. It is validated against an experiment and provides every quantitative result of this thesis;
+  \item the \emph{whole-robot} real-time solver Flare Live provides the reference fluke motion. Its fluke force is checked against
+        the CFD and found too low, so its results are used for trends only.
+\end{itemize}
+\Cref{fig:overview} shows how the three tools and their results are connected. Where the reduced-order model and the CFD
+disagree, the CFD is authoritative; the disagreement itself is analysed in \cref{sec:disc-models}.
+
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[>=Latex,font=\small,
+      box/.style={draw=TUMblue,thick,rounded corners=2pt,align=center,inner sep=4pt,text width=35mm,minimum height=17mm,fill=TUMblue!6,execute at begin node={\hyphenpenalty=10000\relax}},
+      res/.style={draw=black!45,rounded corners=2pt,align=center,inner sep=3pt,text width=35mm,minimum height=9mm,fill=black!3,font=\footnotesize,execute at begin node={\hyphenpenalty=10000\relax}},
+      lab/.style={font=\footnotesize\itshape,text=black!60}]
+    \node[box,font=\small] (mj) at (0,0) {\textbf{Reduced-order model}\\MuJoCo, Morison\\forces, servo model,\\CMA-ES (\cref{ch:mujoco})};
+    \node[box] (cfd) at (5.1,0) {\textbf{Single-leg CFD}\\OpenFOAM, overset grids,\\real leg geometry\\(\cref{ch:cfd,ch:verification})};
+    \node[box] (fl) at (10.2,0) {\textbf{Whole-robot model}\\Flare Live, lattice\\Boltzmann, real time\\(\cref{sec:cfd-flare})};
+    \node[lab,above=1pt of mj.north] {fast, uncalibrated};
+    \node[lab,above=1pt of cfd.north] {resolved, validated};
+    \node[lab,above=1pt of fl.north] {whole robot, coarse};
+    \node[res] (r1) at (0,-2.3) {mechanism: which principle\\an optimizer selects (RQ1)};
+    \node[res] (r2) at (5.1,-2.3) {thrust, power, efficiency\\vs.\ speed; crossover (RQ2)};
+    \node[res] (r3) at (10.2,-2.3) {cross-check of the fluke force (\cref{sec:ver-flare})};
+    \node[res] (sp) at (5.1,-4.2) {self-propulsion estimate $4\bar T(U)=D(U)$ (RQ3)};
+    \node[res] (hw) at (10.2,-4.2) {first hardware test\\(\cref{sec:res-hw})};
+    \draw[->] (mj) -- (r1); \draw[->] (cfd) -- (r2); \draw[->] (fl) -- (r3); \draw[->] (r2) -- (sp);
+    \draw[->,dashed] (mj.east) -- node[above,lab,fill=white,inner sep=1pt]{lift?} (cfd.west);
+    \draw[->,dashed] (fl.west) -- node[above,lab,fill=white,inner sep=1pt]{L0 motion} (cfd.east);
+    \draw[->,dashed] (r2.east) -- node[above,lab,fill=white,inner sep=1pt]{fluke force} (r3.west);
+    \draw[<->,dashed] (sp.east) -- node[above,lab,fill=white,inner sep=1pt]{compare} (hw.west);
+  \end{tikzpicture}
+  \caption[Overview of the method]{Overview of the three simulation tools and their roles. Solid arrows: results; dashed arrows:
+    information passed between tools. The reduced-order model motivates the lift-type propulsor, Flare Live provides the reference fluke motion, and the CFD
+    provides the thrust curves for the self-propulsion estimate and the reference against which the Flare Live fluke force is checked.}
+  \label{fig:overview}
+\end{figure}
+
+The scope is limited as follows.
+\begin{itemize}
+  \item \emph{Environment.} The robot swims at the surface of still water. Waves, currents and the transition
+        between land and water are excluded. All propulsor CFD is single-phase with a rigid lid; the free surface is
+        not modelled.
+  \item \emph{Motion.} Only steady, periodic, straight-ahead swimming is considered. Turning, starting and
+        feedback control are excluded.
+  \item \emph{Propulsors.} Two propulsors fitted to the same leg are compared: the robot's folding fan paddle
+        (drag-based) and a small swept fluke on a pin joint (lift-based). The fluke pitch is prescribed in
+        the simulations; the passive pin-and-spring realization of the hardware is not simulated.
+  \item \emph{Evaluation.} Thrust and hydrodynamic input power are computed for the propulsor alone (fan or
+        fluke), without the linkage. Swimming speeds are predicted from a quasi-steady force balance with a
+        range of hull resistances. Hardware experiments are limited to a first timed test from rest.
+\end{itemize}
+
+\section{Research Questions and Hypotheses}
+
+The central question of this thesis is:
+\begin{quote}
+\itshape Which propulsion principle, drag-based paddling or lift-based flapping, lets the legs of BODY2 swim
+faster and more efficiently, and how should each propulsor move?
+\end{quote}
+It is split into three research questions, each paired with a hypothesis.
+
+\begin{description}[leftmargin=12mm,style=nextline]
+\item[(RQ1)] \emph{Reduced-order optimization.} When a whole-robot gait is optimized in a reduced-order
+  hydrodynamic model under actuator-speed and attitude limits, which propulsion mechanism does the optimizer
+  select, and does the answer depend on the physics included in the model?
+
+  \emph{Hypothesis H1.} If the model contains a lift term, the optimizer uses lift-based strokes, and at equal
+  speed these need less power than drag-based strokes.
+
+\item[(RQ2)] \emph{Drag versus lift across speed.} For the real leg geometry, how large are thrust, power and
+  Froude efficiency of an optimized drag-type paddle and of a lift-type fluke between rest and
+  \SI{0.4}{\metre\per\second}, and what limits each propulsor?
+
+  \emph{Hypothesis H2.} The optimized paddle produces more thrust at low speed, but its thrust falls steeply
+  with speed because the recovery stroke meets an increasing oncoming flow. The fluke produces less thrust at
+  rest, keeps a larger fraction at speed, and becomes both stronger and more efficient above a crossover
+  speed. The fluke performs best when its pitch is adapted to the speed so that the angle of attack stays
+  near the efficient range of flapping foils (about \SIrange{15}{25}{\degree}).
+
+\item[(RQ3)] \emph{Whole robot.} What cruising speed and power follow for the whole robot?
+
+  \emph{Hypothesis H3.} Both optimized propulsors reach similar cruising speeds, set by the hull and linkage
+  resistance, but the fluke needs less power.
+\end{description}
+
+RQ1 is answered in \cref{ch:mujoco}. RQ2 and RQ3 are answered in \cref{ch:results}, after the CFD method and
+its verification in \cref{ch:cfd,ch:verification}. \Cref{ch:discussion} evaluates the hypotheses.
+
+\section{Contributions}
+
+The contributions of this thesis are:
+\begin{enumerate}
+  \item \emph{A reduced-order gait-optimization pipeline with an actuator model} (\cref{ch:mujoco}).
+        Morison-type link forces with an optional flat-plate lift term, a DC-motor torque--speed model of
+        the servos and feasibility-first constraints are combined with CMA-ES. In all 101 feasible optima
+        obtained with lift in the model and without a limit on the lift share, lift supplies the forward impulse and drag opposes it. A lift-share limit
+        allows drag-based and lift-based strokes to be compared within the same model.
+  \item \emph{An optimized drag-type stroke for the BODY2 fan paddle} (\cref{sec:res-drag}). Overset CFD of the
+        real leg with a two-state composite for the folding fan yields a stroke with a trapezoidal velocity
+        law, a 12-mm folded width and early closing that produces \SIrange{73}{83}{\milli\newton} per leg
+        at rest, 3.1--3.5 times the robot's current gait. The added-mass change that the composite does not resolve
+        is bounded analytically with an added mass identified from the CFD.
+  \item \emph{A speed-resolved comparison of drag- and lift-type propulsors on the same leg}
+        (\cref{sec:res-compare}). Thrust, power and efficiency are computed from rest to
+        \SI{0.40}{\metre\per\second}. The drag paddle's speed limit is traced to its recovery, the
+        thrust and efficiency crossovers are located at about \SI{0.24}{} and \SI{0.22}{\metre\per\second}, and a speed-scheduled
+        fluke pitch raises the fluke efficiency at \SI{0.30}{\metre\per\second} from 0.24 to 0.40.
+  \item \emph{Self-propulsion estimates and a fidelity assessment} (\cref{sec:res-selfprop,ch:verification}).
+        Cruising speeds are bounded with a range of hull resistances, the CFD set-up is validated against
+        a flapping-foil experiment and checked for mesh and cycle convergence, and the thrust deficit of
+        the real-time solver Flare Live is quantified on the same fluke motion.
+\end{enumerate}
+
+\section{Thesis Outline}
+
+\Cref{ch:related} reviews drag- and lift-based swimming in animals and robots, flapping-foil hydrodynamics
+and simulation approaches for swimming legged robots. \Cref{ch:foundations} introduces the quantities and
+simple models used throughout: quasi-steady paddling, flapping-foil kinematics and the self-propulsion
+balance. \Cref{ch:platform} describes the robot, the two propulsors and their leg motions.
+\Cref{ch:mujoco} presents the reduced-order model and the gait optimization. \Cref{ch:cfd} describes the
+single-leg CFD and the whole-robot Flare Live model, and \cref{ch:verification} verifies and validates the CFD and
+checks the real-time solver against it. \Cref{ch:results} reports the drag-type stroke design, the lift-type fluke,
+their comparison, the speed schedule for the fluke pitch and the self-propulsion estimates.
+\Cref{ch:discussion} interprets the results and states the limitations, and \cref{ch:conclusion} concludes
+and outlines future work. The appendices collect additional data, the coordination results of the reduced-order model
+(\cref{app:coord}), the Flare Live results (\cref{app:flare-trends}) and information for reproducing the work.

@@ -1,0 +1,23 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      omega;
+}
+
+dimensions [0 0 -1 0 0 0 0];
+internalField uniform 2.130e+00;
+boundaryField
+{
+    overset_FL { type overset; }
+    overset_FR { type overset; }
+    overset_RL { type overset; }
+    overset_RR { type overset; }
+    "(paddle_.*|hull)" { type omegaWallFunction; value uniform 2.130e+00; }
+    inlet { type fixedValue; value uniform 2.130e+00; }
+    outlet { type inletOutlet; inletValue uniform 2.130e+00; value uniform 2.130e+00; }
+    atmosphere { type inletOutlet; inletValue uniform 2.130e+00; value uniform 2.130e+00; }
+    "(sides|bottom)" { type slip; }
+}

@@ -1,0 +1,20 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      setFieldsDict;
+}
+
+defaultFieldValues ( volScalarFieldValue zoneID 123 volScalarFieldValue alpha.water 0 );
+regions
+(
+    zoneToCell { zone c0; fieldValues ( volScalarFieldValue zoneID 0 ); }
+    zoneToCell { zone c1; fieldValues ( volScalarFieldValue zoneID 1 ); }
+    zoneToCell { zone c2; fieldValues ( volScalarFieldValue zoneID 2 ); }
+    zoneToCell { zone c3; fieldValues ( volScalarFieldValue zoneID 3 ); }
+    zoneToCell { zone c4; fieldValues ( volScalarFieldValue zoneID 4 ); }
+    boxToCell { box (-100 -100 -100) (100 100 -0.01); fieldValues ( volScalarFieldValue alpha.water 1 ); }
+    boxToFace { box (-100 -100 -100) (100 100 -0.01); fieldValues ( volScalarFieldValue alpha.water 1 ); }
+);

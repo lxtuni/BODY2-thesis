@@ -1,0 +1,26 @@
+% ---------------- title page (TUM CIT look) ----------------
+\begin{titlepage}
+\newgeometry{left=25mm,right=25mm,top=20mm,bottom=25mm}
+\sffamily
+\begin{minipage}[t]{0.7\textwidth}
+  {\color{TUMblue}\small TUM School of Computation, Information and Technology\\
+  Technical University of Munich}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.25\textwidth}\raggedleft
+  % Insert the official TUM logo from the university template here:
+  \IfFileExists{figures/tum_logo.pdf}{\includegraphics[height=10.5mm]{tum_logo}}{\color{TUMblue}\fbox{\parbox[c][10mm][c]{24mm}{\centering\tiny TUM logo\\(from template)}}}
+\end{minipage}
+
+\vspace*{75mm}
+{\large \thesistype\par}
+\vspace{8mm}
+{\noindent\raggedright\hyphenpenalty=10000\color{TUMblue}\bfseries\fontsize{22}{27}\selectfont \thesistitle\par}
+\vfill
+\begin{tabular}{@{}p{45mm}l}
+\textbf{Supervisor} & \thesissupervisor\\[3mm]
+\textbf{Advisor}    & \thesisadvisor\\[3mm]
+\textbf{Author}     & \thesisauthor\\[3mm]
+\textbf{Date}       & \thesisdate{} in Munich
+\end{tabular}
+\restoregeometry
+\end{titlepage}

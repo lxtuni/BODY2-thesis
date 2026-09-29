@@ -1,0 +1,30 @@
+% Stand-alone preview of the MuJoCo chapter. In the thesis, copy the preamble
+% packages you do not already load, then \input{chapter_mujoco}.
+\documentclass[11pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{siunitx}
+\sisetup{per-mode=symbol,range-phrase=\,--\,,range-units=single}
+\usepackage{booktabs,tabularx,multirow}
+\usepackage{graphicx}
+\usepackage{caption,subcaption}
+\captionsetup{font=small,labelfont=bf}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds,decorations.pathmorphing,angles,quotes}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalise,noabbrev]{cleveref}
+\graphicspath{{figures/}}
+
+% chapters of the full thesis referenced from this one
+\newcommand{\chCFD}{the CFD chapter}   % in the thesis: \renewcommand{\chCFD}{\cref{ch:cfd}}
+
+\begin{document}
+\setcounter{chapter}{3}
+\input{chapter_mujoco}
+\bibliographystyle{unsrt}
+\bibliography{refs_mujoco}
+\end{document}

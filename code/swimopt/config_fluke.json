@@ -1,0 +1,62 @@
+{
+  // swimopt 配置 —— BODY2 升力型尾鳍腿 (robots/body2_fluke.xml + hydro_foil.py)
+  // 用法: 把 simulate.py 里的 Swimmer 按 TODO_fluke.md 第 1 条改好后, 命令行传这个文件
+
+  "model": "robots/body2_fluke.xml",
+
+  "timestep":     0.002,
+  "sim_time":     8.0,       // ≥ 8 个周期 (1 Hz) 才能取到稳态
+  "settle_time":  1.5,
+  "trunk_body":   "trunk",
+  "vmax_guard":   3.0,
+
+  // fitness = 速度 − w_yaw·偏航率 − w_energy·功率 − w_pitch·纵摇RMS(rad) − w_heave·垂荡RMS(m)
+  "w_yaw":    0.3,
+  "w_energy": 0.0,
+  "w_pitch":  0.5,    // 视频里的点头就是靠这一项压掉的; 0 = 只要快
+  "w_heave":  2.0,
+  "servo_rate_max": 14.0,   // rad/s (820 °/s), 超过按比例罚
+  "fluke_qr_min_deg": 15.0,  // 新腿型几何检查: 顶端小于 15° 时尾鳍可能碰船体
+
+  "budget":  300,
+  "popsize": 12,
+  "sigma0":  0.3,
+  "seed":    1,
+  "outdir":  "results_fluke_bounded",
+
+  // ---- 阻力型部分 (机身、大腿、杆): Morison, 与原来一样 ----
+  "hydro": {
+    "rho": 1000.0,
+    "water_z": 0.0,
+    "exclude": ["vis_", "foil"],                       // 尾鳍不走 Morison, 交给 foil
+    "default": { "cd": [0.3, 0.3, 0.3], "ca": 0.2, "cv": 0.02 },
+    "rules": [
+      { "match": "link",  "cd": [0.6, 0.6, 0.25], "ca": 0.3, "cv": 0.02 },   // 大腿 / 杆 (细杆)
+      { "match": "trunk", "cd": [0.093, 1.2, 1.5], "ca": 0.15, "cv": 0.0154 } // x 向按 M1 CFD 0.1/0.2 m/s 与名义水线拟合
+    ]
+  },
+
+  // ---- 升力型部分 (尾鳍): 准定常翼模型, 见 hydro_foil.py 头注释 ----
+  "foil": {
+    "match": "foil",
+    "CLa": null,             // null = 2π·AR/(AR+2) 自动 (AR 3.1 → 3.8/rad); UVLM 标定后可手填
+    "alpha_stall_deg": 15,
+    "CD0": 0.02,
+    "e": 0.9,
+    "CN": 1.8,               // 失速后平板法向力系数
+    "Ca": 1.0                // 附加质量系数 (薄板法向 ≈ 1)
+  },
+
+  // ---- 步态: 每条腿一个主动关节 (杆角 q_r), 尾鳍被动 → 单谐波即可 ----
+  "gait": {
+    "harmonics":    1,
+    "freq_range":   [0.5, 2.0],
+    "amp_range":    [0.30, 0.57],     // rad: ±17° … ±33°；中心接近已检查的 40°±25°
+    "offset_range": [0.50, 0.90],     // rad: 平均 29° … 52°；极值仍由可达性和间隙检查
+    "duty_range":   [0.5, 0.5],       // 升力型没有"划水相", 占空比锁 0.5
+    "ramp_t":       1.5,
+    "optimize": { "duty": false },    // → 7 维: freq + amp + 4 相位 + offset
+    "groups": [ { "match": "2.1", "share": ["amp", "offset"] } ],
+    "preset_phase": "diag"
+  }
+}

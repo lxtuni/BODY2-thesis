@@ -1,0 +1,23 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      dynamicMeshDict;
+}
+
+dynamicFvMesh       dynamicOversetFvMesh;
+dynamicOversetFvMeshCoeffs { }
+
+solver          solidBody;
+solidBodyCoeffs
+{
+    cellZone        c1;
+    solidBodyMotionFunction tabulated6DoFMotion;
+    tabulated6DoFMotionCoeffs
+    {
+        CofG            (0.033506 0.000000 -0.019381);
+        timeDataFileName "<constant>/6DoF.dat";
+    }
+}

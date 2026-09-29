@@ -1,0 +1,12 @@
+  改了 system/controlDict
+  改了 system/fvSchemes
+  当前：maxCo 0.8  maxAlphaCo 1.0  limitU 0.0  overset trackingInverseDistance
+  旧 log → log.overPimpleDyMFoam.part1
+  从 t = 0.9 续跑，8 核（进度：bash progress.sh /home/lxtuni/run/leg_V3trap_U030_closed）
+    calculated   : 163825
+    interpolated : 3306 (interpolated from local:723  mixed local/remote:864  remote:1719  special:0)
+    hole         : 188
+
+V3trap_U030/force_closed.dat  ← 5034 行，t = 0.0009 … 2.1600 s
+V3trap_U030/moment_closed.dat  ← 5034 行，t = 0.0009 … 2.1600 s
+   3110 步，用时 0.70 h

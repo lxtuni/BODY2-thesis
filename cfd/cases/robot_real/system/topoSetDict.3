@@ -1,0 +1,18 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// robot_simple 第 3 级加密盒，由 setup_robot.sh 生成
+actions
+(
+    {
+        name    c0;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        box     (-0.2160 -0.1438 -0.1157) (0.1760 0.1438 0.0468);
+    }
+);

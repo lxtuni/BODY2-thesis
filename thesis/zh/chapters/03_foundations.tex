@@ -1,0 +1,128 @@
+\chapter{基础理论}
+\label{ch:foundations}
+
+本章介绍运动附肢（appendage）所受的力、阻力型（drag-based）与升力型（lift-based）推力的两个简单模型、用于比较推进器（propulsor）的性能指标，以及将单腿推力转化为游动速度的力平衡关系。这些模型用于解释仿真结果，而非取代仿真。
+
+\section{运动附肢所受的力}
+\label{sec:fund-forces}
+
+刚性附肢以相对于水的速度$\bm v$在静水中运动时，会受到压力和剪切力的作用。该力沿$\bm v$方向和垂直于$\bm v$方向的分量分别为阻力（drag）和升力（lift）。对于薄板，阻力在很大程度上取决于其朝向：板面正对运动方向运动时，阻力系数约为1.2--2\cite{Newman1977}；沿板边方向运动时，仅受表面摩擦阻力（skin friction）。使平板加速的同时也会使周围的水加速，这表现为一个与加速度成正比的附加质量（added mass）力。降阶模型（reduced-order model）将各刚体上的这些分量叠加\cite{Morison1950,Fossen1994}：
+\begin{equation}
+  \bm F = -\tfrac12\rho\, C_D A\, |\bm v|\,\bm v \;+\; \bm L \;-\; C_a \rho V \dot{\bm v} \;+\; \bm F_\text{b},
+  \label{eq:morison}
+\end{equation}
+式中，$\rho$为密度，$A$为参考面积，$V$为体积，$C_a$为附加质量系数，$\bm F_\text{b}$为浮力。纯阻力模型（$\bm L=\bm 0$）只能向后推水，它对应的是\emph{桨}（paddle）的模型。加入垂直于$\bm v$的升力项后，主要沿横向于游动方向运动的翼型（foil）也能产生推力，这对应的是\emph{鳍}（fin）或\emph{尾鳍}（fluke）的模型。
+
+本文所研究的流动是非定常的分离流动。桨尖速度约为\SI{0.35}{\metre\per\second}、扇面半径为\SI{42}{\milli\metre}时，桨的工作雷诺数（Reynolds number）为$\mathit{Re}=vc/\nu\approx1.5\times10^4$。尾鳍弦长（chord）为\SI{34}{\milli\metre}、速度为\SI{0.22}{\metre\per\second}时，其工作雷诺数为$\mathit{Re}\approx7.6\times10^3$。在这样的雷诺数下，起动的桨会形成一个涡，涡的增长决定了作用力的大小\cite{Kim2011}；而拍动翼上则附着有前缘涡（leading-edge vortex）\cite{Triantafyllou1991,Anderson1998}。采用常系数的式\eqref{eq:morison}无法反映这两种效应。因此，本文仅用它推导变化趋势，而量值则由CFD给出。
+
+\section{准定常划水}
+\label{sec:fund-paddle}
+
+考虑一支桨：它以速度$v_p$和面积$A$向后扫过长度为$L$的路径（划水冲程，power stroke），再以速度$v_r=x\,v_p$和减小后的面积$aA$返回（回程，recovery stroke），其中$0<a\le 1$。在前进速度为零时，两个冲程的准定常（quasi-steady）冲量分别为$\tfrac12\rho C_D A v_p L$和$-\tfrac12\rho C_D\,aA\,x v_p L$，周期为$L(1+x)/(x v_p)$。周期平均推力为
+\begin{equation}
+  \Tm = \tfrac12\rho C_D A v_p^2\;\frac{x\,(1-a x)}{1+x}.
+  \label{eq:paddle-mean}
+\end{equation}
+Herrera-Amaya和Byron\cite{HerreraAmaya2024}所指出的两种不对称性在此式中均有体现：空间不对称（$a<1$）和时间不对称（$x\neq1$）。划水冲程速度固定是转速受限的舵机（servo）的自然约束；在此条件下，式\eqref{eq:paddle-mean}在
+\begin{equation}
+  x^* = \sqrt{1+1/a}-1, \qquad \mathrm{DUTY}^* = \frac{x^*}{1+x^*},
+  \label{eq:duty-opt}
+\end{equation}
+时取得最大值，其中占空比DUTY为一个周期中划水冲程所占的时间比例。折叠效果好的桨（$a$较小）应快速回程，折叠效果差的桨则应缓慢回程。麝鼠的足面积在回程中减小55.5\,\%（$a=0.445$），由\eqref{eq:duty-opt}可得$\mathrm{DUTY}^*=0.445$，与实测值0.45接近\cite{Fish1984}。对于BODY2的折扇桨（fan paddle），有效面积比$a$由CFD确定（见\cref{sec:res-drag}）；当$x^*>1$时，回程须快于划水冲程，此时DUTY由舵机的转速限值决定，而不再由\eqref{eq:duty-opt}决定。
+
+由同一模型还可得出以下三点结论。
+\begin{itemize}
+  \item \emph{速度规律。}在峰值速度和冲程时间给定时，梯形速度曲线（trapezoidal velocity profile，即加减速段短、中间段匀速）产生的冲量$\int v^2\,\mathrm dt$大于正弦速度曲线。在冲量给定时，由H\"older不等式可知，当$v$为常数时能量$\int v^3\,\mathrm dt$最小。
+  \item \emph{前进速度。}当机器人以速度$\U$运动时，划水冲程作用于相对速度$v_p-\U$，回程则作用于$v_r+\U$。随着$\U$增大，划水冲程的推力下降，回程的阻力上升。桨仅应在$v>\U$时张开。
+  \item \emph{效率。}有用功率为$\Tm\U$，而桨在划水冲程中传递给水的功率为$\Tm v_p$。因此，阻力型冲程的弗劳德效率（Froude efficiency）以$\U/v_p<1$为上限，且以大面积桨慢速划动时效率最高\cite{Fish1996,Walker2000}。
+\end{itemize}
+
+\section{拍动翼运动学}
+\label{sec:fund-foil}
+
+以前进速度$\U$随体运动、同时以竖直位置$h(t)$做沉浮（heave）运动的翼型，与水流相遇时的来流角（inflow angle）为
+\begin{equation}
+  \gamma(t) = \arctan\frac{\dot h(t)}{\U}.
+  \label{eq:gamma}
+\end{equation}
+若弦线相对于游动方向的俯仰角（pitch）为$\theta(t)$，则有效攻角（angle of attack）为
+\begin{equation}
+  \alpha(t) = \gamma(t) - \theta(t),
+  \label{eq:alpha}
+\end{equation}
+其中符号的约定使$\theta$与$\gamma$的转向相同（见\cref{fig:foil-sketch}）。升力$L$垂直于相对来流，阻力$D$沿相对来流方向；推力为
+\begin{equation}
+  F_x = L\sin\gamma - D\cos\gamma .
+  \label{eq:foil-thrust}
+\end{equation}
+只要升力向前倾斜的程度足以克服阻力，就能产生推力。由于升力要乘以$\sin\gamma$，同一翼型在相同的$\alpha$下，只要做沉浮运动就会产生向前的力；与桨不同，它不需要逆着水流的回程。
+
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[scale=1.1,>=Latex]
+    \draw[->,gray] (1.8,-2.0) -- (-1.2,-2.0) node[left,font=\small,black]{游动方向$x$};
+    \draw[gray,dashed] (-3.4,0) -- (2.2,0);
+    \begin{scope}[rotate=-15]
+      \fill[TUMblue!75] (-1.3,0) .. controls (-1.2,0.2) and (-0.4,0.16) .. (1.3,0)
+                        .. controls (-0.4,-0.12) and (-1.2,-0.18) .. (-1.3,0);
+      \draw[TUMblue!40!black,dotted] (-2.2,0) -- (2.0,0);
+    \end{scope}
+    \draw[->] (1.9,0) arc (0:-15:1.9); \node[font=\small] at (2.15,-0.28) {$\theta$};
+    \draw[->,thick] (-3.3,1.87) -- (-1.55,0.40) node[pos=0.25,above right,font=\small]{相对来流};
+    \draw[->] (-2.35,0) arc (180:140:0.9); \node[font=\small] at (-2.55,0.35) {$\gamma$};
+    \draw[->,thick,TUMblue] (0.9,0.35) -- (0.9,1.25) node[above,font=\small]{沉浮$\dot h$};
+    \draw[->,very thick,todo] (0,0) -- (-0.84,-1.0) node[below left,font=\small]{$L$};
+    \draw[->,very thick,todo!55] (0,0) -- (0.54,-0.45) node[right,font=\small]{$D$};
+  \end{tikzpicture}
+  \caption[拍动翼的角度]{做沉浮与俯仰运动的翼型的各角度。相对来流相对于游动方向向下倾斜，倾角为来流角$\gamma=\arctan(\dot h/\U)$；弦线沿同一转向俯仰$\theta$；弦线与来流之间的攻角为$\alpha=\gamma-\theta$。升力$L$垂直于相对来流，阻力$D$平行于相对来流；推力为二者沿$x$方向的合分量。图示为上行冲程（upstroke）。}
+  \label{fig:foil-sketch}
+\end{figure}
+
+斯特劳哈尔数（Strouhal number）$\mathit{St}=fA/\U$（其中$A$为尾缘的峰峰值位移）表示沉浮速度与前进速度之比。本文中$A$取销轴的位移，它可由给定运动得出；尾缘处的值略大一些。高效巡航对应于$0.2<\mathit{St}<0.4$\cite{Taylor2003,Triantafyllou1991}。由转速受限的舵机驱动的腿，其沉浮速度$\dot h_\text{max}$近似固定。于是，斯特劳哈尔数以及随之变化的来流角均随游动速度的增大而减小：
+\begin{equation}
+  \gamma_\text{max}(\U) = \arctan\frac{\dot h_\text{max}}{\U}.
+  \label{eq:gammamax}
+\end{equation}
+若在$\U$变化时保持俯仰规律$\theta(t)$不变，攻角也会随之变化。静止时（$\U\to0$），来流为竖直方向，$\gamma=\SI{90}{\degree}$，尾鳍处于失速状态，相当于一支小桨。高速时，$\gamma_\text{max}$变小，固定的俯仰幅值可能使$\alpha$过小甚至为负。
+
+使$\alpha$保持在\SIrange{15}{25}{\degree}这一高效区间内\cite{Read2003,Hover2004}的一种简单方法，是令俯仰角随来流角按比例缩放：
+\begin{equation}
+  \theta(t) = \theta_0\,\frac{\dot h(t)}{\dot h_\text{max}}, \qquad \theta_0=\tfrac12\,\gamma_\text{max}(\U),
+  \label{eq:l3}
+\end{equation}
+这样，在冲程中点处（此时$\dot h=\dot h_\text{max}$），翼型以来流角的一半作为俯仰角，另一半作为攻角。这种\emph{随航速调度的俯仰}（speed-scheduled pitch）将在\cref{sec:res-l3}中进行评估。该方法每个航速只需一个参数，且无需任何流场知识。对于BODY2的腿，$\dot h_\text{max}\approx\SI{0.28}{\metre\per\second}$，因此在\SIlist{0.223;0.30;0.40}{\metre\per\second}下分别有$\gamma_\text{max}=\SI{52}{\degree}$、\SI{43}{\degree}和\SI{35}{\degree}。
+
+\section{性能指标}
+\label{sec:fund-metrics}
+
+所有单腿物理量均为在完整冲程周期$T=1/f$上求得的周期平均值。设推进器参考点的位置为$\bm x_H(t)$，角速度为$\bm\omega(t)$，流体作用力为$\bm F$，对该参考点的流体力矩为$\bm M_H$，则有：
+\begin{align}
+  \Tm &= \big\langle F_x \big\rangle, \label{eq:thrust}\\
+  \Pm &= -\big\langle \bm F\cdot\dot{\bm x}_H + \bm M_H\cdot\bm\omega \big\rangle, \label{eq:power}\\
+  \etaF &= \frac{\Tm\,\U}{\Pm}, \qquad C_T=\frac{\Tm}{\tfrac12\rho\U^2S}. \label{eq:eta}
+\end{align}
+$x$轴指向游动方向，因此$\Tm>0$表示推力，$\Pm>0$表示传递给流体的功率。$\Pm$为水动力输入功率（hydrodynamic input power），不包括部件的惯性、摩擦或电机损耗。$\etaF$为弗劳德（推进）效率；它在$\U=0$时为零，此时改为报告单位功率推力$\Tm/\Pm$。$S$为推进器的平面面积（planform area）。对于整机，运输代价（cost of transport，COT）或以单位距离能耗$\Pm/\U$（J/m）表示，或以无量纲形式$\Pm/(mg\U)$表示；每个数值均注明所采用的形式。
+
+对于阻力型桨，还将推力分解为划水冲程和回程的贡献：
+\begin{equation}
+  \Tm = \Tm_\text{pow} + \Tm_\text{rec}, \qquad
+  \Tm_\text{pow} = \frac1T\int_{\text{power}} F_x\,\mathrm dt, \quad
+  \Tm_\text{rec} = \frac1T\int_{\text{recovery}} F_x\,\mathrm dt,
+  \label{eq:split}
+\end{equation}
+由此可直接看出，在有航速时是周期中的哪一半限制了推力。
+
+\section{自航力平衡}
+\label{sec:fund-selfprop}
+
+机器人稳定游动时的速度，是其腿部推进力恰好等于船体及不参与推进的部件所受阻力时的速度。若四条腿各自产生单独测得的周期平均推力$\Tm(\U)$，且各腿之间无相互作用，则巡航速度（cruising speed）$\U_c$满足
+\begin{equation}
+  4\,\Tm(\U_c) = D(\U_c),
+  \label{eq:selfprop}
+\end{equation}
+而从静止开始的速度时间历程则由准定常纵荡方程（surge equation）给出：
+\begin{equation}
+  (m+m_a)\,\dot\U = 4\,\Tm(\U) - D(\U).
+  \label{eq:surge}
+\end{equation}
+式\eqref{eq:selfprop}忽略了两方面的影响：一是腿间相互作用，它可使四条划水腿的推力超过单腿值的四倍\cite{Wang2025}；二是腿部运动对船体阻力（hull resistance）的影响。该式还假设各腿在任何航速下都保持其给定运动。由于BODY2的阻力只能确定在一定范围内，\cref{sec:res-selfprop}针对三条阻力曲线求解\eqref{eq:selfprop}，并以区间形式报告结果。

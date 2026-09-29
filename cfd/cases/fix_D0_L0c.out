@@ -1,0 +1,45 @@
+  改了 system/controlDict
+  改了 system/fvSchemes
+  当前：maxCo 0.8  maxAlphaCo 1.0  limitU 0.0  overset trackingInverseDistance
+  旧 log → log.overPimpleDyMFoam.part1
+  从 t = 0.625 续跑，8 核（进度：bash progress.sh /home/lxtuni/run/leg_cur_U015_closed）
+    calculated   : 195084
+    interpolated : 4440 (interpolated from local:892  mixed local/remote:148  remote:3400  special:0)
+    hole         : 392
+
+cur_U015/force_closed.dat  ← 4499 行，t = 0.0014 … 3.7500 s
+cur_U015/moment_closed.dat  ← 4499 行，t = 0.0014 … 3.7500 s
+   4125 步，用时 1.38 h
+  改了 system/controlDict
+  改了 system/fvSchemes
+  当前：maxCo 0.8  maxAlphaCo 1.0  limitU 0.0  overset trackingInverseDistance
+  旧 log → log.overPimpleDyMFoam.part1
+  从 t = 0.875 续跑，8 核（进度：bash progress.sh /home/lxtuni/run/fluke_L0c）
+    calculated   : 288295
+    interpolated : 8795 (interpolated from local:2943  mixed local/remote:1214  remote:4638  special:0)
+    hole         : 345
+
+L0c/force.dat ← 4277 行，t = 0.0005 … 0.9097 s
+L0c/moment.dat ← 4277 行，t = 0.0005 … 0.9097 s
+
+===== 尾鳍 / 翼型（最后 2 个周期） =====
+算例          U m/s     T mN    Fz mN    C_T      η    P mW  T/P N/W  |M_h| mN·m   α75°   对照
+L0c         0.223     20.0     -3.4   0.70   0.31    14.5     1.37       15.81   23.0   
+L1a10       0.223     32.8     -9.4   1.15   0.24    30.1     1.09      197.08   14.3   
+L1a28       0.223     26.2     -0.7   0.92   0.24    23.9     1.09       16.55   30.1   
+
+===== 阻力型 V3trap 两态合成 =====
+方案              U m/s  T(τ 0.33/−0.06) mN    T 最优 mN   τ_c   τ_o
+V3trap          0.000                87.2       87.2  0.33 -0.06
+
+===== 阻力型 真机现步态（按自身开合时机合成：τ_o 0 / τ_c = DUTY） =====
+方案              U m/s     T mN   τ_c      T 重扫最优 mN   （重扫最优只作参考：真机开合由线驱动，时机不可调）
+cur_U0          0.000     23.5  0.50           27.1
+cur_U015        0.150    -13.1  0.50          -12.0
+
+===== 推力–航速（单腿，mN） =====
+  U m/s      升力型 尾鳍       阻力型 现步态     阻力型 V3trap
+  0.000           —          23.5           87.2
+  0.150           —         -13.1              —
+
+→ /mnt/c/Users/L/Desktop/openfoam/robot_real/cloud_fluke/results_fluke/summary.json

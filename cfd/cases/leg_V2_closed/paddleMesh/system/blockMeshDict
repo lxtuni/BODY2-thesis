@@ -1,0 +1,43 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      blockMeshDict;
+}
+
+scale 1;
+vertices
+(
+    (0.00934912 -0.027 -0.0223077)
+    (0.0985473 -0.027 -0.108445)
+    (0.0985473 0.027 -0.108445)
+    (0.00934912 0.027 -0.0223077)
+    (0.0354683 -0.027 0.00473943)
+    (0.124666 -0.027 -0.0813982)
+    (0.124666 0.027 -0.0813982)
+    (0.0354683 0.027 0.00473943)
+);
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) (50 22 15) simpleGrading (1 1 1)
+);
+edges ();
+boundary
+(
+    oversetPatch
+    {
+        type overset;
+        faces
+        (
+            (0 4 7 3)
+            (1 2 6 5)
+            (0 1 5 4)
+            (3 7 6 2)
+            (0 3 2 1)
+            (4 5 6 7)
+        );
+    }
+);
+mergePatchPairs ();

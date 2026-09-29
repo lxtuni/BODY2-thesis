@@ -1,0 +1,50 @@
+{
+ "kind": "fluke",
+ "ramp": 0.5,
+ "U": 0.4,
+ "cycles": 3.0,
+ "T": 0.5,
+ "AREA": 0.00115,
+ "origin": [
+  0.06345,
+  0.004
+ ],
+ "H0": [
+  0.020867100000000006,
+  0.0,
+  -0.0169252
+ ],
+ "FIN0": 2.0045333,
+ "REF": 0.0,
+ "motion": "/home/<user>/cloud_fluke/fluke/motion_a20U040.csv",
+ "motion_meta": {
+  "mode": "alpha",
+  "alpha_deg": 20.0,
+  "U": 0.4,
+  "U_law": 0.4,
+  "amp": 1.0,
+  "fan_center_deg": 8.294260887621636,
+  "smooth_harmonics": 6,
+  "smooth_harmonics_hinge": 12,
+  "freq": 2.0,
+  "T": 0.5,
+  "n": 400,
+  "hinge_travel_z_mm": 38.75277450036512,
+  "hinge_travel_x_mm": 4.352274145747952,
+  "fin_range_deg": [
+   -15.645478772878592,
+   14.017859614345953
+  ],
+  "fin_rate_max_deg_s": 433.87744067279624,
+  "hinge_speed_max": 0.2883640946866208,
+  "alpha_act_p75": 21.62796406317156,
+  "alpha_act_max": 25.067299902366912
+ },
+ "stl": "/home/<user>/cloud_fluke/fluke/A2_blade_cfd.stl",
+ "turb": "laminar",
+ "bg": 0.0025,
+ "comp": 0.0012,
+ "vox": 0.0005999999944120646,
+ "dt0": 0.00048,
+ "vmax": 0.5038231185498576
+}

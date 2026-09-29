@@ -1,0 +1,32 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      blockMeshDict;
+}
+
+scale 1;
+vertices
+(
+    (-0.4013 -0.2778 -0.3516)
+    (0.3073 -0.2778 -0.3516)
+    (0.3073 0.2778 -0.3516)
+    (-0.4013 0.2778 -0.3516)
+    (-0.4013 -0.2778 0.1381)
+    (0.3073 -0.2778 0.1381)
+    (0.3073 0.2778 0.1381)
+    (-0.4013 0.2778 0.1381)
+);
+blocks ( hex (0 1 2 3 4 5 6 7) (71 56 49) simpleGrading (1 1 1) );
+edges ();
+boundary
+(
+    inlet  { type patch; faces ((1 2 6 5)); }    // +x 端：来流从这里吹向 -x
+    outlet { type patch; faces ((0 4 7 3)); }
+    sides  { type patch; faces ((0 1 5 4) (3 7 6 2)); }
+    bottom { type patch; faces ((0 3 2 1)); }
+    top    { type patch; faces ((4 5 6 7)); }    // 滑移刚盖（单相，远离尾鳍 ≥ 12 cm，等价无限深水 = Flare 同条件）
+);
+mergePatchPairs ();

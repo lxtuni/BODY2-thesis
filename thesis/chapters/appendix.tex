@@ -1,0 +1,326 @@
+\chapter{Additional Data}
+\label{app:data}
+
+\section{Drag-Type Paddle: Power Stroke and Recovery}
+\label{app:drag-split}
+
+\begin{table}[H]
+  \centering
+  \caption[Power-stroke and recovery contributions]{Contributions of power stroke and recovery to the mean thrust of the fan
+    paddle, \eqref{eq:split}, in \si{\milli\newton}, for $\tau_o=0$ and $\tau_c=0.33$ (V3trap) or $\tau_c=\mathrm{DUTY}$ (robot gait).
+    Net: two-state composite; corrected: range of the added-mass correction \eqref{eq:addedmass}.}
+  \label{tab:app-split}
+  \footnotesize
+  \begin{tabular}{@{}lcccc|cccc@{}}
+    \toprule
+    & \multicolumn{4}{c|}{V3trap} & \multicolumn{4}{c}{Robot gait} \\
+    $\U$ (\si{\metre\per\second}) & power & recovery & net & corrected & power & recovery & net & corrected \\
+    \midrule
+    0     & 88.0 & $-5.3$  & 82.7 & 72.9--82.7 & 29.4 & $-6.0$  & 23.4    & 23.4 \\
+    0.08  & 85.7 & $-10.2$ & 75.6 & 65.8--71.4 & 18.1 & $-12.9$ & 5.2     & 3.9--5.2 \\
+    0.15  & 75.4 & $-17.2$ & 58.2 & 48.4--50.4 & 12.6 & $-25.7$ & $-13.1$ & $-15.5$--$-13.1$ \\
+    0.223 & 62.5 & $-26.9$ & 35.7 & 23.9--25.9 & --   & --      & --      & -- \\
+    0.30  & 50.9 & $-39.1$ & 11.7 & $-4.1$--1.9 & --  & --      & --      & -- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Fluke Cases}
+\label{app:fluke}
+
+\begin{table}[H]
+  \centering
+  \caption[All fluke cases]{All single-leg fluke cases. $\alpha_{75}$: 75th percentile of $|\alpha|$ over the cycle.}
+  \label{tab:app-fluke}
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{@{}llccccc@{}}
+    \toprule
+    Case & Motion & $\U$ (\si{\metre\per\second}) & $\Tm$ (mN) & $\Pm$ (mW) & $\etaF$ & $\alpha_{75}$ \\
+    \midrule
+    L2U000 & L0 & 0     & 45.5 & 18.1 & --    & \SI{73}{\degree} \\
+    L2U008 & L0 & 0.08  & 36.5 & 17.1 & 0.171 & -- \\
+    L2U015 & L0 & 0.15  & 29.1 & 16.6 & 0.263 & -- \\
+    L0     & L0 & 0.223 & 21.4 & 16.3 & 0.293 & \SI{19.9}{\degree} \\
+    L2U030 & L0 & 0.30  & 12.7 & 15.6 & 0.245 & \SI{13.7}{\degree} \\
+    L1a10  & $\alpha$ law \SI{10}{\degree} & 0.223 & $\approx31$ & $\approx35$ & $\approx0.20$ & \SI{13}{\degree} \\
+    L1a28  & $\alpha$ law \SI{28}{\degree} & 0.223 & 26.2 & 23.9 & 0.244 & \SI{30}{\degree} \\
+    L1a20  & $\alpha$ law \SI{20}{\degree}, paddle-leg hinge path & 0.40 & 15.4 & 24.3 & 0.25 & \SI{21.7}{\degree} \\
+    L3U030 & scheduled, $\theta_0=\SI{21.6}{\degree}$ & 0.30 & 13.9 & 10.5 & 0.398 & \SI{21.0}{\degree} \\
+    L3U040 & scheduled, $\theta_0=\SI{17.6}{\degree}$ & 0.40 & 10.5 & 11.4 & 0.368 & \SI{16.4}{\degree} \\
+    L0c    & L0, coarse mesh & 0.223 & \multicolumn{4}{l}{$-7.3$\,\% thrust in the common window (\cref{sec:ver-mesh})} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Actuator Requirements}
+\label{app:actuators}
+
+\begin{table}[H]
+  \centering
+  \caption[Actuator requirements]{Peak joint speeds and peak hydrodynamic moments of the motions (propulsor only; inertia and drag
+    of the linkage not included), compared with the servos of the robot.}
+  \label{tab:actuators}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    & Paddle, V3trap & Fluke, L0 & Fluke, L3 at \SI{0.30}{\metre\per\second} \\
+    \midrule
+    Leg joints & hip \SI{214}{\degree\per\second}, curl \SI{459}{\degree\per\second} & knee $\approx$\SI{310}{\degree\per\second} & as L0 \\
+    Propulsor joint & fold within \SIrange{45}{60}{\milli\second} at $\tau_c$ & pitch \SI{712}{\degree\per\second} & pitch \SI{366}{\degree\per\second} \\
+    Hydrodynamic moment & \SI{35.6}{\milli\newton\metre} about the hip & \SI{12.6}{\milli\newton\metre} about the pin (at \SI{0.30}{\metre\per\second}) & \SI{7.4}{\milli\newton\metre} about the pin \\
+    \midrule
+    Available & \multicolumn{3}{>{\raggedright\arraybackslash}p{0.70\textwidth}}{PTK\,7465W at \SIrange{6.0}{8.4}{\volt}: stall torque
+      \SIrange{0.44}{0.57}{\newton\metre}, no-load speed \SIrange{650}{860}{\degree\per\second}; no controllable fold on the hardware} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\chapter{Inter-Limb Coordination in the Reduced-Order Model}
+\label{app:coord}
+
+This appendix reports the results of the reduced-order model on the coordination of the four legs. They do not affect the
+comparison of drag- and lift-based propulsion in \cref{ch:mujoco}, but they show how strongly the attitude limits shape the
+optimal gait.
+
+\section{Gait Families without Lift}
+
+With drag only and moderate limits, all five families find feasible gaits
+(\cref{tab:mj-families}, \cref{fig:mj-families}a). Bound is the fastest,
+$0.481\pm\SI{0.034}{\metre\per\second}$ or about two body lengths per second, with a margin larger than the seed
+scatter. It is left--right symmetric, so heading and roll vanish and all degrees of freedom serve propulsion;
+all three bound solutions sit at the \SI{15}{\degree} pitch limit and at the upper frequency bound of
+\SI{2.5}{\hertz}. About two thirds of all solutions end within \SI{1}{\degree} of a limit, and 14 of 15 keep
+their servos at the torque limit throughout. The limits shape the answer and are reported with it.
+
+With strict limits and drag only, the advantage of bound disappears: it drops to
+$0.159\pm\SI{0.020}{\metre\per\second}$, all ten family solutions sit at the \SI{5}{\degree} pitch limit, and walk,
+pace and trot differ by less than the seed scatter (\cref{fig:mj-families}b). Pitch is the bottleneck of every
+coordination.
+
+\begin{table}[t]
+  \centering
+  \caption[Fastest gait per family]{Fastest gait per family (speed in \si{\metre\per\second}, mean $\pm$
+    standard deviation over seeds). Moderate limits $10/10/\SI{15}{\degree}$, strict limits
+    $10/5/\SI{5}{\degree}$. Seeds per family: 3 (drag only, moderate), 2 (drag only, strict), 5 for bound, pace and
+    trot and 2 for walk and pronk (drag + lift, strict).}
+  \label{tab:mj-families}
+  \small
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    Family & Drag only, moderate & Drag only, strict & Drag + lift, strict \\
+    \midrule
+    bound & $\mathbf{0.481\pm0.034}$ & $0.159\pm0.020$ & $\mathbf{0.295\pm0.139}$ \\
+    pace  & $0.345\pm0.064$ & $0.191\pm0.062$ & $0.204\pm0.085$ \\
+    trot  & $0.344\pm0.048$ & $0.172\pm0.013$ & $0.139\pm0.051$ \\
+    walk  & $0.344\pm0.098$ & $0.209\pm0.089$ & $0.143\pm0.077$ \\
+    pronk & $0.265\pm0.038$ & $0.145\pm0.043$ & $0.118\pm0.064$ \\
+    \midrule
+    free phase, $10^4$ evaluations & -- & -- & $0.303\pm0.078$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_mj_families}
+  \caption[Fastest gaits per family in MuJoCo]{Fastest gait per family in the reduced-order model; bars are
+    seed means, dots individual seeds. (a) Drag only, moderate limits. (b) Drag only, strict limits. (c) Drag and
+    lift, strict limits, including three free-phase searches with $10^4$ evaluations. Free-phase searches with
+    2500 evaluations are not shown because they had not converged.}
+  \label{fig:mj-families}
+\end{figure}
+
+\section{Coordination with Lift under Strict Limits}
+
+With lift and strict limits, all fifteen trot, pace and bound solutions over five seeds are lift-propelled,
+feasible and do not surface (\cref{tab:mj-families}, \cref{fig:mj-families}c). Bound is again the fastest, up to
+\SI{0.483}{\metre\per\second} for one seed, as fast as the fastest drag-only gait under moderate limits, but its
+servos are saturated almost all the time. Trot has the lowest mean power ($1.23\pm\SI{0.90}{\watt}$) but is also the slowest of the three, so its low energy per metre mixes \enquote{economical} with \enquote{slow}.
+
+To separate the two, the least power at equal speed was computed per family with lift and strict limits
+(five seeds, \cref{fig:mj-coord}). At \SI{0.10}{\metre\per\second} trot needs \SI{0.10}{\watt} against
+\SI{0.17}{\watt} for bound, and at \SI{0.15}{\metre\per\second} \SI{0.48}{} against \SI{0.51}{\watt}; the medians
+over seeds are close. At \SI{0.20}{\metre\per\second} trot needs \SI{1.68}{\watt}, while pronk and bound need
+\SI{0.96}{} and \SI{0.98}{\watt}, and only three of five trot seeds are feasible; trot's speed limit under strict
+limits is about \SI{0.22}{\metre\per\second}. All 55 feasible solutions of this experiment are lift-propelled.
+Diagonal coordination is therefore at most marginally more economical at low speed; above about
+\SI{0.15}{\metre\per\second}, fore--aft coordinations are both more economical and faster.
+\Cref{fig:mj-trot} shows one lift-propelled trot at \SI{0.221}{\metre\per\second} and \SI{1.03}{\watt}, whose
+servos never saturate.
+
+The free-phase search needs a larger budget. With 2500 evaluations it reached only
+\SIrange{0.05}{0.07}{\metre\per\second}; with $10^4$ evaluations, three seeds reached
+$0.303\pm\SI{0.078}{\metre\per\second}$, all lift-propelled and all converged to fore--aft coordinations close to
+bound or pronk (deviation 15--19\,\% of a period), not to trot. The best free gait, \SI{0.369}{\metre\per\second}
+at \SI{3.3}{\watt}, is faster than three of the five bound optima and needs less energy per metre than all five, which shows that better
+coordinations exist outside the fixed families.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_mj_trot_frames.png}\\[1mm]
+  {\small (a)}\\[2mm]
+  \includegraphics[width=\textwidth]{fig_mj_trot.png}\\
+  {\small (b)}
+  \caption[A lift-propelled trot in MuJoCo]{A lift-propelled trot found with strict limits (\SI{0.90}{\hertz},
+    $\mathrm{DUTY}=0.59$, \SI{0.221}{\metre\per\second}, \SI{1.03}{\watt}). (a) Four frames of the MuJoCo animation,
+    \SIrange{0.25}{0.30}{\second} apart, covering one stroke period of \SI{1.11}{\second}; the camera follows the trunk. (b) Top:
+    power strokes of the four legs over the last three cycles; diagonal legs act together. Bottom: forward speed of the trunk
+    after the ramp-in, mean dotted.}
+  \label{fig:mj-trot}
+\end{figure}
+
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.58\textwidth]{fig_mj_coord}
+  \caption[Least power per gait family]{Least mechanical power to reach a required speed per gait family, with lift and strict limits
+    (best of five seeds).}
+  \label{fig:mj-coord}
+\end{figure}
+
+\section{Electrical Power}
+
+Because most of the fastest gaits keep their servos at the torque limit, the mechanical-power ranking could
+hide large copper losses. The electrical power was therefore recomputed for all 222 valid optima. Averaged per family, it lies within about $\pm30$\,\% of the mechanical power, because at saturation the back-EMF term cancels much of the stall torque. The exceptions are trot and pronk with drag only under moderate limits, whose electrical power is 71\,\% and 44\,\% higher (for trot \SI{19.6}{} instead of \SI{11.5}{\watt}). This moves trot behind pace and walk in energy per metre; apart from this, the statements of this appendix hold for the electrical power as well.
+
+\chapter{Real-Time Solver: Tow Runs and Whole-Robot Trends}
+\label{app:flare-trends}
+
+This appendix collects the Flare Live results. The tow runs are the basis of the cross-check in \cref{sec:ver-flare}; the
+self-propelled runs show trends of the whole robot but no reliable magnitudes.
+
+\section{Tow Runs}
+\label{app:flare}
+
+\begin{table}[H]
+  \centering
+  \caption[Flare Live tow runs]{Flare Live tow runs with the L0 motion: streamwise fluid force on the fluke (fluke frame) and net
+    thrust of the whole flapping leg, in \si{\milli\newton}, averaged over $t=\SIrange{3}{9}{\second}$.}
+  \label{tab:app-flare}
+  \footnotesize
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    $\U$ (\si{\metre\per\second}) & Lattice & Fluke, flapping & Fluke, idle & Leg net thrust & CFD fluke & $\alpha_{75}$ \\
+    \midrule
+    0     & \SI{3}{\milli\metre} & 20.0  & --      & 25.7 & 45.5 & \SI{73.8}{\degree} \\
+    0.1   & \SI{3}{\milli\metre} & 8.5   & --      & 15.9 & $\approx34$ & \SI{41.1}{\degree} \\
+    0.223 & \SI{3}{\milli\metre} & $-0.1$ & $-12.6$ & 9.6  & 21.4 & \SI{19.7}{\degree} \\
+    0.223 & \SI{2}{\milli\metre} & 4.1   & $-11.6$ & 5.8  & 21.4 & \SI{19.8}{\degree} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Self-Propelled Runs}
+
+Because of the thrust deficit of \cref{sec:ver-flare}, the self-propelled Flare Live runs are used only for trends
+(\cref{fig:flare-robot}, \cref{tab:flare}). With the resistance $K=\SI{0.65}{\newton\second\squared\per\metre\squared}$
+($D_\text{mid}$), a trot at \SI{2}{\hertz} with a target angle of attack of \SI{18}{\degree} swims at
+\SI{0.154}{\metre\per\second}, about half the CFD-based prediction, consistent with the missing fluke thrust.
+\begin{itemize}
+  \item \emph{Frequency.} Speed grows with frequency as $\U\propto f^{0.71}$ at $K=0.65$ ($f^{0.51}$ at $K=3.95$), while power grows
+        as $f^{1.8}$; the cost of transport rises with frequency. The Strouhal number stays nearly constant.
+  \item \emph{Angle of attack.} The target \SI{18}{\degree} gives the highest speed and the lowest cost of transport; \SI{28}{\degree}
+        is slightly slower, \SI{10}{\degree} much slower. The controller does hold the target: in the \SI{10}{\degree} run, the
+        mid-stroke angle of attack has a median of \SI{10.1}{\degree}, but the fluke has to rotate by \SI{122}{\degree} per cycle and
+        sits at its end stop 11\,\% of the time. In CFD, the \SI{10}{\degree} law gave the most thrust at this speed
+        (\cref{sec:res-lift}). The penalty for small angles in Flare Live is consistent with its unresolved lift; only the statement
+        that efficiency is highest near \SIrange{18}{20}{\degree} is supported by both solvers.
+  \item \emph{Resistance.} Lowering $K$ from 0.65 to 0.27 (bare hull) raises the speed only from \SI{0.154}{} to
+        \SI{0.160}{\metre\per\second}, so in Flare Live the robot is limited by its thrust rather than by its hull.
+  \item \emph{Attitude.} The hull heaves by less than \SI{0.6}{\milli\metre} and pitches by less than \SI{0.3}{\degree} in the trot:
+        diagonal coordination keeps the floating robot level.
+\end{itemize}
+
+\begin{table}[t]
+  \centering
+  \caption[Flare Live self-propelled runs]{Self-propelled Flare Live runs, trot, $K=\SI{0.65}{\newton\second\squared\per\metre\squared}$.
+    COT $=P_\text{j}/(mg\U)$ with the joint-drive power $P_\text{j}$ and $m=\SI{0.863}{\kilo\gram}$.}
+  \label{tab:flare}
+  \small
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    Run & $\U$ (\si{\milli\metre\per\second}) & $P_\text{j}$ (mW) & COT \\
+    \midrule
+    \SI{2}{\hertz}, $\alpha$ \SI{10}{\degree} & 100.2 & 261 & 0.31 \\
+    \SI{2}{\hertz}, $\alpha$ \SI{18}{\degree} & \textbf{153.8} & 239 & \textbf{0.18} \\
+    \SI{2}{\hertz}, $\alpha$ \SI{28}{\degree} & 143.8 & 249 & 0.20 \\
+    \SI{2.5}{\hertz}, $\alpha$ \SI{18}{\degree} & 183.1 & 355 & 0.23 \\
+    \SI{3}{\hertz}, $\alpha$ \SI{18}{\degree} & 205.0 & 488 & 0.28 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_flare_robot}
+  \caption[Flare Live free-swimming trends]{Self-propelled robot in Flare Live (trot). (a) Speed versus stroke frequency for two
+    hull resistances. (b) Speed versus the target angle of attack at \SI{2}{\hertz}. (c) Cost of transport versus frequency.}
+  \label{fig:flare-robot}
+\end{figure}
+
+The joint-drive power in Flare Live (\SIrange{240}{490}{\milli\watt}) is an order of magnitude above the hydrodynamic power of
+the CFD (about \SI{65}{\milli\watt} for four flukes), because it includes the power to move the linkages, their inertia and the
+controller effort.
+
+\chapter{Reproducibility}
+\label{app:repro}
+
+\section{Software}
+
+\begin{sloppypar}
+\begin{itemize}
+  \item OpenFOAM v2606, \texttt{overPimpleDyMFoam}; meshes with \texttt{blockMesh} and \texttt{snappyHexMesh}. Case generators,
+        run scripts and post-processing in Python (\texttt{make\_leg\_cfd.py}, \texttt{make\_fluke\_cfd.py},
+        \texttt{fluke\_traj.py}, \texttt{fluke\_forces.py}).
+  \item MuJoCo 3.14 with the Python package \texttt{cma}; the gait-optimization code \texttt{swimopt} (\url{https://github.com/lxtuni/swimopt}), including the raw results of all
+        234 runs, 222 of them valid (\texttt{thesis\_notes/data/all\_runs.csv}). The replay of the drag-only optima with lift
+        (\cref{sec:mj-liftshare}) is documented in the notes of the repository, not in \texttt{all\_runs.csv}.
+  \item Flare Live with the scripts \texttt{run\_float.py} (self-propelled runs) and \texttt{bench\_foil.py} (tow runs).
+\end{itemize}
+\end{sloppypar}
+\TODO{Add the repository of the CFD and Flare Live scripts and the commit hashes of the final versions.}
+
+\section{MuJoCo Settings}
+
+\begin{table}[H]
+  \centering
+  \caption[MuJoCo settings]{Settings of the reduced-order gait optimization.}
+  \label{tab:app-mujoco}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    Item & Value \\
+    \midrule
+    Time step, integrator & \SI{2}{\milli\second}, implicit-fast \\
+    Evaluation & settle \SI{1.0}{\second}, ramp-in \SI{1.5}{\second}, score \SI{8}{\second} rounded up to whole periods \\
+    Servo & position servo, stiffness 60, critical damping, $\tau_s=\SI{3}{\newton\metre}$, $\omega_\text{max}=\SI{400}{\degree\per\second}$ \\
+    Flipper coefficients & $C_D=(2.2,0.10,0.10)$, $C_a=1.0$, $c_v=0.05$, $c_l=1.1$ \\
+    Link coefficients & $C_D=(0.5,0.5,0.25)$, $C_a=0.3$, $c_v=0.02$ \\
+    Trunk coefficients & $C_D=(0.9,1.6,1.8)$, $C_a=0.2$, $c_v=0.10$ \\
+    Gait & $H=2$; $f\in[0.2,2.5]$\,Hz; DUTY $\in[0.25,0.75]$; $A\in[0,0.9]$\,rad; $q_0\in[-0.5,0.5]$\,rad \\
+    CMA-ES & population 16, $\sigma_0=0.25$, 2500 evaluations ($10^4$ for free phase), non-zero seeds \\
+    Limits & heading/roll/pitch RMS $10/10/\SI{15}{\degree}$ or $10/5/\SI{5}{\degree}$; surfacing $\le5$\,\% where stated; lift thrust share $s_L\le0.1$ for the drag-based strokes of \cref{sec:mj-liftshare} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Model Errors Found and Corrected}
+
+Several errors in the simulation set-up were found during the work and corrected before the reported results were produced.
+They are listed because they are easy to repeat.
+\begin{itemize}
+  \item MJCF reads joint ranges in degrees by default; a range of $\pm1.3$ intended in radians locked every joint to
+        $\pm\SI{1.3}{\degree}$. All results before this correction were discarded.
+  \item Changing body masses at run time without recomputing MuJoCo's derived constants made the added mass ineffective for a
+        single free body and caused a 36\,\% error in a momentum-conservation test.
+  \item Visual and collision geometries imported from a URDF were both given hydrodynamic forces, doubling buoyancy, drag and added
+        mass.
+  \item An additive weighting of speed and attitude produced strongly rolling and yawing optima once the legs could move freely;
+        it was replaced by the feasibility-first formulation \eqref{eq:feasibility}.
+  \item A first measure of the lift share, $|I_L|/(|I_L|+|I_\text{drag}|)$, is about 0.5 for every gait with lift, because in steady
+        swimming the lift and drag impulses cancel. Used as a limit, it could only be met by gaits that barely moved. It was
+        replaced by $s_L$ of \eqref{eq:liftshare}, and the runs with the old measure were discarded.
+  \item In the fluke CFD, a coarse background mesh that had not been refined around the fluke led to a failed hole cutting in which
+        almost the whole background was removed; the number of hole cells is now checked automatically.
+\end{itemize}

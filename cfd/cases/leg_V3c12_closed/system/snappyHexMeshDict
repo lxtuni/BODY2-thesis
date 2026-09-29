@@ -1,0 +1,38 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      snappyHexMeshDict;
+}
+
+// 背景网格：只做区域加密（无表面），把桨扫掠区细化到 4.0 mm
+castellatedMesh true;
+snap            false;
+addLayers       false;
+geometry
+{
+    ref1 { type searchableBox; min (-0.115028 -0.108 -0.20381); max (0.188754 0.108 0.153974); }
+    ref2 { type searchableBox; min (-0.0550283 -0.048 -0.14381); max (0.128754 0.048 0.0939739); }
+}
+castellatedMeshControls
+{
+    maxLocalCells 3000000; maxGlobalCells 6000000; minRefinementCells 10; maxLoadUnbalance 0.1;
+    nCellsBetweenLevels 4;
+    features ();
+    refinementSurfaces { }
+    resolveFeatureAngle 30;
+    refinementRegions
+    {
+        ref1 { mode inside; levels ((1e15 1)); }
+        ref2 { mode inside; levels ((1e15 2)); }
+    }
+    locationInMesh (-0.3418 -0.2038 -0.3258);
+    allowFreeStandingZoneFaces true;
+}
+snapControls { nSmoothPatch 3; tolerance 2.0; nSolveIter 30; nRelaxIter 5; }
+addLayersControls { relativeSizes true; layers { } expansionRatio 1.0; finalLayerThickness 0.3; minThickness 0.1; nGrow 0; featureAngle 60; nRelaxIter 3; nSmoothSurfaceNormals 1; nSmoothNormals 3; nSmoothThickness 10; maxFaceThicknessRatio 0.5; maxThicknessToMedialRatio 0.3; minMedialAxisAngle 90; nBufferCellsNoExtrude 0; nLayerIter 50; }
+meshQualityControls { maxNonOrtho 65; maxBoundarySkewness 20; maxInternalSkewness 4; maxConcave 80; minVol 1e-13; minTetQuality 1e-15; minArea -1; minTwist 0.02; minDeterminant 0.001; minFaceWeight 0.05; minVolRatio 0.01; minTriangleTwist -1; nSmoothScale 4; errorReduction 0.75; }
+writeFlags ();
+mergeTolerance 1e-6;

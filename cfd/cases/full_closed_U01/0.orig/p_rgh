@@ -1,0 +1,23 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      p_rgh;
+}
+
+dimensions      [1 -1 -2 0 0 0 0];
+internalField   uniform 0;
+boundaryField
+{
+    overset_FL { type overset; }
+    overset_FR { type overset; }
+    overset_RL { type overset; }
+    overset_RR { type overset; }
+    "(paddle_.*|hull)" { type fixedFluxPressure; value uniform 0; }
+    inlet        { type fixedFluxPressure; value uniform 0; }
+    outlet       { type zeroGradient; }
+    atmosphere   { type totalPressure; p0 uniform 0; U U; phi phi; rho rho; psi none; gamma 1; value uniform 0; }
+    "(sides|bottom)" { type fixedFluxPressure; value uniform 0; }
+}

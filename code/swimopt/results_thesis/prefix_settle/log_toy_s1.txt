@@ -1,0 +1,5 @@
+toy_s1: n=108 done=False best_speed=0.0301 yaw=9.4 wall=138s
+toy_s1: n=216 done=False best_speed=0.0838 yaw=21.4 wall=274s
+toy_s1: n=324 done=False best_speed=0.0528 yaw=3.5 wall=409s
+toy_s1: n=432 done=False best_speed=0.1047 yaw=22.2 wall=545s
+toy_s1: n=480 done=True best_speed=0.1047 yaw=22.2 wall=604s

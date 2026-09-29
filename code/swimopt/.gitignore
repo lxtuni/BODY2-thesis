@@ -1,0 +1,33 @@
+# ---- Python environment (machine-specific, never commit) ----
+mjenv/
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# ---- Proprietary robot model (lab CAD, not for public release) ----
+robots/body2.xml
+robots/*body2*
+config_body2.json
+robots/meshes/
+robots/*.STL
+robots/*.stl
+robots/*.dae
+robots/*.obj
+
+# ---- Run outputs ----
+results/
+*.log
+MUJOCO_LOG.TXT
+_ui_run.json
+
+# ---- Personal notes, not part of the public repo ----
+PUSH_*.txt
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

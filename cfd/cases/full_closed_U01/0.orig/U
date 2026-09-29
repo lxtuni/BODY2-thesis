@@ -1,0 +1,23 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+
+dimensions      [0 1 -1 0 0 0 0];
+internalField   uniform (-0.1000 0 0);
+boundaryField
+{
+    overset_FL { type overset; patchType overset; value uniform (0 0 0); }
+    overset_FR { type overset; patchType overset; value uniform (0 0 0); }
+    overset_RL { type overset; patchType overset; value uniform (0 0 0); }
+    overset_RR { type overset; patchType overset; value uniform (0 0 0); }
+    "(paddle_.*|hull)" { type movingWallVelocity; value uniform (0 0 0); }
+    inlet        { type fixedValue; value uniform (-0.1000 0 0); }
+    outlet       { type outletPhaseMeanVelocity; alpha alpha.water; Umean 0.1000; value uniform (-0.1000 0 0); }
+    atmosphere   { type pressureInletOutletVelocity; value uniform (0 0 0); }
+    "(sides|bottom)" { type slip; }
+}

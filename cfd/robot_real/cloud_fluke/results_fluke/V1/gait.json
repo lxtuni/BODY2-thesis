@@ -1,0 +1,52 @@
+{
+ "kind": "fluke",
+ "ramp": 0.5,
+ "U": 0.4,
+ "cycles": 3.0,
+ "T": 1.5,
+ "AREA": 0.06,
+ "origin": [
+  0.0,
+  0.0
+ ],
+ "H0": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "FIN0": -23.146026,
+ "REF": 0.0,
+ "motion": "/home/<user>/cloud_fluke/fluke/motion_V1.csv",
+ "motion_meta": {
+  "mode": "heave-pitch",
+  "h0": 0.075,
+  "theta0_deg": 23.14602598722255,
+  "psi_deg": 90.0,
+  "alpha_max_deg": 15.0,
+  "St": 0.25,
+  "freq": 0.6666666666666667,
+  "T": 1.4999999999999998,
+  "U": 0.4,
+  "n": 400,
+  "hinge_travel_z_mm": 150.0,
+  "hinge_travel_x_mm": 0.0,
+  "fin_range_deg": [
+   -23.14602598722255,
+   23.14602598722255
+  ],
+  "fin_rate_max_deg_s": 96.94985991705526,
+  "hinge_speed_max": 0.3141463462364136,
+  "alpha_act_p75": 14.579877902664862,
+  "alpha_act_max": 14.998855455538092
+ },
+ "naca": "0012",
+ "chord": 0.1,
+ "span": 0.6,
+ "pivot_frac": 0.3333,
+ "turb": "laminar",
+ "bg": 0.005,
+ "comp": 0.0025,
+ "vox": 0.0028499999999999997,
+ "dt0": 0.0015,
+ "vmax": 0.33138947209941455
+}

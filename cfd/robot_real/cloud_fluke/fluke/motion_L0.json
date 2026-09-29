@@ -1,0 +1,20 @@
+{
+ "mode": "bench",
+ "source": "fluke/bench_LF_active.csv",
+ "samples": 800,
+ "cycles": 7.99,
+ "freq": 2.0,
+ "T": 0.5,
+ "U": 0.2229,
+ "n": 400,
+ "hinge_travel_z_mm": 39.1767088771805,
+ "hinge_travel_x_mm": 4.319605154713094,
+ "fin_range_deg": [
+  -33.750138827161884,
+  43.59715008675519
+ ],
+ "fin_rate_max_deg_s": 712.1617821379979,
+ "hinge_speed_max": 0.28226091718229934,
+ "alpha_act_p75": 19.917427337966163,
+ "alpha_act_max": 29.816549406829978
+}

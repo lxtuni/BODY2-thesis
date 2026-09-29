@@ -1,0 +1,9 @@
+demo {'drag_thrust_N': -0.161, 'lift_thrust_N': 0.226, 'lift_share': 3.467, 'alpha_thrust_weighted_deg': 72.272, 'path_transverse_ratio': 0.381}
+toy_s1 {'drag_thrust_N': 0.18, 'lift_thrust_N': -0.049, 'lift_share': -0.373, 'alpha_thrust_weighted_deg': 66.502, 'path_transverse_ratio': 0.572}
+toy_s2 {'drag_thrust_N': -0.085, 'lift_thrust_N': 0.017, 'lift_share': -0.24, 'alpha_thrust_weighted_deg': 67.762, 'path_transverse_ratio': 0.598}
+g_diag {'drag_thrust_N': -0.426, 'lift_thrust_N': 0.925, 'lift_share': 1.854, 'alpha_thrust_weighted_deg': 70.086, 'path_transverse_ratio': 0.381}
+g2_diag {'drag_thrust_N': -0.322, 'lift_thrust_N': 0.857, 'lift_share': 1.601, 'alpha_thrust_weighted_deg': 69.181, 'path_transverse_ratio': 0.47}
+g_fb {'drag_thrust_N': -0.848, 'lift_thrust_N': 1.17, 'lift_share': 3.635, 'alpha_thrust_weighted_deg': 65.228, 'path_transverse_ratio': 0.626}
+g2_fb {'drag_thrust_N': -1.069, 'lift_thrust_N': 1.767, 'lift_share': 2.532, 'alpha_thrust_weighted_deg': 57.772, 'path_transverse_ratio': 0.521}
+g_inphase {'drag_thrust_N': -0.199, 'lift_thrust_N': 0.495, 'lift_share': 1.67, 'alpha_thrust_weighted_deg': 64.591, 'path_transverse_ratio': 0.438}
+g2_inphase {'drag_thrust_N': -0.157, 'lift_thrust_N': 0.47, 'lift_share': 1.503, 'alpha_thrust_weighted_deg': 71.084, 'path_transverse_ratio': 0.452}

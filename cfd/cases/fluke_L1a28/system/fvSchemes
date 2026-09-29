@@ -1,0 +1,30 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+
+ddtSchemes { default Euler; }
+gradSchemes { default Gauss linear; }
+divSchemes
+{
+    default         none;
+    div(phi,U)      Gauss limitedLinearV 1;
+    div((nuEff*dev2(T(grad(U))))) Gauss linear;
+}
+laplacianSchemes { default Gauss linear corrected; }
+interpolationSchemes { default linear; }
+snGradSchemes { default corrected; }
+// 洞切：搜索盒限制在运动包络内，体素 ≈ 0.61 mm（必须明显小于最薄处 2.7 mm，否则全域变洞）
+// ORIG_DIV (230 240 240)
+oversetInterpolation
+{
+    method              inverseDistance;
+    searchBox           (-0.0652702 -0.072 -0.109068) (0.0725757 0.072 0.0369575);
+    searchBoxDivisions  (230 240 240);
+}
+fluxRequired { default no; p; }
+wallDist { method meshWave; }

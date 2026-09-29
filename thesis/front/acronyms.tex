@@ -1,0 +1,50 @@
+\chapter*{List of Acronyms and Symbols}
+\addcontentsline{toc}{chapter}{List of Acronyms and Symbols}
+\markboth{List of Acronyms and Symbols}{List of Acronyms and Symbols}
+
+\begin{description}[labelwidth=16mm,leftmargin=20mm,itemsep=1pt,font=\normalfont\bfseries]
+\item[AR] aspect ratio, $\mathit{AR}=b^2/S$
+\item[BL] body length (speeds in BL/s)
+\item[CFD] computational fluid dynamics
+\item[CMA-ES] covariance matrix adaptation evolution strategy
+\item[COT] cost of transport
+\item[EMF] electromotive force (back-EMF of the servo motor)
+\item[GCI] grid convergence index
+\item[LSTM] long short-term memory (recurrent neural network)
+\item[MJCF] MuJoCo XML model format
+\item[PIMPLE] merged PISO--SIMPLE pressure--velocity coupling algorithm
+\item[RMS] root mean square
+\item[SPH] smoothed-particle hydrodynamics
+\item[URDF] unified robot description format
+\end{description}
+
+\bigskip
+\begin{description}[labelwidth=16mm,leftmargin=20mm,itemsep=1pt,font=\normalfont]
+\item[$\U$] forward (swimming or tow) speed, \si{\metre\per\second}
+\item[$f,\;T$] stroke frequency and period, $T=1/f$
+\item[$\tau$] cycle phase $t/T\bmod 1$
+\item[$\Tm$] cycle-mean thrust of one leg, \si{\milli\newton}
+\item[$\Pm$] cycle-mean hydrodynamic input power of one leg, \si{\milli\watt}
+\item[$\etaF$] Froude efficiency $\Tm\U/\Pm$
+\item[$C_T$] thrust coefficient $\Tm/(\tfrac12\rho\U^2S)$
+\item[$\mathit{St}$] Strouhal number $fA/\U$ with peak-to-peak excursion $A$
+\item[$\alpha$] angle of attack between foil chord and relative inflow
+\item[$\gamma$] inflow angle of the heaving foil, $\gamma=\arctan(\dot h/\U)$
+\item[$\theta$] fluke pitch angle
+\item[$\mathrm{DUTY}$] fraction of the cycle spent in the power stroke
+\item[$\tau_o,\tau_c$] phases at which the fan paddle is opened and closed
+\item[$K$] hull drag coefficient in $D=K\U|\U|$, \si{\newton\second\squared\per\metre\squared}
+\item[$\rho,\nu$] density and kinematic viscosity of water
+\end{description}
+
+\bigskip
+\noindent\textbf{Case names}
+\begin{description}[labelwidth=16mm,leftmargin=20mm,itemsep=1pt,font=\normalfont\bfseries]
+\item[Robot gait] fan paddle with the robot's current stroke (\SI{1.25}{\second} period, fold to \SI{30}{\milli\metre})
+\item[V1--V3] design steps of the drag-type stroke at rest; V3trap: the optimized stroke (trapezoidal velocity law, fold to \SI{12}{\milli\metre}, early closing)
+\item[L0] fluke with the reference motion from Flare Live at \SI{0.223}{\metre\per\second}; L0c: the same on the coarse mesh
+\item[L2] L0 motion at other speeds (\SIlist{0;0.08;0.15;0.30}{\metre\per\second})
+\item[L1] fluke with an angle-of-attack law (L1a10, L1a28: targets of \SI{10}{} and \SI{28}{\degree})
+\item[L3] fluke with the speed-scheduled pitch $\theta_0=\gamma_\text{max}/2$ (L3U030, L3U040 at \SI{0.30}{} and \SI{0.40}{\metre\per\second})
+\item[Validation] heaving and pitching NACA\,0012 foil after Schouveiler et al.\ (\cref{sec:ver-v1})
+\end{description}

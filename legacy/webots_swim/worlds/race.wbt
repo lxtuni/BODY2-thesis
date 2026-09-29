@@ -1,0 +1,60 @@
+#VRML_SIM R2025a utf8
+EXTERNPROTO "../protos/Body2Swimmer.proto"
+
+WorldInfo {
+  info [ "Gait race: 14/23 (diagonal) vs 12/34 (front-back), same start, same direction." ]
+  title "BODY2 gait race"
+  coordinateSystem "ENU"
+  basicTimeStep 2
+  gravity 9.81
+  defaultDamping Damping { linear 0.30 angular 0.60 }
+}
+Viewpoint {
+  orientation -0.18 0.12 0.98 2.0
+  position 0.10 -1.30 1.05
+}
+Background { skyColor [ 0.55 0.70 0.92 ] }
+DirectionalLight { direction 0.4 -0.6 -1  intensity 3.5  castShadows TRUE }
+
+# ===== water =====
+Fluid {
+  name "water"
+  density 1000
+  viscosity 0.0013
+  streamVelocity 0 0 0
+  translation 0 0 -0.40
+  children [
+    Shape { appearance Appearance { material Material { diffuseColor 0.15 0.40 0.70 transparency 0.6 } }
+            geometry Box { size 3.2 2.0 0.80 } }
+  ]
+  boundingObject Box { size 3.2 2.0 0.80 }
+  locked TRUE
+}
+Solid {
+  translation 0 0 -0.82
+  children [ Shape { appearance PBRAppearance { baseColor 0.45 0.45 0.5 roughness 1 metalness 0 }
+                     geometry Box { size 3.2 2.0 0.02 } } ]
+  boundingObject Box { size 3.2 2.0 0.02 }
+  name "pool_bottom"
+}
+# start line (x = 0)
+Solid {
+  translation 0 0 0.001
+  children [ Shape { appearance PBRAppearance { baseColor 0.9 0.1 0.1 roughness 1 metalness 0 }
+                     geometry Box { size 0.01 1.2 0.002 } } ]
+  name "start_line"
+}
+
+# ===== two racers, same start line (x=0), offset in Y so they don't collide =====
+Body2Swimmer {
+  translation 0 0.30 0.020
+  name "racer_14_23"
+  controller "paddle_race"
+  controllerArgs [ "14_23" ]
+}
+Body2Swimmer {
+  translation 0 -0.30 0.020
+  name "racer_12_34"
+  controller "paddle_race"
+  controllerArgs [ "12_34" ]
+}

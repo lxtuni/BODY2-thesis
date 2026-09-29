@@ -1,0 +1,107 @@
+\chapter{引言}
+\label{ch:intro}
+
+\section{研究动机}
+
+腿式机器人在陆地上运动灵活，而它们能够发挥作用的许多场所，如海岸线、洪涝区、池塘和河岸，也都存在开阔水域。四足机器人要穿越这类水域，就需要在足部不再接触地面时有某种自我推进的方式。加装推力器（thruster）是一种选择\cite{Yao2023}，但推力器会增加质量、体积和执行器，而这些在陆地上毫无用处。另一种方案是直接用腿本身游泳\cite{Li2019,Qu2025,Han2025,Wang2025}。这样便无需额外硬件，游泳问题就转化为如何驱动现有关节以及足部应采用何种形状的问题。
+
+用腿游泳的动物采用两种不同的物理原理\cite{Fish1996}。狗、麝鼠或鸭子以\emph{划水}（paddling）方式游泳。它们用垂直于运动方向的足向后推水，然后再将足收回到前方\cite{Fish1984,Fish2021DogPaddle}。推力来自划水冲程（power stroke）中足所受的阻力，而回程（recovery stroke）不可避免地会损失一部分推力。海豚、海龟和许多鱼类则横向于游动方向\emph{拍动}（flapping）鳍或尾鳍（fluke）。鳍以较小的攻角（angle of attack）迎向来流并产生升力，升力的前向分量即为推力。阻力型划水（drag-based paddling）结构简单，在静止时即可工作，且加速性能好。升力型拍动（lift-based flapping）在巡航速度（cruising speed）下的效率是前者的两到三倍\cite{Fish1996,Walker2000}。完全转为水生的哺乳动物都从第一种原理过渡到了第二种原理。
+
+大多数游泳腿式机器人采用第一种原理，因为行走用的足本身就是一支桨（paddle）。本文研究这一选择对于小型两栖四足机器人BODY2是否合适，以及在每种原理下腿应如何运动。该机器人的腿是为行走而设计的。每条腿都是由两个航模舵机（servo）驱动的平面两自由度连杆机构（linkage），足部是一支在回程中折叠的扇形桨。其当前的游泳步态（gait）取自机器人的视频，并非针对推力而设计。这支桨能否做到高效，抑或在同一条腿上装一个产生升力的小型尾鳍会更好，仅凭文献无法判断，因为答案取决于腿部几何、执行器限值和游动速度。
+
+\section{问题描述与研究范围}
+
+本文要解决的问题是：对于给定的腿和给定的执行器，找出能最有效地推进机器人的推进器（propulsor）及周期性腿部运动，并量化该答案如何随游动速度变化。以下三个特性使这一问题颇具难度。
+
+第一，流动是非定常且分离的。桨在每个周期内起停两次，每次停止时都会脱落一个涡，并会与自身的尾流相遇。拍动的尾鳍工作在$10^3$--$10^4$的雷诺数范围内，此时前缘涡（leading-edge vortex）以及沉浮（heave）与俯仰（pitch）之间的相位差决定了推力\cite{Triantafyllou1991,Anderson1998}。准定常（quasi-steady）模型能够捕捉这些效应的趋势，但无法给出其量级\cite{Kim2011}。
+
+第二，答案取决于航速。静止时，桨推动的是不动的水，并在划水冲程的大部分时间内产生推力。有航速时，迎面来流会减小划水冲程中的相对速度，并增大回程中的相对速度。升力型翼型（foil）的表现则相反：其攻角由沉浮速度与游动速度之比决定，因此它通过运动学与航速相关。所以，仅在单一航速下进行比较，可能得出偏向任一原理的结论。
+
+第三，没有哪一个模型能同时做到准确且计算代价低。单腿的三维CFD仿真需要数小时到数天，无法嵌入需要数千次评估的优化器中。降阶模型（reduced-order model）可以做到这一点，但其系数未经标定，其升力模型也只是教科书式的平板模型。
+
+因此，本文使用三种仿真工具，各自回答不同的问题，且不要求任何一种工具复现其他工具的数值：
+\begin{itemize}
+  \item 在MuJoCo中建立的\emph{降阶}整机模型，结合CMA-ES步态优化，回答\emph{机理}问题：在执行器和稳定性约束下，优化器会选择哪种推进原理？其系数未经标定，因此仅用于判断方向，而不用于给出量级；
+  \item 在OpenFOAM中采用重叠网格（overset grid）对真实BODY2腿部几何进行的\emph{单腿CFD}，回答\emph{量级}问题：每种推进器在不同前进速度下产生多大的推力和功率，以及一种推进器在何处反超另一种。它已通过一项实验予以确认，并提供了本文的全部定量结果；
+  \item \emph{整机}实时求解器Flare Live提供参考尾鳍运动。其尾鳍推力经与CFD对比校核后发现偏低，因此其结果仅用于趋势分析。
+\end{itemize}
+\Cref{fig:overview}展示了这三种工具及其结果之间的联系。当降阶模型与CFD的结果不一致时，以CFD为准；这种不一致本身将在\cref{sec:disc-models}中分析。
+
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[>=Latex,font=\small,
+      box/.style={draw=TUMblue,thick,rounded corners=2pt,align=center,inner sep=4pt,text width=35mm,minimum height=17mm,fill=TUMblue!6,execute at begin node={\hyphenpenalty=10000\relax}},
+      res/.style={draw=black!45,rounded corners=2pt,align=center,inner sep=3pt,text width=35mm,minimum height=9mm,fill=black!3,font=\footnotesize,execute at begin node={\hyphenpenalty=10000\relax}},
+      lab/.style={font=\footnotesize\itshape,text=black!60}]
+    \node[box,font=\small] (mj) at (0,0) {\textbf{降阶模型}\\MuJoCo，Morison力，\\舵机模型，\\CMA-ES（\cref{ch:mujoco}）};
+    \node[box] (cfd) at (5.1,0) {\textbf{单腿CFD}\\OpenFOAM，重叠网格，\\真实腿部几何\\（\cref{ch:cfd,ch:verification}）};
+    \node[box] (fl) at (10.2,0) {\textbf{整机模型}\\Flare Live，格子\\玻尔兹曼，实时\\（\cref{sec:cfd-flare}）};
+    \node[lab,above=1pt of mj.north] {快速，未标定};
+    \node[lab,above=1pt of cfd.north] {解析流场，已确认};
+    \node[lab,above=1pt of fl.north] {整机，分辨率粗};
+    \node[res] (r1) at (0,-2.3) {机理：优化器\\选择哪种原理（RQ1）};
+    \node[res] (r2) at (5.1,-2.3) {推力、功率、效率\\随航速的变化；交叉点（RQ2）};
+    \node[res] (r3) at (10.2,-2.3) {尾鳍推力的交叉校核（\cref{sec:ver-flare}）};
+    \node[res] (sp) at (5.1,-4.2) {自航估计$4\bar T(U)=D(U)$（RQ3）};
+    \node[res] (hw) at (10.2,-4.2) {首次硬件测试\\（\cref{sec:res-hw}）};
+    \draw[->] (mj) -- (r1); \draw[->] (cfd) -- (r2); \draw[->] (fl) -- (r3); \draw[->] (r2) -- (sp);
+    \draw[->,dashed] (mj.east) -- node[above,lab,fill=white,inner sep=1pt]{升力？} (cfd.west);
+    \draw[->,dashed] (fl.west) -- node[above,lab,fill=white,inner sep=1pt]{L0运动} (cfd.east);
+    \draw[->,dashed] (r2.east) -- node[above,lab,fill=white,inner sep=1pt]{尾鳍推力} (r3.west);
+    \draw[<->,dashed] (sp.east) -- node[above,lab,fill=white,inner sep=1pt]{对比} (hw.west);
+  \end{tikzpicture}
+  \caption[方法概览]{三种仿真工具及其作用的概览。实线箭头：结果；虚线箭头：工具之间传递的信息。降阶模型促成了升力型推进器的引入，Flare Live提供参考尾鳍运动，CFD则为自航估计提供推力曲线，并作为校核Flare Live尾鳍推力的参考。}
+  \label{fig:overview}
+\end{figure}
+
+研究范围限定如下。
+\begin{itemize}
+  \item \emph{环境。}机器人在静水水面游动。不考虑波浪、水流以及水陆之间的过渡。所有推进器CFD均为带刚性盖（rigid lid）的单相计算；未对自由液面（free surface）建模。
+  \item \emph{运动。}仅考虑稳态、周期性的直线前进游动。不考虑转向、起步和反馈控制。
+  \item \emph{推进器。}比较装在同一条腿上的两种推进器：机器人的折扇桨（folding fan paddle，阻力型）和装在销轴关节上的小型后掠尾鳍（swept fluke，升力型）。仿真中尾鳍俯仰角为给定值；硬件上采用的销轴加弹簧的被动实现方式未进行仿真。
+  \item \emph{评价。}推力和水动力输入功率（hydrodynamic input power）仅针对推进器本身（折扇或尾鳍）计算，不含连杆。游动速度由准定常力平衡预测，并考虑一定范围的船体阻力（hull resistance）。硬件实验仅限于一次从静止起步的初步计时测试。
+\end{itemize}
+
+\section{研究问题与假设}
+
+本文的核心问题是：
+\begin{quote}
+\itshape 阻力型划水与升力型拍动，哪一种推进原理能让BODY2的腿游得更快、更高效？每种推进器又应如何运动？
+\end{quote}
+该问题被分解为三个研究问题（research question），每个研究问题对应一个假设（hypothesis）。
+
+\begin{description}[leftmargin=12mm,style=nextline]
+\item[(RQ1)] \emph{降阶优化。}在执行器速度限值和姿态限值下，于降阶水动力模型中优化整机步态时，优化器会选择哪种推进机理？该答案是否取决于模型中所包含的物理效应？
+
+  \emph{假设H1。}若模型包含升力项，优化器会采用升力型冲程，且在相同航速下，这些冲程所需功率低于阻力型冲程。
+
+\item[(RQ2)] \emph{不同航速下的阻力与升力。}对于真实的腿部几何，在从静止到\SI{0.4}{\metre\per\second}的范围内，经过优化的阻力型桨和升力型尾鳍的推力、功率和弗劳德效率（Froude efficiency）各有多大？各推进器又受什么因素限制？
+
+  \emph{假设H2。}优化后的桨在低速时推力更大，但由于回程所遭遇的迎面来流不断增强，其推力随航速急剧下降。尾鳍在静止时推力较小，但在有航速时能保留更大比例的推力，并在航速超过某一交叉点（crossover）后推力更大、效率也更高。当尾鳍的俯仰角随航速调整、使攻角保持在拍动翼的高效区间（约\SIrange{15}{25}{\degree}）附近时，尾鳍性能最佳。
+
+\item[(RQ3)] \emph{整机。}由此可得整机的巡航速度和功率是多少？
+
+  \emph{假设H3。}两种优化后的推进器达到相近的巡航速度，该速度由船体和连杆的阻力决定，但尾鳍所需功率更低。
+\end{description}
+
+\cref{ch:mujoco}回答RQ1。在\cref{ch:cfd,ch:verification}介绍CFD方法及其验证之后，\cref{ch:results}回答RQ2和RQ3。\Cref{ch:discussion}对各假设进行评价。
+
+\section{贡献}
+
+本文的贡献（contribution）如下：
+\begin{enumerate}
+  \item \emph{带执行器模型的降阶步态优化流程}（\cref{ch:mujoco}）。
+        将带有可选平板升力项的Morison型连杆力、舵机的直流电机转矩--转速模型以及可行性优先（feasibility-first）约束与CMA-ES相结合。在模型含升力且不限制升力占比时得到的全部101个可行最优解中，均由升力提供前向冲量，而阻力与之相抗。借助升力占比限值，可以在同一模型内比较阻力型与升力型划动。
+  \item \emph{针对BODY2折扇桨的优化阻力型冲程}（\cref{sec:res-drag}）。对真实腿部进行重叠网格CFD，并以两态合成（two-state composite）描述折扇，得到一种采用梯形速度规律、12\,mm收拢宽度（folded width）和提前合扇的冲程，其在静止时每条腿产生\SIrange{73}{83}{\milli\newton}的推力，是机器人当前步态的3.1--3.5倍。两态合成无法解析的附加质量（added mass）变化，则借助由CFD辨识出的附加质量进行解析界定。
+  \item \emph{同一条腿上阻力型与升力型推进器随航速变化的对比}
+        （\cref{sec:res-compare}）。计算了从静止到\SI{0.40}{\metre\per\second}范围内的推力、功率和效率。阻力型桨的速度上限被追溯到其回程；推力和效率的交叉点分别位于约\SI{0.24}{}和\SI{0.22}{\metre\per\second}处；随航速调度的尾鳍俯仰（speed-scheduled pitch）使尾鳍在\SI{0.30}{\metre\per\second}时的效率从0.24提高到0.40。
+  \item \emph{自航（self-propulsion）估计与保真度评估}（\cref{sec:res-selfprop,ch:verification}）。
+        利用一定范围的船体阻力给出巡航速度的界限；以一项拍动翼实验对CFD设置进行确认（validation），并检查了网格收敛与周期收敛（cycle convergence）；同时在相同的尾鳍运动下量化了实时求解器Flare Live的推力不足。
+\end{enumerate}
+
+\section{论文结构}
+
+\Cref{ch:related}综述动物和机器人中的阻力型与升力型游泳、拍动翼水动力学以及游泳腿式机器人的仿真方法。\Cref{ch:foundations}介绍全文所用的物理量和简化模型：准定常划水、拍动翼运动学以及自航平衡。\Cref{ch:platform}描述机器人、两种推进器及其腿部运动。
+\Cref{ch:mujoco}介绍降阶模型和步态优化。\Cref{ch:cfd}描述单腿CFD和整机Flare Live模型，\cref{ch:verification}对CFD进行验证（verification）与确认，并以其为基准校核实时求解器。
+\Cref{ch:results}报告阻力型冲程的设计、升力型尾鳍、二者的比较、尾鳍俯仰角的航速调度规律以及自航估计。
+\Cref{ch:discussion}解读结果并说明局限性，\cref{ch:conclusion}总结全文并展望未来工作。附录汇集了补充数据、降阶模型的肢间协调结果（\cref{app:coord}）、Flare Live结果（\cref{app:flare-trends}）以及复现本工作所需的信息。

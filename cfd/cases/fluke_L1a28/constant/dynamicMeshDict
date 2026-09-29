@@ -1,0 +1,22 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      dynamicMeshDict;
+}
+
+dynamicFvMesh       dynamicOversetFvMesh;
+dynamicOversetFvMeshCoeffs { }
+solver          solidBody;
+solidBodyCoeffs
+{
+    cellZone        c1;
+    solidBodyMotionFunction tabulated6DoFMotion;
+    tabulated6DoFMotionCoeffs
+    {
+        CofG            (0.020867 0.000000 -0.016925);     // 转轴（尾鳍销轴）t=0 位置
+        timeDataFileName "<constant>/6DoF.dat";
+    }
+}

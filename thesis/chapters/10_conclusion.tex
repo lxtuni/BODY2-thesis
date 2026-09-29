@@ -1,0 +1,68 @@
+\chapter{Conclusion and Outlook}
+\label{ch:conclusion}
+
+\section{Conclusion}
+
+This thesis compared drag-based paddling and lift-based flapping for the legs of the amphibious quadruped BODY2,
+using a reduced-order gait optimization and single-leg CFD of the real leg. \Cref{tab:key-findings} answers the three
+research questions.
+
+\begin{table}[H]
+  \centering
+  \caption[Key findings]{Answers to the research questions. Paddle: optimized fan paddle V3trap; fluke: A2 with the speed-scheduled
+    pitch L3 unless stated otherwise; powers are hydrodynamic.}
+  \label{tab:key-findings}
+  \small
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{27mm}>{\raggedright\arraybackslash}p{40mm}>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    Question & Answer & Key numbers \\
+    \midrule
+    RQ1: mechanism selected by the optimizer (\cref{ch:mujoco}) &
+      Lift, whenever the model contains it &
+      Unless lift is suppressed, all 101 feasible optima with lift are lift-propelled. Drag-based strokes need 2--10 times the power at equal speed:
+      2--3 times across models, 4--10 times within the lift model (3 feasible strokes of 30) \\
+    \addlinespace
+    RQ2: drag versus lift across speed (\cref{sec:res-drag,sec:res-lift,sec:res-compare,sec:res-l3}) &
+      Paddle at low speed, fluke at cruising speed &
+      At rest \SIrange{73}{83}{} versus \SI{45.5}{\milli\newton} per leg, equal thrust per area. Crossover of thrust at
+      $0.24\pm\SI{0.02}{\metre\per\second}$, of efficiency at $0.22\pm\SI{0.02}{\metre\per\second}$. Paddle thrust vanishes near
+      \SI{0.30}{\metre\per\second}. Scheduled pitch raises $\etaF$ at \SI{0.30}{\metre\per\second} from 0.24 to 0.40 \\
+    \addlinespace
+    RQ3: whole robot (\cref{sec:res-selfprop,sec:res-hw}) &
+      Fluke slightly faster, much more economical; paddle accelerates faster &
+      \SI{0.30}{} versus \SIrange{0.26}{0.27}{\metre\per\second} at \SI{42}{} versus \SI{73}{\milli\watt} ($-43$\,\%); current gait
+      about \SI{0.09}{\metre\per\second}; $t_{90}$ \SI{0.68}{} versus \SIrange{1.46}{1.57}{\second}. Hardware at \SI{2}{\hertz}
+      1.3--1.6 times slower than predicted: the estimate is an upper bound \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+The CFD reproduces the thrust coefficient of a flapping-foil experiment to within 8\,\%, with about $\pm12$\,\% discretization
+uncertainty in thrust. The paddle values are given as a range because the two-state model of the folding fan does not resolve
+the change of added mass at the fold, which is bounded analytically. The reduced-order model and the CFD agree on the mechanism and on the speed limit of
+paddling, but not on the speed below which the paddle is more efficient; there the validated CFD is taken as authoritative. A first
+test of the robot with flukes reached roughly a quarter to a half of the CFD thrust, for reasons that the test cannot separate (\cref{sec:res-hw}), so the predicted cruising speeds are upper bounds for the present hardware.
+
+\paragraph{Recommendation.} For BODY2 swimming at the surface, the fluke with a pitch amplitude that decreases with speed is the better
+propulsor for cruising. The folding paddle is better for starting and low-speed manoeuvring, but only with a fold that narrows
+to about \SI{12}{\milli\metre} and can be switched at a specific phase.
+
+\section{Outlook}
+
+\begin{itemize}
+  \item \emph{Passive pitch.} Simulate the fluke with its real pin and leaf spring, coupling the pitch dynamics to the CFD forces,
+        and design a progressive spring or preload that approximates the speed-scheduled pitch over the whole speed range.
+  \item \emph{Fairer fluke.} Optimize the fluke's heave amplitude, frequency and pitch phase with the same care as the paddle
+        stroke, including a pitch near \SI{45}{\degree} at rest, and simulate the \SI{18.5}{\square\centi\metre} lunate fluke of the
+        paddle's area (\cref{sec:disc-design}). Both are expected to move the crossover to lower speed.
+  \item \emph{Folding paddle.} Simulate the fold itself with a deforming or multi-body mesh to replace the two-state composite and its
+        added-mass bounds.
+  \item \emph{Whole robot and free surface.} Simulate four legs with the hull, including the free surface, to quantify leg--leg
+        interaction and surface effects on both propulsors.
+  \item \emph{Calibration.} Calibrate the reduced-order coefficients, in particular a lift slope with aspect-ratio correction, and the
+        servo model against the single-leg CFD and the PTK\,7465W, and repeat the gait optimization; give the drag-based strokes of
+        \cref{sec:mj-liftshare} a fairer search.
+  \item \emph{Experiments.} Measure the resistance of the reversed hull in a coast-down test, the static thrust of the robot and
+        its steady swimming speed from a flying start in repeated runs, and film the fluke pitch to find the cause of the thrust
+        deficit.
+\end{itemize}

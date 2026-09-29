@@ -1,0 +1,2 @@
+fl_s2: n=96 done=False best_speed=0.0017 yaw=1.9 wall=139s
+fl_s2: n=144 done=True best_speed=0.0107 yaw=3.5 wall=228s

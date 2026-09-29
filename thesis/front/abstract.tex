@@ -1,0 +1,56 @@
+\thispagestyle{empty}
+\vspace*{25mm}
+\noindent{\sffamily\bfseries\Large Abstract\par}
+\vspace{6mm}
+\noindent
+Amphibious quadruped robots can swim by moving their legs, but a leg designed for walking makes a poor
+propulsor. This thesis asks which propulsion principle suits the legs of the quadruped BODY2 and how each
+propulsor should move. Drag-based paddling with a folding fan paddle is compared with lift-based flapping of a
+small fluke fitted to the same leg. Three simulation tools with different roles are used. First, a reduced-order
+MuJoCo model with Morison-type link forces and an actuator speed limit is combined with CMA-ES gait
+optimization. Whenever the model contains lift and lift is not suppressed, every feasible optimized gait is lift-propelled, and at equal speed the lift gaits
+need one half to one third of the power of the best gaits of a drag-only model. Second, the single leg is simulated
+with overset-grid CFD in OpenFOAM. For the fan paddle, a trapezoidal velocity law, a 12-mm folded width and
+closing the fan at the start of the deceleration raise the thrust from \SI{23.4}{\milli\newton} for the robot's
+current gait to \SIrange{73}{83}{\milli\newton} per leg at rest; the range bounds the change of added mass at the
+fold, which the two-state model of the folding fan does not resolve. The paddle loses its thrust by about
+\SI{0.30}{\metre\per\second}, because its recovery drag and the cost of opening the fan in the oncoming flow grow
+while its power-stroke thrust decays. The fluke produces the same thrust per area at rest and loses it more slowly with speed.
+Thrust and efficiency cross over at about \SI{0.24}{} and \SI{0.22}{\metre\per\second}. Scheduling the fluke pitch with speed keeps the angle of attack near
+\SI{20}{\degree} and raises the Froude efficiency at \SI{0.30}{\metre\per\second} from 0.24 to 0.40. A
+quasi-steady self-propulsion balance predicts a cruising speed of \SI{0.30}{\metre\per\second} for the fluke and
+\SIrange{0.26}{0.27}{\metre\per\second} for the optimized paddle, with 43\,\% less power for the fluke with
+speed-scheduled pitch. A first hardware test with flukes at \SI{2}{\hertz} is 1.3 to 1.6 times slower than predicted, so these
+speeds are upper bounds for the present robot. Third, the real-time solver Flare Live supplies the reference fluke motion, but its lattice does not resolve the
+foil and it underpredicts the fluke thrust, so it is used for trends only. The CFD set-up
+reproduces the thrust coefficient of a flapping-foil experiment to within 8\,\%.
+
+\vspace{12mm}
+\noindent{\sffamily\bfseries\Large Kurzfassung\par}
+\vspace{6mm}
+\noindent\begingroup\sisetup{locale=DE}
+Amphibische Vierbeiner können schwimmen, indem sie ihre Beine bewegen, doch ein zum Laufen ausgelegtes Bein
+ist ein schlechter Antrieb. Diese Arbeit untersucht, welches Antriebsprinzip zu den Beinen des Vierbeiners
+BODY2 passt und wie sich der jeweilige Antrieb bewegen sollte. Verglichen werden widerstandsbasiertes Paddeln
+mit einem faltbaren Fächerpaddel und auftriebsbasiertes Schlagen mit einer kleinen Flosse am selben Bein. Dazu
+werden drei Simulationswerkzeuge mit unterschiedlichen Aufgaben eingesetzt. Zunächst wird ein Modell reduzierter Ordnung in
+MuJoCo mit Morison-Kräften je Glied und begrenzter Stellgeschwindigkeit der Servos mit einer CMA-ES-Gangoptimierung kombiniert.
+Sobald das Modell Auftrieb enthält und dieser nicht unterdrückt wird, nutzen alle zulässigen optimierten Gangarten Auftrieb, und bei gleicher Geschwindigkeit benötigen
+sie nur die Hälfte bis ein Drittel der Leistung der besten Gangarten eines reinen Widerstandsmodells. Anschließend
+wird das Einzelbein mit Overset-CFD in OpenFOAM simuliert. Für das Fächerpaddel erhöhen ein trapezförmiges
+Geschwindigkeitsprofil, eine gefaltete Breite von 12\,mm und das Schließen des Fächers zu Beginn der
+Verzögerung den Schub im Stand von \SI{23.4}{\milli\newton} (aktueller Gang des Roboters) auf
+\SIrange{73}{83}{\milli\newton} pro Bein; die Spanne erfasst die Änderung der hydrodynamischen Masse beim Falten, die das
+Zwei-Zustands-Modell des Fächers nicht auflöst. Bei etwa \SI{0.30}{\metre\per\second} verliert das Paddel seinen Schub, weil
+Rückholwiderstand und der Aufwand zum Öffnen des Fächers in der Anströmung wachsen, während der Schub im Arbeitshub abnimmt.
+Die Flosse erzeugt im Stand denselben Schub pro Fläche und verliert ihn mit der Geschwindigkeit langsamer. Schub und Wirkungsgrad kreuzen sich bei etwa
+\SI{0.24}{} bzw. \SI{0.22}{\metre\per\second}.
+Eine geschwindigkeitsabhängige Anstellung hält den Anstellwinkel bei etwa \SI{20}{\degree} und steigert den
+Froude-Wirkungsgrad bei \SI{0.30}{\metre\per\second} von 0,24 auf 0,40. Eine quasistationäre
+Eigenantriebsbilanz sagt für die Flosse \SI{0.30}{\metre\per\second} und für das optimierte Paddel
+\SIrange{0.26}{0.27}{\metre\per\second} voraus, wobei die Flosse mit geschwindigkeitsabhängiger Anstellung 43\,\% weniger
+Leistung benötigt. Ein erster Schwimmversuch des Roboters mit Flossen ist bei \SI{2}{\hertz} 1,3- bis 1,6-mal langsamer als
+vorhergesagt; die vorhergesagten Geschwindigkeiten sind daher Obergrenzen für den aktuellen Roboter. Der Echtzeitlöser Flare Live
+liefert die Referenzbewegung der Flosse, löst das Profil jedoch nicht auf und unterschätzt den Flossenschub; er dient daher nur zur
+Einordnung von Trends. Der CFD-Aufbau gibt den Schubbeiwert eines Schlagflügelexperiments auf 8\,\% genau wieder.\endgroup
+\cleardoublepage

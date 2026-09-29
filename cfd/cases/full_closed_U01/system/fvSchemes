@@ -1,0 +1,35 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+
+ddtSchemes { default Euler; }
+gradSchemes { default Gauss linear; }
+divSchemes
+{
+    default         none;
+    div(rhoPhi,U)   Gauss limitedLinearV 1;
+    div(U)          Gauss linear;
+    div(phi,alpha)  Gauss vanLeer;
+    div(phirb,alpha) Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
+    div(phi,k)      Gauss limitedLinear 1;
+    div(phi,omega)  Gauss limitedLinear 1;
+}
+laplacianSchemes { default Gauss linear corrected; }
+interpolationSchemes { default linear; }
+snGradSchemes { default corrected; }
+// 洞切：搜索盒 = 四腿运动包络 + 3 cm，体素 ≈1.24 mm（必须 ≲ 桨厚/4）；v2606 若报 searchBoxDivisions 类型错误，改成每个 zone 一组
+oversetInterpolation
+{
+    method              inverseDistance;
+    searchBox           (-0.189655 -0.136013 -0.142172) (0.152325 0.136013 0.0967423);
+    searchBoxDivisions  (275 219 192);
+}
+oversetInterpolationSuppressed { grad(p_rgh); surfaceIntegrate(phiHbyA); }
+fluxRequired { default no; p_rgh; pcorr; alpha.water; }
+wallDist { method meshWave; }

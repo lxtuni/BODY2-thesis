@@ -1,0 +1,184 @@
+\chapter{流动仿真方法}
+\label{ch:cfd}
+
+本文使用了两种流动求解器。基于OpenFOAM的单腿仿真解析单个推进器（propulsor）周围的流动，
+并提供\cref{ch:results}中的推力（thrust）与功率数据。采用实时格子玻尔兹曼（lattice Boltzmann）求解器Flare Live进行的整机仿真，
+则提供尾鳍的参考运动以及自由游动机器人的定性趋势（\cref{app:flare-trends}）。本章对二者分别加以介绍。
+
+\section{基于重叠网格的单腿CFD}
+\label{sec:cfd-of}
+
+\subsection{控制方程与求解器}
+
+水（$\rho=\SI{1000}{\kilo\gram\per\cubic\metre}$，$\nu=\SI{1.0e-6}{\square\metre\per\second}$）的流动被建模为不可压缩、层流、单相流动。
+雷诺数为$10^3$--$10^4$（见\cref{sec:fund-forces}），处于层流至转捩的范围，在该范围内作用力主要由边缘处的分离涡主导；
+本文不使用湍流模型。不可压缩Navier--Stokes方程采用OpenFOAM v2606 \cite{Weller1998}中的\texttt{overPimpleDyMFoam}求解，
+该求解器是一种有限体积（finite-volume）求解器，采用PIMPLE压力--速度耦合（pressure--velocity coupling）以及重叠网格（overset/Chimera grid）\cite{Windt2020}。
+时间步长按最大库朗数（Courant number）0.8自适应调整。
+
+之所以选用重叠网格，是因为推进器在每个周期内相对于船体（hull）的转角可达\SI{120}{\degree}。
+贴体（body-fitted）的部件网格（component mesh）在静止的背景网格（background mesh）内随推进器作刚体运动。
+在每个时间步中，被推进器覆盖的背景网格单元被移除，即挖洞（hole cutting），各网格上的解通过插值边界单元（fringe cells）处的插值相互耦合。
+计算采用反距离（inverse-distance）插值模板（stencil）；对于部分算例，计算在模板更新时崩溃，
+这些算例随后改用跟踪式反距离（tracking inverse-distance）变体，从最后一次保存的时刻继续计算。
+为防止挖洞失败，在第一个时间步中检查洞单元的数量，若其超过全部单元的3\,\%或少于50个，则换用另一种模板重新启动该算例。
+
+\subsection{计算域、边界条件与运动}
+
+仿真在随船体运动的参考系中进行。前进速度$\U$以均匀来流的形式从上游边界进入；
+下游边界采用固定压力，速度采用入口--出口（inlet--outlet）条件。
+计算域顶部为位于尾鳍（fluke）上方\SI{12}{\centi\metre}处的滑移壁面（slip wall），即代表无自由液面（free surface）深水的刚性盖（rigid lid）；
+侧面和底部边界同样为远离推进器的滑移壁面。推进器的刚体运动以位置与姿态数据表的形式给定，数据来自\cref{sec:plat-motions}中的腿部运动学。
+为避免突然启动引起的压力尖峰和时间步长骤减，尾鳍运动从静止开始，在前半个周期内以平滑阶跃过渡。
+共仿真三个周期；尾鳍取后两个周期的平均值，折扇桨（fan paddle）取第三个周期的平均值。
+
+仅对推进器本身进行仿真：尾鳍不含其脚杆，折扇桨包含其\SI{3}{\milli\metre}的细杆，但不含曲柄（crank）和平行四边形（parallelogram）机构。
+连杆（linkage）只贡献阻力，假定该阻力对两种推进器相同，并已计入自航（self-propulsion）平衡的阻力项中（见\cref{sec:res-selfprop}）。
+细杆约贡献桨推力的1\,\%。此外，\cref{sec:res-selfprop}中使用的船体阻力取自另行开展的含自由液面的裸船体两相流仿真，此处不再详述。
+
+\subsection{网格}
+
+两套网格均由推进器表面通过\texttt{snappyHexMesh}生成。对于尾鳍，采用经过清理的CFD几何：
+去除打印件上的销轴（pin）孔和限位（end stop）臂，并将\SI{0.1}{\milli\metre}的尾缘在95\,\%弦长（chord）处截断，
+因为这些细节会产生退化网格单元，使时间步长降至\SI{e-4}{\second}以下。
+由此得到的鳍片与Flare几何之间偏差的中位数为\SI{0.12}{\milli\metre}。网格参数列于\cref{tab:meshes}。
+
+\begin{table}[t]
+  \centering
+  \caption[网格参数]{单腿仿真的网格参数。尺寸为推进器周围加密区域内的网格单元边长。}
+  \label{tab:meshes}
+  \small
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    & 尾鳍（L算例） & 折扇桨（D算例） & 确认用翼型 \\
+    \midrule
+    部件网格（表面） & \SI{1.2}{\milli\metre}（\SI{0.6}{\milli\metre}） & \SI{2.5}{\milli\metre}（\SI{1.25}{\milli\metre}） & \SI{2.5}{\milli\metre} \\
+    背景网格 & \SI{2.5}{\milli\metre} & \SI{4}{\milli\metre} & \SI{5}{\milli\metre} \\
+    单位长度表面网格数 & 每弦长$\approx50$ & 每半径$\approx34$ & 每弦长$\approx40$ \\
+    单元数，部件+背景 & $1.8\times10^5+5.4\times10^5$ & -- & -- \\
+    仿真周期数/平均周期数 & 3 / 2 & 3 / 1 & 3 / 2 \\
+    启动方式 & 0.5周期平滑阶跃 & 无 & 无 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+折扇桨网格比尾鳍网格粗。该网格建立较早，当时正在设计桨的冲程，为保持各轮桨设计迭代之间的可比性而沿用至今。
+其对比较结果的影响在\cref{sec:ver-drag}中讨论。
+
+\subsection{折扇的两态合成}
+\label{sec:cfd-composite}
+
+对折扇的折叠过程进行仿真需要可变形几何。作为替代，每个桨冲程以相同的运动仿真两次：一次为开扇状态，一次为合扇状态。
+随后由这两次计算组合得到周期力时程，
+\begin{equation}
+  \bm F(\tau) = \begin{cases}
+    \bm F_\text{open}(\tau), & \tau_o \le \tau < \tau_c,\\
+    \bm F_\text{closed}(\tau), & \text{其他情况},
+  \end{cases}
+  \label{eq:composite}
+\end{equation}
+式中$\tau$为周期相位，$\tau_o,\tau_c$分别为开扇相位和合扇相位（\cref{fig:composite}）。
+因此，开扇与合扇均为瞬时完成，且每次计算各自保留自身的尾流。该两态合成（two-state composite）是折叠过程的一阶模型。
+其优点在于，可在仿真完成后对任意$(\tau_o,\tau_c)$组合评估折叠时机，且无需额外计算代价。
+该方法存在两项系统误差，二者均使结果偏于乐观。
+
+\paragraph{忽略附加质量（added mass）的变化。}扇面张开时，其周围的水必须被带动起来；扇面合拢时，这部分水被释放。
+在式\eqref{eq:composite}中，开扇计算开始时的流场是在扇面张开状态下已经建立起来的流动，而合扇计算结束时无需释放任何东西。
+记扇面在水体参考系中的速度为$V$（向前为正），开扇与合扇状态下附加质量之差为$\Delta m_a$，
+则每个周期内桨上缺失的冲量介于两个极限之间：
+\begin{equation}
+  \Delta J = \begin{cases}
+    \Delta m_a\,(V_c - V_o) & \text{势流：释放的动量返回到桨上，}\\
+    -\Delta m_a\,V_o & \text{完全脱落：释放的动量留在尾流中，}
+  \end{cases}
+  \label{eq:addedmass}
+\end{equation}
+式中$V_o$和$V_c$分别为开扇和合扇时刻的速度。在分离流中，释放的动量有一部分以停止涡（stopping vortex）的形式脱落（shedding），
+因此真实值介于两个极限之间；开扇代价$-\Delta m_a V_o$则没有这样的出路，在两个极限中均存在。
+修正后的平均推力以$\Tm+\Delta J/T$在两个极限下的取值范围给出。
+开扇状态的附加质量由$\U=0$时开扇桨仿真的加速阶段辨识得到：将$F_x=-m_a\dot v_x-\tfrac12\rho C_N S\,v_x|v_x|$拟合到力时程上，
+根据拟合窗口和参考点的不同，得到$m_a=\SIrange{38}{49}{\gram}$，与同面积圆盘的\SI{38}{\gram}相近。
+扇面折叠至\SI{12}{\milli\metre}时附加质量约为\SI{5}{\gram}，据此对V3trap取$\Delta m_a=\SI{38}{\gram}$，
+对机器人步态取\SI{20}{\gram}，因为后者的扇面仅折叠至\SI{30}{\milli\metre}；$\Delta m_a$的不确定度约为$\pm15$\,\%。
+若扇面在船体参考系中处于静止时切换状态，则该修正在此参考系中不做功，功率$\Pm$亦不作修正。V3trap在$\tau_c=0.33$时合扇，此时扇面仍在运动；相应的功每个周期约为$\tfrac12\Delta m_a V_c^2$量级，未计入$\Pm$。
+
+由此得出两点推论。其一，在髋部运动的换向点处切换（此时$V$等于前进速度$\U$），在$\U=0$时无需修正，
+但在有航速时每个周期需付出$\Delta m_a\U$的代价。其二，若在换向之前、即回程（recovery）的减速阶段开扇，
+则合成模型会将张开的扇面在减速过程中释放的动量计入桨上，却不计入其先前带动这部分水所付出的代价。
+因此，该合成模型会人为地偏向提前开扇；本文中所有桨的结果均采用$\tau_o=0$。
+
+\paragraph{开扇计算的尾流。}在划水冲程（power stroke）中，开扇桨计算会穿过其自身开扇回程所产生的尾流，而该回程已将水向前推动；
+真实的桨以折叠状态回程，留下的尾流要弱得多。这使合成模型中划水冲程的相对速度偏高。
+该效应未作量化，列为局限性之一。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.62\textwidth]{fig_composite}
+  \caption[两态合成]{V3trap在$\U=0$时折扇桨的两态合成。在$\tau_o=0$与$\tau_c=0.33$之间（阴影区域）采用开扇桨仿真结果，
+    周期其余部分采用合扇桨仿真结果。在进行式\eqref{eq:addedmass}的附加质量修正之前，
+    该合成结果的周期平均推力为\SI{82.7}{\milli\newton}。}
+  \label{fig:composite}
+\end{figure}
+
+\subsection{后处理}
+
+在每个时间步中，对推进器表面上的压力和黏性力进行积分，力矩取关于髋轴$O_2$的值。
+推力、输入功率（input power）和效率由式\eqref{eq:thrust}至\eqref{eq:eta}求得，其中尾鳍销轴或桨参考点的速度以及角速度取自运动表。
+关于尾鳍销轴的俯仰力矩给出了俯仰执行器或弹簧所需提供的铰链（hinge）力矩。
+攻角由式\eqref{eq:alpha}根据销轴速度和俯仰角计算，并以两种方式之一给出：一是周期内$|\alpha|$的第75百分位数$\alpha_{75}$，
+二是每个半冲程中间部分（远离冲程换向点）的中位数。
+对于$\alpha=\SI{10}{\degree}$的L1算例，其铰链路径在轨迹的七个控制点处存在速度折点，
+由此在力时程中产生的附加质量尖峰在求平均之前经过了滤波；该算例在结果中被标注为可信度较低。
+
+\subsection{算例矩阵}
+
+\Cref{tab:cases}列出了全部单腿仿真算例。每个阻力型（D）条目均包含一次开扇计算和一次合扇计算。
+
+\begin{table}[t]
+  \centering
+  \caption[单腿仿真算例]{单腿仿真算例。}
+  \label{tab:cases}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{28mm}@{}}
+    \toprule
+    算例 & 说明 & $\U$（\si{\metre\per\second}） \\
+    \midrule
+    L0 & 尾鳍，取自Flare Live的参考运动 & 0.223 \\
+    L2 & 尾鳍，L0运动保持不变（固定俯仰规律） & 0, 0.08, 0.15, 0.30 \\
+    L1 & 尾鳍，攻角控制律$\alpha=\SI{10}{\degree}$、\SI{28}{\degree} / \SI{20}{\degree} & 0.223 / 0.40 \\
+    L3 & 尾鳍，随航速调度的俯仰$\theta_0=\gamma_\text{max}/2$ & 0.30, 0.40 \\
+    L0c & 在较粗网格上计算的L0（所有网格尺寸$\times1.33$） & 0.223 \\
+    机器人步态 & 折扇桨，当前划水动作（收拢宽度30\,mm） & 0, 0.08, 0.15 \\
+    V3trap & 折扇桨，优化后的划水动作（收拢宽度12\,mm），$\tau_o=0$，$\tau_c=0.33$ & 0, 0.08, 0.15, 0.223, 0.30 \\
+    V & 桨设计迭代V1、V2、V3、V3c12、V3c06（见\cref{sec:res-drag}） & 0 \\
+    Val & 确认：NACA\,0012沉浮--俯仰翼型（见\cref{sec:ver-v1}） & 0.40 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+在八个核上，每个尾鳍算例耗时3--4\,h，每个桨状态约2.5\,h；确认算例的翼型展长为\SI{0.6}{\metre}，耗时约43\,h。
+
+\section{Flare Live中的整机仿真}
+\label{sec:cfd-flare}
+
+Flare Live \cite{FlareLive}是一款商业求解器，它将自适应块网格上的格子玻尔兹曼流动求解器与机器人的多体模型相耦合，
+并在GPU上以接近实时的速度运行。机器人以由关节连接的刚体形式导入；每个关节由跟踪指令轨迹的位置控制器驱动。
+腿和尾鳍浸没在流体中。船体不在流体中解析；其阻力以外力$D=K\,\U|\U|$的形式施加。
+$K$取三个值：原始Flare模型中的\SI{3.95}{\newton\second\squared\per\metre\squared}；
+\SI{0.65}{}，对应\cref{sec:res-selfprop}中船体加连杆的阻力估计值$D_\text{mid}$；
+以及\SI{0.27}{}，对应裸船体。模型质量为\SI{863}{\gram}，约为硬件实测质量（\SI{418.8}{\gram}）的两倍；由于Flare Live仅用于趋势分析，该差异未作修正。
+格子间距为\SI{3}{\milli\metre}，并以\SI{2}{\milli\metre}的格子作为敏感性测试。
+
+腿以\SI{2}{\hertz}的对角小跑（trot）步态运动（频率扫描中为\SIrange{2}{3}{\hertz}）。尾鳍俯仰角由攻角控制律主动控制：
+根据测得的销轴沉浮（heave）速度和当前游速设定俯仰角，使式\eqref{eq:alpha}给出\SI{10}{\degree}、\SI{18}{\degree}或\SI{28}{\degree}的目标$\alpha$，
+且不超出尾鳍\SI{-75}{\degree}与\SI{+60}{\degree}的限位。
+
+共进行两类仿真：
+\begin{itemize}
+  \item \emph{自航仿真（self-propelled run）。}机器人从静止开始自由游动；速度、功率和姿态在稳态段取平均。
+        功率为关节驱动器的机械功率，运输代价（cost of transport，COT）为$P_\text{j}/(mg\U)$，其中$P_\text{j}$为关节驱动功率。
+  \item \emph{拖曳仿真（tow run）。}机器人固定于速度为$\U$的均匀来流中，其中一条腿拍动（L0运动），其余腿保持静止。
+        尾鳍所受的流体力由销轴处的关节反力求得，变换到尾鳍坐标系中，并在$t=\SIrange{3}{9}{\second}$内取平均。
+        尾鳍静止的仿真给出参考阻力。
+\end{itemize}
+拖曳仿真严格采用CFD算例L0的运动及其航速序列，从而可以直接比较两种求解器得到的尾鳍力（见\cref{sec:ver-flare}）。

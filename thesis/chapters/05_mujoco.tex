@@ -1,0 +1,295 @@
+\chapter{Reduced-Order Gait Optimization}
+\label{ch:mujoco}
+
+This chapter addresses RQ1. A whole-robot model with quasi-steady link forces is built in MuJoCo
+\cite{Todorov2012}, and its gait is optimized with CMA-ES \cite{Hansen2001,Hansen2016} under actuator and
+attitude constraints. The model is cheap enough for thousands of evaluations but its coefficients are not
+calibrated. Its purpose is to show which propulsion principle an optimizer selects, and how the answer depends on the physics included, not to predict speeds of BODY2.
+
+\section{Model}
+\label{sec:mj-model}
+
+\subsection{Robot}
+
+BODY2 could not be used directly: its CAD-derived model is an open kinematic tree in which the parallelogram
+linkages are not closed, and its buoyancy distribution had not been measured. The optimization therefore uses
+a simple quadruped model, \texttt{toy\_quad}, of similar size (\cref{fig:mj-model}, \cref{tab:mj-robot}). Each
+leg has three hinge joints about the transverse axis: hip, knee and flipper wrist, twelve actuators in total.
+The flipper, a thin plate of \qtyproduct{52 x 36}{\milli\metre} whose area of \SI{18.7}{\square\centi\metre} is close to that of the open fan paddle of BODY2, is called \emph{flipper} throughout to distinguish it from the fan paddle and the fluke of
+the real robot: it can paddle or flap depending on the physics included, whereas the two propulsors of BODY2 are each built for one
+principle. The dry mass is \SI{0.78}{\kilo\gram}; fully submerged, the robot would
+displace \SI{1126}{\cubic\centi\metre}, so it floats at the surface like BODY2. The body length of
+\SI{0.239}{\metre} is used to express speeds in body lengths per second.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.42\textwidth]{fig_mj_model.png}
+  \caption[MuJoCo model]{The MuJoCo model \texttt{toy\_quad} floating at the surface (rendering from the
+    simulation). Each leg has a hip, a knee and a flipper joint.}
+  \label{fig:mj-model}
+\end{figure}
+
+\begin{table}[t]
+  \centering
+  \caption[MuJoCo robot model]{The reduced-order robot model \texttt{toy\_quad}.}
+  \label{tab:mj-robot}
+  \small
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    Part & Geometry & Size & Mass \\
+    \midrule
+    Trunk & box & \qtyproduct{0.20 x 0.10 x 0.05}{\metre} & \SI{0.600}{\kilo\gram} \\
+    Upper leg ($\times4$) & capsule & $r=\SI{7}{\milli\metre}$, $l=\SI{55}{\milli\metre}$ & \SI{0.020}{\kilo\gram} \\
+    Lower leg ($\times4$) & capsule & $r=\SI{6}{\milli\metre}$, $l=\SI{50}{\milli\metre}$ & \SI{0.015}{\kilo\gram} \\
+    Flipper ($\times4$) & plate & \qtyproduct{8 x 52 x 36}{\milli\metre} & \SI{0.010}{\kilo\gram} \\
+    \midrule
+    \multicolumn{4}{@{}l}{Joint ranges: hip and knee $\pm\SI{1.3}{\radian}$, flipper $\pm\SI{1.6}{\radian}$;
+      legs at $\pm\SI{0.085}{\metre}$ fore--aft, $\pm\SI{0.045}{\metre}$ lateral} \\
+    \multicolumn{4}{@{}l}{Dry mass \SI{0.78}{\kilo\gram}; added mass \SI{0.28}{\kilo\gram}; body length
+      \SI{0.239}{\metre}; time step \SI{2}{\milli\second}, implicit integrator} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Hydrodynamic Forces}
+
+Each geometric body $k$ receives a quasi-steady force, scaled by its immersed fraction $f_k$ and applied at its
+centre:
+\begin{equation}
+  \bm F_k = \rho g V_k f_k\,\bm e_z
+  \;-\; \tfrac12\rho f_k \sum_{i=1}^{3} C_{D,i} A_i\, v_i|v_i|\,\bm e_i
+  \;-\; c_v f_k\,\bm v \;+\; \bm L_k .
+  \label{eq:mj-force}
+\end{equation}
+Here $\bm v$ is the velocity of the body centre relative to still water, $v_i$ its components along the
+body axes $\bm e_i$, and $A_i$ the projected areas; $c_v$ is a small linear damping coefficient (0.05, 0.02 and \SI{0.10}{\newton\second\per\metre} for flipper, links and trunk) that matters only at very low speed. The drag is anisotropic: the flipper has
+$C_D=(2.2,\,0.10,\,0.10)$ normal to and along its faces, the links $(0.5,0.5,0.25)$ and the trunk
+$(0.9,1.6,1.8)$. This anisotropy is the only source of thrust in a drag-only model. The immersed fraction is
+computed from the actual vertical extent of each body, so a flipper that breaks the surface loses its force.
+Added mass $m_a=C_a\rho V$ ($C_a=1.0$ for the flipper, 0.3 for the links, 0.2 for the trunk) is added to the
+body inertia together with a constant upward force $m_a g$ that cancels its weight. This isotropic
+approximation is unconditionally stable, unlike an explicit $\dot{\bm v}$ term. The coefficients are
+literature values of the same level as in beaver-robot models \cite{Chen2021,Chen2022}; they are not
+calibrated.
+
+\paragraph{Lift.} All terms of \eqref{eq:mj-force} except $\bm L_k$ oppose some component of the relative flow.
+An optional post-stall flat-plate lift acts on the flippers,
+\begin{equation}
+  C_L(\alpha) = c_l \sin 2\alpha, \qquad |\bm L| = \tfrac12\rho\,C_L\,A_\text{face}|\bm v|^2 f,
+  \label{eq:mj-lift}
+\end{equation}
+normal to $\bm v$ in the plane spanned by $\bm v$ and the plate normal, where $\alpha$ is the angle between
+$\bm v$ and the plate. The value $c_l=1.1$ is a textbook flat-plate value without an aspect-ratio correction.
+At small $\alpha$ the lift grows like $\alpha$ and the drag like $\alpha^2$, so a fast, shallow, feathered
+stroke produces almost no thrust in the drag-only model but a large thrust with lift. With the lift switched
+off, a lift-based gait cannot win, because the mechanism that would make it win is absent.
+
+\paragraph{Thrust decomposition.} To identify the mechanism of a gait, the signed impulses of the lift terms and
+of the drag terms (including the linear term) along the swimming direction are accumulated over the scoring
+window. A gait with positive lift impulse and negative drag impulse is \emph{lift-propelled}: lift supplies the
+forward impulse, and drag only opposes it. The decomposition was checked with a coasting test, in which the
+initial momentum equals the sum of the impulses. To quantify how much of the propulsion lift provides, the
+\emph{lift thrust share}
+\begin{equation}
+  s_L = \frac{I_L}{|I_\text{trunk}|}
+  \label{eq:liftshare}
+\end{equation}
+relates the forward impulse $I_L$ of the lift terms to the drag impulse of the trunk; the drag on the limbs is
+accumulated separately. A paddling stroke has $s_L\approx0$; a lift-propelled stroke has $s_L>1$, because lift must also
+overcome the drag of the limbs themselves. The share can be imposed as a further limit, $s_L\le s_\text{max}$, which forces
+drag-based strokes in a model that contains lift (\cref{sec:mj-liftshare}).
+
+\subsection{Servo Model}
+\label{sec:mj-servo}
+
+The actuators are position servos with a stiffness of \SI{60}{\newton\metre\per\radian} and critical damping. Real hobby servos cannot move
+arbitrarily fast. Each actuator is therefore given the torque--speed characteristic of a DC motor,
+\begin{equation}
+  \tau = \tau_s\,u - \frac{\tau_s}{\omega_\text{max}}\,\omega, \qquad |u|\le1,
+  \label{eq:servo}
+\end{equation}
+with stall torque $\tau_s=\SI{3}{\newton\metre}$ and no-load speed
+$\omega_\text{max}=\SI{400}{\degree\per\second}$. These values were chosen before the servos of BODY2 were identified; the PTK\,7465W has a lower stall torque and a higher no-load speed (\cref{sec:plat-robot}), and the consequences are discussed in \cref{sec:disc-limits}. The back-EMF term is a viscous damping
+$b=\tau_s/\omega_\text{max}\approx\SI{0.43}{\newton\metre\second\per\radian}$, which is added to the joint
+damping and integrated implicitly by MuJoCo; the result is independent of the time step. Two simpler
+variants failed: limiting only the rate of the command let the legs be dragged back and then snap forward at
+\SI{1500}{\degree\per\second}, and rewriting the torque limit at every step acted as an explicit damping that
+oscillated at up to \SI{3000}{\degree\per\second} and changed the result six-fold with the time step.
+
+Two power measures are reported. The optimization uses the mean mechanical power at the motor shafts,
+$\sum_j\langle|\tau_{m,j}\,\omega_j|\rangle$ with the motor torque $\tau_m=\tau-b\,\omega$ and no recovery of
+braking energy. The electrical power adds the copper loss of the same motor model,
+$\sum_j\langle\max(\tau_{m,j}\omega_j,0)+\tau_{m,j}^2\,\omega_\text{max}/\tau_s\rangle$, which follows from
+\eqref{eq:servo} without new parameters; it is computed after the optimization and used as a check. The cost of
+transport in this chapter is power over speed in \si{\joule\per\metre}.
+
+\section{Gait Parametrization}
+\label{sec:mj-gait}
+
+Every actuator $i$ follows the target angle
+\begin{equation}
+  q_i(t) = q_{0,i} + r(t)\sum_{h=1}^{H} A_{i,h}\,\sin\!\big(h\,\vartheta(t)+\varphi_{i,h}\big), \qquad H=2,
+  \label{eq:gait}
+\end{equation}
+with offset $q_{0,i}$, amplitudes $A_{i,h}$, phases $\varphi_{i,h}$ and a ramp $r(t)$ from 0 to 1 over the
+first \SI{1.5}{\second}. The duty warp $\vartheta(t)$ lets the power stroke be faster or slower than the recovery
+while keeping the period: with the cycle progress $c=(ft)\bmod1$,
+\begin{equation}
+  \vartheta = \begin{cases}
+    \pi\,c/\mathrm{DUTY}, & c<\mathrm{DUTY},\\
+    \pi + \pi\,(c-\mathrm{DUTY})/(1-\mathrm{DUTY}), & c\ge\mathrm{DUTY}.
+  \end{cases}
+  \label{eq:duty-warp}
+\end{equation}
+The second harmonic, which is invariant under a phase shift of $\pi$, can express the feathering of the
+flipper. It is not necessary for net thrust: a single harmonic already propels the model. Joints of the same
+type share amplitude and offset. The search ranges are $f\in[0.2,2.5]$\,Hz, $\mathrm{DUTY}\in[0.25,0.75]$,
+$A\in[0,0.9]$\,rad and $q_0\in[-0.5,0.5]$\,rad, normalized to $[0,1]$.
+
+The coordination of the legs is either free, with an independent phase for every actuator (35 parameters),
+or fixed to a \emph{gait family} with one phase per joint type (17 parameters). The families are defined by
+the delay of each leg relative to the left fore leg FL, applied in time before the duty warp:
+\begin{center}
+  \small
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    Family & Common name & Delays of FR, BL, BR (fraction of period) \\
+    \midrule
+    \texttt{diag} & trot & 0.5, 0.5, 0 \\
+    \texttt{lr} & pace & 0.5, 0, 0.5 \\
+    \texttt{fb} & bound & 0, 0.5, 0.5 \\
+    \texttt{wave} & walk & 0.5, 0.75, 0.25 \\
+    \texttt{inphase} & pronk & 0, 0, 0 \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+To classify a free gait, the delays of the joint type with the largest first-harmonic amplitude are compared
+with each family, and the family with the smallest mean circular distance is reported together with that
+distance (0 = identical, 0.5 = opposite).
+
+\section{Objective, Constraints and Optimizer}
+\label{sec:mj-objective}
+
+Each evaluation settles the robot for \SI{1.0}{\second}, ramps the gait in over \SI{1.5}{\second} and scores the
+following \SI{8}{\second}, rounded up to whole stroke periods. The speed is the displacement along the initial
+heading divided by the window length, so turning is penalized automatically. Two objectives are used: the
+highest speed, or the lowest mean mechanical power subject to a minimum speed $v_\text{min}$. All settings are listed in \cref{tab:app-mujoco}.
+
+Stability is imposed by limits, not by weights. With RMS values of heading error, roll and pitch and their
+limits $\ell_k$, the penalty is
+\begin{equation}
+  p = \sum_k \frac{\max(0,\mathrm{RMS}_k-\ell_k)}{\ell_k}
+    \;\big[+\,\text{surfacing and } v_\text{min} \text{ terms}\big], \qquad
+  \text{fitness} = \begin{cases} \text{objective}, & p=0,\\ -1000-p, & p>0. \end{cases}
+  \label{eq:feasibility}
+\end{equation}
+Any infeasible gait thus scores below every feasible one; speed cannot buy back a violation. An earlier
+additive weighting of speed and attitude failed once the legs could move freely: speed dominated, and the best
+gait rolled by \SI{42}{\degree} and yawed by \SI{44}{\degree}. Two limit sets are used: a moderate one,
+heading/roll/pitch $10/10/\SI{15}{\degree}$, used in this chapter, and a strict one, $10/5/\SI{5}{\degree}$, used for the
+coordination study in \cref{app:coord}. Where stated, the
+fraction of time in which any limb is less than half immersed (surfacing) is limited to 5\,\%, because the
+model has no free-surface physics.
+
+The optimizer is CMA-ES with population 16 and initial step size 0.25 in the normalized space, run for 2500
+evaluations unless stated otherwise, with several seeds per condition. Each result is a bound of what the model
+allows: a lower bound for the highest speed and an upper bound for the least power. Values are given as mean
+$\pm$ standard deviation over seeds.
+
+\section{Results}
+\label{sec:mj-results}
+
+\subsection{Baseline and Servo Limit}
+
+A hand-designed trot at \SI{1.2}{\hertz} swims at \SI{0.070}{\metre\per\second} (0.29 body lengths per second)
+with \SI{26.7}{\degree} RMS pitch and servos saturated 85\,\% of the time. Without the servo model, the
+optimizer found gaits with joint speeds of \SIrange{2700}{4200}{\degree\per\second}, about seven to ten times the servo limit. Replayed with the servo model, the best of them did not move forward
+(\SI{-0.001}{\metre\per\second}). Re-optimized with the servo model, three free-phase searches reached
+\SIrange{0.11}{0.25}{\metre\per\second}, all close to a bound. The servo limit therefore has to be part of the
+model; all following results include it.
+
+\subsection{Drag versus Lift at Equal Speed}
+
+Comparing the fastest gaits of the two physics would be unfair, because power rises steeply with speed and the
+fastest gaits differ in speed. The comparison is therefore made at equal speed: the least mechanical power
+needed to reach $v_\text{min}\in\{0.10,0.20,0.30\}$\,m/s under moderate limits and at most 5\,\% surfacing,
+over five families and two seeds (\cref{tab:mj-pareto}, \cref{fig:mj-pareto}).
+
+\begin{table}[t]
+  \centering
+  \caption[Least power at equal speed, drag versus lift]{Least mean mechanical power to reach a required speed,
+    moderate limits, best over five families and two seeds (family of the best solution and number of feasible searches out of
+    ten in brackets). Left: drag-based strokes in a model without lift; middle: drag-based strokes forced by $s_L\le0.1$ in the
+    model with lift (\cref{sec:mj-liftshare}); right: unconstrained strokes in the model with lift.}
+  \label{tab:mj-pareto}
+  \small
+  \begin{tabular}{@{}cccc@{}}
+    \toprule
+    Required speed & Drag-only model & Lift model, $s_L\le0.1$ & Lift model, free \\
+    \midrule
+    \SI{0.10}{\metre\per\second} & \SI{0.23}{\watt} (walk) & \SI{0.42}{\watt} (bound; 2/10) & \SI{0.10}{\watt} (bound; 10/10) \\
+    \SI{0.20}{\metre\per\second} & \SI{1.04}{\watt} (bound) & \SI{5.50}{\watt} (pronk; 1/10) & \SI{0.55}{\watt} (pronk; 8/10) \\
+    \SI{0.30}{\metre\per\second} & \SI{3.10}{\watt} (trot) & none (0/10) & \SI{0.97}{\watt} (bound; 4/10) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Three results are robust. First, whenever lift is in the model and not suppressed, every feasible optimum is
+lift-propelled: in all 22 feasible lift optima of this experiment the lift impulse is positive
+(\SIrange{0.46}{2.2}{\newton\second} on the front) and the drag impulse negative. The optimizer never paddles when it can
+flap. Second, at equal speed
+the lift-propelled gaits need about one half to one third of the power of the best drag-only gaits, at all three
+speeds. Third, each optimum depends on its physics: with lift removed, the lift optima keep only 35--58\,\% of
+their speed, and 26 of the 27 drag optima no longer satisfy the attitude limits when lift is added, because lift also
+creates moments on the trunk (\cref{sec:mj-liftshare}). The size of the ratio is not reliable: the searches have not converged (a second seed lowered the
+drag-only power at \SI{0.20}{\metre\per\second} from 2.99 to \SI{1.04}{\watt}), so both fronts are upper bounds. The ranking is the same with the electrical power, which includes the copper losses of the servos: the drag-only front needs 0.22, 1.14 and \SI{2.80}{\watt}, the lift front 0.10, 0.47 and \SI{0.86}{\watt}.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.62\textwidth]{fig_mj_pareto}
+  \caption[Least power at equal speed]{Least mechanical power to reach a required speed, moderate limits: drag-only model, model
+    with lift, and drag-based strokes forced by $s_L\le0.1$ in the model with lift. Pale markers are the individual optima of each
+    family and seed.}
+  \label{fig:mj-pareto}
+\end{figure}
+
+\subsection{Drag-Based Strokes within the Lift Model}
+\label{sec:mj-liftshare}
+
+The comparison of \cref{tab:mj-pareto} between the drag-only model and the lift model is a comparison of two models as
+much as of two propulsion principles. A direct test of RQ1 compares both principles within one model. For this, the
+least-power searches of the lift model were repeated with the additional limit $s_L\le0.1$ from \eqref{eq:liftshare}, which
+admits only strokes that obtain their thrust from drag, with the same speeds, limits, families and seeds as the unconstrained
+searches (30 searches).
+
+The results are shown in the middle column of \cref{tab:mj-pareto} and in \cref{fig:mj-pareto}. Only 3 of the 30 searches
+found a feasible drag-based stroke; most of the others satisfy the share limit but not the required speed. On this small basis,
+the drag-based strokes need 4.2 times the power of the lift-propelled ones at \SI{0.10}{\metre\per\second} (\SI{0.42}{} against
+\SI{0.10}{\watt}) and 10 times at \SI{0.20}{\metre\per\second} (\SI{5.50}{} against \SI{0.55}{\watt}), and none reaches
+\SI{0.30}{\metre\per\second}, the closest reaching \SI{0.26}{\metre\per\second}. Because the feasible region is narrow, part of the
+factor may be due to search difficulty rather than physics; with two seeds and 2500 evaluations, the direction is reliable but the
+value is not.
+
+The two comparisons bound the answer. In the drag-only model a paddling stroke does not have to suppress the lift that its
+flipper would produce, which favours it; in the lift model it has to, and the constrained search is difficult, which penalizes
+it. Together they indicate that in this model a drag-based stroke needs between about two and ten times the power of a
+lift-based stroke at the same speed, and that it cannot reach the speed at which lift-propelled gaits still cruise.
+
+A complementary check replays the 27 feasible optima of the drag-only model with lift switched on. For 21 of them the lift
+thrust share exceeds 0.1 (median 1.26), so the same leg motions are mainly lift-propelled once lift exists, and 26 no longer
+stay straight and level. Whether a stroke is drag-based or lift-based is therefore a property of the physics as much as of the
+motion: a flipper that crosses the water at an angle produces lift whether the model includes it or not. Paddling strokes found
+in a drag-only model cannot be transferred unchanged to a real flipper.
+
+\section{Summary}
+\label{sec:mj-summary}
+
+Within this model the answer to RQ1 is clear in direction. When lift is part of the physics and not suppressed, the optimizer selects lift-propelled strokes in all 101 feasible optima (22 in this chapter, the others in the coordination study of \cref{app:coord}). At equal speed they need one half to one third of the
+power of the best strokes of a drag-only model. When drag-based strokes are forced within the lift model, the few that are
+feasible (3 of 30 searches) need four to ten times the power of the lift-propelled strokes and do not reach
+\SI{0.30}{\metre\per\second}; in this model a drag-based stroke therefore costs at least about twice and up to ten times as much. Whether a stroke is drag- or lift-based depends on the physics:
+most paddling strokes of the drag-only model become lift-propelled when lift is added. Which coordination of the legs is best
+is a separate question, which depends mainly on the attitude limits; it is reported in \cref{app:coord}. Three caveats limit these statements to the model: the coefficients and the lift
+slope are not calibrated, the flat-plate lift has no aspect-ratio correction although the flipper has
+$\mathit{AR}\approx1.4$, and the searches are not fully converged, particularly the constrained search for drag-based strokes. \Cref{ch:cfd,ch:results} therefore test the
+central claim, that lift-based flapping beats drag-based paddling, with resolved flow simulations of the real leg.

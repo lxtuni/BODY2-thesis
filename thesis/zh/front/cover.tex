@@ -1,0 +1,27 @@
+% ---------------- 封面（TUM CIT 样式，中文译本） ----------------
+\begin{titlepage}
+\newgeometry{left=25mm,right=25mm,top=20mm,bottom=25mm}
+\sffamily
+\begin{minipage}[t]{0.7\textwidth}
+  {\color{TUMblue}\small TUM School of Computation, Information and Technology\\
+  Technical University of Munich}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.25\textwidth}\raggedleft
+  \IfFileExists{../figures/tum_logo.pdf}{\includegraphics[height=10.5mm]{tum_logo}}{\color{TUMblue}\fbox{\parbox[c][10mm][c]{24mm}{\centering\tiny TUM logo\\(from template)}}}
+\end{minipage}
+
+\vspace*{65mm}
+{\large \thesistype\par}
+\vspace{8mm}
+{\noindent\raggedright\color{TUMblue}\bfseries\fontsize{24}{32}\selectfont \thesistitlezh\par}
+\vspace{5mm}
+{\noindent\raggedright\hyphenpenalty=10000\color{TUMblue}\fontsize{15}{19}\selectfont \thesistitle\par}
+\vfill
+\begin{tabular}{@{}p{45mm}l}
+\textbf{导师（Supervisor）} & \thesissupervisor\\[3mm]
+\textbf{指导（Advisor）}    & \thesisadvisor\\[3mm]
+\textbf{作者（Author）}     & \thesisauthor\\[3mm]
+\textbf{日期（Date）}       & \thesisdate，慕尼黑
+\end{tabular}
+\restoregeometry
+\end{titlepage}

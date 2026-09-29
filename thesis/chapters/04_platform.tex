@@ -1,0 +1,162 @@
+\chapter{Robot Platform and Propulsors}
+\label{ch:platform}
+
+This chapter describes the quadruped BODY2, the two propulsors that are compared and the leg motions that
+drive them. The motions defined here are the inputs of the CFD in \cref{ch:cfd,ch:results}.
+
+\section{The Quadruped BODY2}
+\label{sec:plat-robot}
+
+BODY2 is a small amphibious quadruped built at the chair. Its sealed, flat-bottomed hull carries the
+electronics and the eight servos and gives the robot its buoyancy (\cref{fig:robot}). At the design waterline
+the hull is \SI{232}{\milli\metre} long and \SI{99}{\milli\metre} wide, with a draft of \SI{25}{\milli\metre}
+and a displacement of about \SI{385}{\gram}. The complete robot weighs \SI{418.8}{\gram} and therefore floats \SIrange{1}{2}{\milli\metre}
+deeper, consistent with the waterline observed on the hardware. The robot swims at the surface: the hull floats and the legs
+reach down into the water.
+
+Each leg is a planar linkage with two degrees of freedom that moves in a vertical plane parallel to the
+hull's symmetry plane. Two servos (PTK\,7465W; stall torque \SIrange{0.44}{0.57}{\newton\metre} and no-load speed \SIrange{650}{860}{\degree\per\second} at \SIrange{6.0}{8.4}{\volt}) drive it. The first rotates a crank about the hip axis $O_2$ (angle $\psi$);
+the second sets the configuration of a parallelogram that carries the foot (angle $\phi$). The end point $E$
+of the parallelogram carries the propulsor. For walking, the foot is the fan paddle described below. For
+swimming, the leg can be fitted either with this paddle or with a fluke on the same mounting points, so that
+the two propulsion principles can be compared on one leg.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_robot}
+  \caption[BODY2 with fan paddles and with flukes]{BODY2 in its two swimming configurations, rendered from the
+    CAD models. (a) Drag-type configuration with the folding fan paddles (green) used for walking and
+    paddling. (b) Lift-type configuration with a fluke (blue) on a straight foot rod at each leg.}
+  \label{fig:robot}
+\end{figure}
+
+\section{Propulsors}
+\label{sec:plat-propulsors}
+
+\Cref{fig:propulsors} and \cref{tab:propulsors} summarize the two propulsors.
+
+\paragraph{Drag-type: folding fan paddle.} The foot is a \SI{120}{\degree} fan of radius
+\SI{42}{\milli\metre} at the end of a \SI{50}{\milli\metre} rod; \emph{fan} denotes the folding blade alone and \emph{paddle} the
+blade on its rod. Open, the fan has an area of
+\SI{18.5}{\square\centi\metre} (\SI{20.5}{\square\centi\metre} including the rod). A cable folds it for the
+recovery stroke. In the current hardware the folded fan is still \SI{30}{\milli\metre} wide
+(\SI{12.5}{\square\centi\metre}, 68\,\% of the open area), which makes the spatial asymmetry weak. A folded
+width of \SI{12}{\milli\metre} (\SI{5.9}{\square\centi\metre}) is assumed for the optimized stroke in
+\cref{sec:res-drag}. The fan is always oriented normal to the stroke; its opening and closing are treated as
+instantaneous switches between two rigid shapes (\cref{sec:cfd-composite}).
+
+\paragraph{Lift-type: fluke.} The fluke (design ``A2'') is a small swept foil with a span of
+\SI{60}{\milli\metre}, a root chord of \SI{34}{\milli\metre}, a planform area of \SI{11.2}{\square\centi\metre}
+and an aspect ratio of about 3.2. Its section is a thick symmetric profile similar to NACA\,0021. It is mounted
+on a pin near its leading edge at the lower end of a straight foot rod, so that it can pitch about a spanwise
+axis. On the hardware the pitch is passive, set by the hydrodynamic moment against a leaf spring and two end
+stops. In the simulations of this thesis the pitch angle $\theta(t)$ is prescribed; how closely a passive
+fluke follows a prescribed schedule is not studied here.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_propulsors}
+  \caption[Propulsor geometries]{Propulsor geometries used in the CFD, drawn to scale. (a) Open fan paddle.
+    (b) Folded fan of the current hardware, \SI{30}{\milli\metre} wide. (c) Folded fan of
+    \SI{12}{\milli\metre} width assumed for the optimized stroke. (d) Fluke A2 in top view, with its pin
+    axis.}
+  \label{fig:propulsors}
+\end{figure}
+
+\begin{table}[t]
+  \centering
+  \caption[Propulsor data]{Propulsor data. Areas are planform areas of the propulsor without the linkage.}
+  \label{tab:propulsors}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    & Fan paddle (drag type) & Fluke A2 (lift type) \\
+    \midrule
+    Shape & \SI{120}{\degree} fan, $r=\SI{42}{\milli\metre}$, on \SI{50}{\milli\metre} rod & swept foil, NACA\,0021-like \\
+    Area & \SI{18.5}{\square\centi\metre} open; \SI{12.5}{} or \SI{5.9}{\square\centi\metre} folded (30 or 12\,mm wide) & \SI{11.2}{\square\centi\metre} \\
+    Size & fan radius \SI{42}{\milli\metre} & chord \SI{34}{\milli\metre}, span \SI{60}{\milli\metre} \\
+    Principle & drag, folding recovery & lift, pitching about pin \\
+    Degrees of freedom & $\psi,\phi$ + open/closed & $\psi,\phi$ + pitch $\theta$ \\
+    Frequency & \SI{0.8}{\hertz} (robot gait), \SI{1.39}{\hertz} (V3trap) & \SI{2}{\hertz} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Leg Motions}
+\label{sec:plat-motions}
+
+\Cref{fig:kinematics} shows the motions studied.
+
+\paragraph{Robot gait.} The robot currently swims with a gait taken from video of the robot: period
+\SI{1.25}{\second}, $\mathrm{DUTY}=0.5$, a sinusoidal hip sweep of \SI{60}{\degree} and the fan folded to
+\SI{30}{\milli\metre} during the recovery. It was designed for walking and serves as the baseline.
+
+\paragraph{Optimized drag-type stroke (V3trap).} The stroke derived in \cref{sec:res-drag} has a period of
+\SI{0.72}{\second} and $\mathrm{DUTY}=0.382$. The hip sweeps \SI{50}{\degree} centred on the vertical
+(\SIrange{120}{70}{\degree}), so that the paddle moves nearly straight backwards and stays normal to its path.
+The hip velocity follows a trapezoidal law with ramps of about \SI{45}{\milli\second}. During the recovery the
+parallelogram curls the paddle upwards and the fan is folded to \SI{12}{\milli\metre}. The fan is closed at
+$\tau_c=0.33$, the start of the power-stroke deceleration, and opened at $\tau_o=0$, the reversal point at the
+end of the recovery (\cref{fig:kinematics}a).
+
+\paragraph{Fluke motion.} The fluke leg keeps the hip fixed and swings the foot rod about the knee, so that
+the fluke's pin moves up and down on a flat arc: $\pm\SI{24.9}{\degree}$ at \SI{2}{\hertz}, a vertical stroke
+of \SI{39.2}{\milli\metre} and a peak heave speed of about \SI{0.28}{\metre\per\second}
+(\cref{fig:kinematics}b). The reference motion, called L0, is taken from the whole-robot Flare Live model
+(\cref{sec:cfd-flare}): the joint angles and the fluke pitch of one leg were recorded while the fluke pitch
+was controlled to hold a target angle of attack at \SI{0.223}{\metre\per\second}, and phase-averaged over the
+recorded cycles. The resulting 75th percentile of $|\alpha|$ at this speed is \SI{19.9}{\degree}. Three
+families are derived from it:
+\begin{itemize}
+  \item \emph{L2, fixed pitch schedule:} the L0 motion unchanged at
+        \SIlist{0;0.08;0.15;0.30}{\metre\per\second}, as a propeller is tested at fixed rotational speed and
+        varying advance speed. Since $\gamma$ changes with $\U$ (\cref{eq:gammamax}), the angle of attack is
+        large at low speed and small at high speed.
+  \item \emph{L1, angle-of-attack law:} a pitch schedule computed from the heave speed to hold a target
+        $\alpha$ of \SI{10}{\degree} or \SI{28}{\degree} at \SI{0.223}{\metre\per\second}, and \SI{20}{\degree} at
+        \SI{0.40}{\metre\per\second}. These cases use slightly different hinge paths from L0 and are therefore
+        not a clean angle-of-attack sweep.
+  \item \emph{L3, speed-scheduled pitch:} the L0 hinge path with the pitch
+        schedule~\eqref{eq:l3}, $\theta_0=\gamma_\text{max}/2$, at \SIlist{0.30;0.40}{\metre\per\second}
+        ($\theta_0=\SI{21.6}{\degree}$ and \SI{17.6}{\degree}).
+\end{itemize}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_kinematics}
+  \caption[Leg motions]{Leg motions in the hull frame. (a) Optimized drag-type stroke V3trap: paddle positions
+    at 25 instants per cycle, open (thick) and closed (thin), and the path of the linkage end point $E$.
+    (b) Fluke motion L0: chord positions over one cycle, downstroke and upstroke, with the hinge path. (c) Joint
+    histories: hip angle of V3trap and of the robot gait (about their means), fluke pitch angle and hinge
+    heave of L0 (dotted, right axis).}
+  \label{fig:kinematics}
+\end{figure}
+
+Two differences between the propulsors are inherent in this set-up and are kept in mind throughout. First,
+the propulsors differ in area (\SI{18.5}{} versus \SI{11.2}{\square\centi\metre}) and in frequency, so thrust
+per leg, thrust per area and thrust per power are all reported. Second, the drag-type stroke has been
+optimized in several rounds, whereas L0 is a motion taken from another model and was not optimized for
+thrust; L3 is the only systematic improvement of the fluke motion. At rest both propulsors draw a similar
+hydrodynamic input power of \SIrange{18}{22}{\milli\watt} per leg, so that the comparison is made at a similar
+power budget.
+
+\section{Hardware Prototype}
+\label{sec:plat-hw}
+
+The lift-type configuration exists as hardware (\cref{fig:hardware}). All four legs carry printed flukes on a passive pin with
+a leaf spring. The firmware drives each leg through seven control points per cycle: the thigh is held fixed, the foot bar swings
+by $\pm\SI{25}{\degree}$ about the horizontal, and the legs are coordinated in a trot. At \SI{2}{\hertz} this is close to the L0
+motion: the pin travels \SI{38.0}{\milli\metre} vertically (L0: \SI{39.2}{\milli\metre}) at a mean heave speed of about
+\SI{0.15}{\metre\per\second} (L0: \SI{0.157}{\metre\per\second}), but its peak heave speed is about 15\,\% lower, because the
+control points are joined by straight segments. Unlike in the simulations, the hull is mounted reversed, so the robot swims with its
+blunt end first. In the water, BODY2 with flukes swam visibly faster than with its fan paddles and its current gait. A first timed
+test is compared with the self-propulsion estimate in \cref{sec:res-hw}. The optimized paddle was not tested, because it requires a
+controllable fold and a trapezoidal velocity law that the hardware does not have.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.78\textwidth]{fig_hardware.jpg}
+  \caption[BODY2 hardware with flukes]{Hardware prototype of BODY2 with printed fluke feet mounted on the leg linkages; two of the
+    fluke feet are shown resting on the table. Each leg is driven by two PTK\,7465W servos.}
+  \label{fig:hardware}
+\end{figure}

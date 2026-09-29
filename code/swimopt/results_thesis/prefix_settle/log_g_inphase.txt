@@ -1,0 +1,2 @@
+g_inphase: n=120 done=False best_speed=0.2994 yaw=0.0 wall=146s
+g_inphase: n=150 done=True best_speed=0.2994 yaw=0.0 wall=182s

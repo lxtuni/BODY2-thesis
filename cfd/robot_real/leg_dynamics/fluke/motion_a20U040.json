@@ -1,0 +1,23 @@
+{
+ "mode": "alpha",
+ "alpha_deg": 20.0,
+ "U": 0.4,
+ "U_law": 0.4,
+ "amp": 1.0,
+ "fan_center_deg": 8.294260887621636,
+ "smooth_harmonics": 6,
+ "smooth_harmonics_hinge": 12,
+ "freq": 2.0,
+ "T": 0.5,
+ "n": 400,
+ "hinge_travel_z_mm": 38.75277450036512,
+ "hinge_travel_x_mm": 4.352274145747952,
+ "fin_range_deg": [
+  -15.645478772878592,
+  14.017859614345953
+ ],
+ "fin_rate_max_deg_s": 433.87744067279624,
+ "hinge_speed_max": 0.2883640946866208,
+ "alpha_act_p75": 21.62796406317156,
+ "alpha_act_max": 25.067299902366912
+}

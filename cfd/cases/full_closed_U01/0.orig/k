@@ -1,0 +1,23 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      k;
+}
+
+dimensions [0 2 -2 0 0 0 0];
+internalField uniform 6.000e-06;
+boundaryField
+{
+    overset_FL { type overset; }
+    overset_FR { type overset; }
+    overset_RL { type overset; }
+    overset_RR { type overset; }
+    "(paddle_.*|hull)" { type kqRWallFunction; value uniform 6.000e-06; }
+    inlet { type fixedValue; value uniform 6.000e-06; }
+    outlet { type inletOutlet; inletValue uniform 6.000e-06; value uniform 6.000e-06; }
+    atmosphere { type inletOutlet; inletValue uniform 6.000e-06; value uniform 6.000e-06; }
+    "(sides|bottom)" { type slip; }
+}

@@ -1,0 +1,14 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      decomposeParDict;
+}
+
+// 重叠网格并行：scotch 在某些分区下会触发 "Attempt to cast type patch to type lduInterface"（v2606，closed 桨算例复现），
+// 改用 hierarchical 规则分区，沙箱与实机均正常。
+numberOfSubdomains 16;
+method          hierarchical;
+hierarchicalCoeffs { n (4 4 1); order xyz; }

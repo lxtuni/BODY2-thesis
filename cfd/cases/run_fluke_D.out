@@ -1,0 +1,102 @@
+
+===== [09-27 20:21:14] 开始：D1U030 D0U008   8 核（机器 8 物理核，OpenFOAM v2606） =====
+
+===== [09-27 20:21:14] 生成 leg_V3trap_U030_open =====
+    算例：/home/lxtuni/run/leg_V3trap_U030_open   脚蹼 open   U = 0.3 m/s   3.0 个周期 (T = 0.72 s) → endTime 2.160 s
+    部件网格盒 50×39×15 = 29250 单元（2.50 mm，表面再细化 1 级）
+    背景域 x[-0.392,0.361] y[-0.284,0.284] z[-0.376,0.184]  blockMesh 47×36×35，加密到 4.0 mm
+    桨尖最大速度 0.40 m/s → 初始 Δt = 0.0012 s，maxCo 0.8；每周期写 20 帧
+    洞切搜索盒 (-0.0550281 -0.0783731 -0.14381)–(0.128754 0.0783731 0.0939034)，体素 148×126×192（≈1.2 mm）
+
+===== [09-27 20:21:15] 跑 /home/lxtuni/run/leg_V3trap_U030_open（网格 + 求解；看进度 bash progress.sh /home/lxtuni/run/leg_V3trap_U030_open） =====
+!! leg_V3trap_U030_open 没有正常结束：看 /home/lxtuni/run/leg_V3trap_U030_open/log.overPimpleDyMFoam 末尾与 /home/lxtuni/run/leg_V3trap_U030_open/allrun.out
+Running setFields on /home/lxtuni/run/leg_V3trap_U030_open
+Running checkMesh on /home/lxtuni/run/leg_V3trap_U030_open
+Running decomposePar on /home/lxtuni/run/leg_V3trap_U030_open
+Running overPimpleDyMFoam (8 processes) on /home/lxtuni/run/leg_V3trap_U030_open 
+Running redistributePar (8 processes) on /home/lxtuni/run/leg_V3trap_U030_open 
+
+===== [09-27 21:47:35] 生成 leg_V3trap_U030_closed =====
+    算例：/home/lxtuni/run/leg_V3trap_U030_closed   脚蹼 closed   U = 0.3 m/s   3.0 个周期 (T = 0.72 s) → endTime 2.160 s
+    部件网格盒 50×14×15 = 10500 单元（2.50 mm，表面再细化 1 级）
+    背景域 x[-0.392,0.361] y[-0.254,0.254] z[-0.376,0.184]  blockMesh 47×32×35，加密到 4.0 mm
+    桨尖最大速度 0.40 m/s → 初始 Δt = 0.0012 s，maxCo 0.8；每周期写 20 帧
+    洞切搜索盒 (-0.0550281 -0.048 -0.14381)–(0.128754 0.048 0.0939034)，体素 148×78×192（≈1.2 mm）
+
+===== [09-27 21:47:35] 跑 /home/lxtuni/run/leg_V3trap_U030_closed（网格 + 求解；看进度 bash progress.sh /home/lxtuni/run/leg_V3trap_U030_closed） =====
+!! leg_V3trap_U030_closed 没有正常结束：看 /home/lxtuni/run/leg_V3trap_U030_closed/log.overPimpleDyMFoam 末尾与 /home/lxtuni/run/leg_V3trap_U030_closed/allrun.out
+Running setFields on /home/lxtuni/run/leg_V3trap_U030_closed
+Running checkMesh on /home/lxtuni/run/leg_V3trap_U030_closed
+Running decomposePar on /home/lxtuni/run/leg_V3trap_U030_closed
+Running overPimpleDyMFoam (8 processes) on /home/lxtuni/run/leg_V3trap_U030_closed 
+Running redistributePar (8 processes) on /home/lxtuni/run/leg_V3trap_U030_closed 
+
+===== [09-27 22:19:38] D1U030 完成，汇总 =====
+    
+    ===== 尾鳍 / 翼型（最后 2 个周期） =====
+    算例          U m/s     T mN    Fz mN    C_T      η    P mW  T/P N/W  |M_h| mN·m   α75°   对照
+    
+    ===== 阻力型 V3trap 两态合成 =====
+    方案              U m/s  T(τ 0.33/−0.06) mN    T 最优 mN   τ_c   τ_o
+    V3trap          0.000                87.2       87.2  0.33 -0.06
+    
+    ===== 阻力型 真机现步态（按自身开合时机合成：τ_o 0 / τ_c = DUTY） =====
+    方案              U m/s     T mN   τ_c      T 重扫最优 mN   （重扫最优只作参考：真机开合由线驱动，时机不可调）
+    cur_U0          0.000     23.5  0.50           27.1
+    
+    ===== 推力–航速（单腿，mN） =====
+      U m/s      升力型 尾鳍       阻力型 现步态     阻力型 V3trap
+      0.000           —          23.5           87.2
+    
+    → /mnt/c/Users/L/Desktop/openfoam/robot_real/leg_dynamics/results_fluke/summary.json
+
+===== [09-27 22:19:38] 生成 leg_cur_U008_open =====
+    算例：/home/lxtuni/run/leg_cur_U008_open   脚蹼 open   U = 0.08 m/s   3.0 个周期 (T = 1.25 s) → endTime 3.750 s
+    部件网格盒 50×39×15 = 29250 单元（2.50 mm，表面再细化 1 级）
+    背景域 x[-0.383,0.387] y[-0.284,0.284] z[-0.376,0.187]  blockMesh 48×36×35，加密到 4.0 mm
+    桨尖最大速度 0.40 m/s → 初始 Δt = 0.0012 s，maxCo 0.8；每周期写 20 帧
+    洞切搜索盒 (-0.0464069 -0.0783731 -0.14381)–(0.154666 0.0783731 0.0967374)，体素 162×126×194（≈1.2 mm）
+
+===== [09-27 22:19:39] 跑 /home/lxtuni/run/leg_cur_U008_open（网格 + 求解；看进度 bash progress.sh /home/lxtuni/run/leg_cur_U008_open） =====
+!! leg_cur_U008_open 没有正常结束：看 /home/lxtuni/run/leg_cur_U008_open/log.overPimpleDyMFoam 末尾与 /home/lxtuni/run/leg_cur_U008_open/allrun.out
+Running setFields on /home/lxtuni/run/leg_cur_U008_open
+Running checkMesh on /home/lxtuni/run/leg_cur_U008_open
+Running decomposePar on /home/lxtuni/run/leg_cur_U008_open
+Running overPimpleDyMFoam (8 processes) on /home/lxtuni/run/leg_cur_U008_open 
+Running redistributePar (8 processes) on /home/lxtuni/run/leg_cur_U008_open 
+
+===== [09-27 22:35:28] 生成 leg_cur_U008_closed =====
+    算例：/home/lxtuni/run/leg_cur_U008_closed   脚蹼 closed   U = 0.08 m/s   3.0 个周期 (T = 1.25 s) → endTime 3.750 s
+    部件网格盒 50×22×15 = 16500 单元（2.50 mm，表面再细化 1 级）
+    背景域 x[-0.383,0.387] y[-0.263,0.263] z[-0.376,0.187]  blockMesh 48×33×35，加密到 4.0 mm
+    桨尖最大速度 0.40 m/s → 初始 Δt = 0.0012 s，maxCo 0.8；每周期写 20 帧
+    洞切搜索盒 (-0.0464069 -0.057 -0.14381)–(0.154666 0.057 0.0967374)，体素 162×92×194（≈1.2 mm）
+
+===== [09-27 22:35:29] 跑 /home/lxtuni/run/leg_cur_U008_closed（网格 + 求解；看进度 bash progress.sh /home/lxtuni/run/leg_cur_U008_closed） =====
+!! leg_cur_U008_closed 没有正常结束：看 /home/lxtuni/run/leg_cur_U008_closed/log.overPimpleDyMFoam 末尾与 /home/lxtuni/run/leg_cur_U008_closed/allrun.out
+Running setFields on /home/lxtuni/run/leg_cur_U008_closed
+Running checkMesh on /home/lxtuni/run/leg_cur_U008_closed
+Running decomposePar on /home/lxtuni/run/leg_cur_U008_closed
+Running overPimpleDyMFoam (8 processes) on /home/lxtuni/run/leg_cur_U008_closed 
+Running redistributePar (8 processes) on /home/lxtuni/run/leg_cur_U008_closed 
+
+===== [09-27 22:50:03] D0U008 完成，汇总 =====
+    
+    ===== 尾鳍 / 翼型（最后 2 个周期） =====
+    算例          U m/s     T mN    Fz mN    C_T      η    P mW  T/P N/W  |M_h| mN·m   α75°   对照
+    
+    ===== 阻力型 V3trap 两态合成 =====
+    方案              U m/s  T(τ 0.33/−0.06) mN    T 最优 mN   τ_c   τ_o
+    V3trap          0.000                87.2       87.2  0.33 -0.06
+    
+    ===== 阻力型 真机现步态（按自身开合时机合成：τ_o 0 / τ_c = DUTY） =====
+    方案              U m/s     T mN   τ_c      T 重扫最优 mN   （重扫最优只作参考：真机开合由线驱动，时机不可调）
+    cur_U0          0.000     23.5  0.50           27.1
+    
+    ===== 推力–航速（单腿，mN） =====
+      U m/s      升力型 尾鳍       阻力型 现步态     阻力型 V3trap
+      0.000           —          23.5           87.2
+    
+    → /mnt/c/Users/L/Desktop/openfoam/robot_real/leg_dynamics/results_fluke/summary.json
+
+===== [09-27 22:50:04] 全部完成：results_fluke/summary.json（尾鳍）与 results_verify/V3trap_U*/（阻力型） =====

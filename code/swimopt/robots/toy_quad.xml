@@ -1,0 +1,80 @@
+<mujoco model="toy_quad_swimmer">
+  <compiler angle="radian"/>
+  <!-- ① 模型层占位: 玩具四足游泳机器人(髋+膝+脚蹼腕 3关节/腿). 换真模型只替换本文件. -->
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast"/>
+  <default>
+    <joint damping="0.004" armature="0.0002"/>
+    <geom rgba="0.85 0.86 0.9 1"/>
+    <position kp="60" dampratio="1" ctrlrange="-1.4 1.4" forcerange="-12 12"/>
+  </default>
+  <worldbody>
+    <light pos="0 0 2" dir="0 0 -1"/>
+    <geom name="vis_waterplane" type="plane" size="4 4 .1" pos="0 0 0" rgba="0.15 0.4 0.7 0.25" contype="0" conaffinity="0"/>
+    <body name="trunk" pos="0 0 0.01">
+      <freejoint name="root"/>
+      <geom name="body_trunk" type="box" size="0.10 0.05 0.025" mass="0.60"/>
+      <body name="upper_FL" pos="0.085 0.045 -0.02">
+        <joint name="J1_FL" type="hinge" axis="0 1 0" range="-1.3 1.3"/>
+        <geom name="link_FL_up" type="capsule" fromto="0 0 0 0 0 -0.055" size="0.007" mass="0.020"/>
+        <body name="lower_FL" pos="0 0 -0.055">
+          <joint name="J2_FL" type="hinge" axis="0 1 0" range="-1.3 1.3"/>
+          <geom name="link_FL_lo" type="capsule" fromto="0 0 0 0 0 -0.050" size="0.006" mass="0.015"/>
+          <body name="flipper_FL" pos="0 0 -0.052">
+            <joint name="J3_FL" type="hinge" axis="0 1 0" range="-1.6 1.6"/>
+            <geom name="flip_FL" type="box" pos="0 0 -0.018" size="0.004 0.026 0.018" mass="0.010"/>
+          </body>
+        </body>
+      </body>
+      <body name="upper_FR" pos="0.085 -0.045 -0.02">
+        <joint name="J1_FR" type="hinge" axis="0 1 0" range="-1.3 1.3"/>
+        <geom name="link_FR_up" type="capsule" fromto="0 0 0 0 0 -0.055" size="0.007" mass="0.020"/>
+        <body name="lower_FR" pos="0 0 -0.055">
+          <joint name="J2_FR" type="hinge" axis="0 1 0" range="-1.3 1.3"/>
+          <geom name="link_FR_lo" type="capsule" fromto="0 0 0 0 0 -0.050" size="0.006" mass="0.015"/>
+          <body name="flipper_FR" pos="0 0 -0.052">
+            <joint name="J3_FR" type="hinge" axis="0 1 0" range="-1.6 1.6"/>
+            <geom name="flip_FR" type="box" pos="0 0 -0.018" size="0.004 0.026 0.018" mass="0.010"/>
+          </body>
+        </body>
+      </body>
+      <body name="upper_BL" pos="-0.085 0.045 -0.02">
+        <joint name="J1_BL" type="hinge" axis="0 1 0" range="-1.3 1.3"/>
+        <geom name="link_BL_up" type="capsule" fromto="0 0 0 0 0 -0.055" size="0.007" mass="0.020"/>
+        <body name="lower_BL" pos="0 0 -0.055">
+          <joint name="J2_BL" type="hinge" axis="0 1 0" range="-1.3 1.3"/>
+          <geom name="link_BL_lo" type="capsule" fromto="0 0 0 0 0 -0.050" size="0.006" mass="0.015"/>
+          <body name="flipper_BL" pos="0 0 -0.052">
+            <joint name="J3_BL" type="hinge" axis="0 1 0" range="-1.6 1.6"/>
+            <geom name="flip_BL" type="box" pos="0 0 -0.018" size="0.004 0.026 0.018" mass="0.010"/>
+          </body>
+        </body>
+      </body>
+      <body name="upper_BR" pos="-0.085 -0.045 -0.02">
+        <joint name="J1_BR" type="hinge" axis="0 1 0" range="-1.3 1.3"/>
+        <geom name="link_BR_up" type="capsule" fromto="0 0 0 0 0 -0.055" size="0.007" mass="0.020"/>
+        <body name="lower_BR" pos="0 0 -0.055">
+          <joint name="J2_BR" type="hinge" axis="0 1 0" range="-1.3 1.3"/>
+          <geom name="link_BR_lo" type="capsule" fromto="0 0 0 0 0 -0.050" size="0.006" mass="0.015"/>
+          <body name="flipper_BR" pos="0 0 -0.052">
+            <joint name="J3_BR" type="hinge" axis="0 1 0" range="-1.6 1.6"/>
+            <geom name="flip_BR" type="box" pos="0 0 -0.018" size="0.004 0.026 0.018" mass="0.010"/>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <actuator>
+    <position name="Joint_FL1.1" joint="J1_FL"/>
+    <position name="Joint_FL2.1" joint="J2_FL"/>
+    <position name="Joint_FL3.1" joint="J3_FL"/>
+    <position name="Joint_FR1.1" joint="J1_FR"/>
+    <position name="Joint_FR2.1" joint="J2_FR"/>
+    <position name="Joint_FR3.1" joint="J3_FR"/>
+    <position name="Joint_BL1.1" joint="J1_BL"/>
+    <position name="Joint_BL2.1" joint="J2_BL"/>
+    <position name="Joint_BL3.1" joint="J3_BL"/>
+    <position name="Joint_BR1.1" joint="J1_BR"/>
+    <position name="Joint_BR2.1" joint="J2_BR"/>
+    <position name="Joint_BR3.1" joint="J3_BR"/>
+  </actuator>
+</mujoco>

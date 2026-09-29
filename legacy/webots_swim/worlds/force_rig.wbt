@@ -1,0 +1,87 @@
+#VRML_SIM R2025a utf8
+# Single-paddle FORCE RIG: a fixed base + one paddle on a torque-feedback motor,
+# submerged in water. Used to MEASURE the hydrodynamic torque Webots produces and
+# compare it to the analytical blade-element drag and the (omitted) added-mass term.
+
+WorldInfo {
+  info [ "Force rig: measure paddle hydrodynamic torque vs analytical drag/added-mass." ]
+  title "robot0526 hydro force rig"
+  coordinateSystem "ENU"
+  basicTimeStep 1
+  gravity 9.81
+}
+Viewpoint {
+  orientation -0.30 0.32 0.90 1.8
+  position 0.35 -0.45 0.30
+}
+Background { skyColor [ 0.55 0.70 0.92 ] }
+DirectionalLight { direction 0.4 -0.6 -1  intensity 3.5  castShadows TRUE }
+
+Fluid {
+  name "water"
+  density 1000
+  viscosity 0.0013
+  streamVelocity 0 0 0
+  translation 0 0 -0.40
+  children [
+    Shape {
+      appearance Appearance { material Material { diffuseColor 0.15 0.40 0.70 transparency 0.6 } }
+      geometry Box { size 1.2 1.2 0.80 }
+    }
+  ]
+  boundingObject Box { size 1.2 1.2 0.80 }
+  locked TRUE
+}
+
+# ---- static rig base (no physics => pinned to the world) ----
+Robot {
+  name "rig"
+  controller "force_rig"
+  children [
+    # visible post above the water for reference
+    Pose {
+      translation 0 0 0.06
+      children [ Shape {
+        appearance PBRAppearance { baseColor 0.3 0.3 0.35 roughness 1 metalness 0 }
+        geometry Box { size 0.03 0.03 0.22 }
+      } ]
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters { axis 0 1 0  anchor 0 0 -0.05 }
+      device [
+        RotationalMotor { name "rig_motor" maxTorque 8 maxVelocity 40 }
+        PositionSensor { name "rig_sensor" }
+      ]
+      endPoint DEF RIG_PADDLE Solid {
+        translation 0 0 -0.15
+        name "rig_paddle"
+        children [
+          # thin visual arm up to the hinge (visual only, no drag)
+          Pose {
+            translation 0 0 0.05
+            children [ Shape {
+              appearance PBRAppearance { baseColor 0.5 0.5 0.55 roughness 1 metalness 0 }
+              geometry Box { size 0.006 0.006 0.10 }
+            } ]
+          }
+          Shape {
+            appearance PBRAppearance { baseColor 0.95 0.75 0.20 roughness 1 metalness 0 }
+            geometry Box { size 0.006 0.050 0.070 }
+          }
+        ]
+        boundingObject Box { size 0.006 0.050 0.070 }
+        physics Physics { density -1 mass 0.021 }
+        immersionProperties [
+          ImmersionProperties {
+            fluidName "water"
+            referenceArea "xyz-projected area"
+            dragForceCoefficients 1.10 0.05 0.05
+            dragTorqueCoefficients 0 0 0
+            viscousResistanceForceCoefficient 0.02
+            viscousResistanceTorqueCoefficient 0.0
+          }
+        ]
+      }
+    }
+  ]
+}

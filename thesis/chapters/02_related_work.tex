@@ -1,0 +1,149 @@
+\chapter{Related Work}
+\label{ch:related}
+
+This chapter reviews what is known about drag- and lift-based swimming in animals and on foils, how swimming
+legged robots have been designed and simulated, and which gap this thesis addresses.
+
+\section{Drag- and Lift-Based Swimming in Animals}
+\label{sec:rw-bio}
+
+Fish \cite{Fish1996} classified mammalian swimming by the force that produces thrust. Paddlers such as the
+muskrat, mink or dog move a foot or hand backwards against the water in a power stroke and return it in a
+recovery stroke. Their propulsive efficiency is at most about 0.33. Swimmers that oscillate a fluke or flipper
+across the swimming direction generate lift and reach efficiencies above 0.8. Fish argued that the transition
+from paddling to lift-based swimming in the evolution of aquatic mammals was driven by this efficiency
+difference and that intermediate forms combine both principles.
+
+The muskrat is the best-documented paddler \cite{Fish1984}. Its power stroke lasts \SI{0.18}{\second} and
+its recovery \SI{0.22}{\second}, a duty factor of 0.45. During recovery it folds the toes together, reducing
+the frontal area of the foot by 55.5\,\%, yet the recovery drag still amounts to about one third of the
+power-stroke thrust. Its maximum mechanical efficiency is 0.33. Dogs use a stereotyped diagonal paddling
+gait, in which each foot moves on a closed path and the fore- and hindlimbs of opposite sides move together
+\cite{Fish2021DogPaddle}. Ducks paddle with webbed feet whose hydrodynamic performance resembles that of oars
+rather than delta wings \cite{Ribak2023}.
+
+Cetaceans are the reference for lift-based swimming. Bottlenose dolphins swim with a propulsive efficiency
+of about 0.8 \cite{Fish1993}. Odontocetes cruise at Strouhal numbers of $0.26\pm0.05$ \cite{Rohr2004}, and
+flying and swimming animals in general cruise at $0.2<\mathit{St}<0.4$, the range of high power efficiency of
+oscillating foils \cite{Taylor2003}. Walker and Westneat \cite{Walker2000} compared rowing and flapping
+appendages with a blade-element model and concluded that rowing is favourable at low speeds and for
+manoeuvres and acceleration, whereas flapping is more efficient at higher speeds. For BODY2 this suggests the division of
+labour tested in this thesis, a paddle for starting and low speed and a fluke for cruising, and makes the speed at which one
+overtakes the other the quantity to be found.
+
+\section{Flapping-Foil Hydrodynamics}
+\label{sec:rw-foil}
+
+A foil that heaves and pitches with a phase difference produces thrust through a leading-edge vortex on each
+half stroke and a reverse von K\'arm\'an street in its wake \cite{Triantafyllou1991}. Wake stability analysis
+predicts the highest efficiency at $0.25\lesssim\mathit{St}\lesssim0.35$ \cite{Triantafyllou1991}. Anderson et
+al.\ \cite{Anderson1998} measured efficiencies up to 0.87 for a NACA\,0012 foil at a heave amplitude of
+$0.75$ chord, a maximum angle of attack of about \SI{20}{\degree} and a pitch lead of \SI{75}{\degree}. Read
+et al.\ \cite{Read2003} extended these measurements and found a broad efficiency plateau of 0.5--0.6 for
+maximum angles of attack between \SI{15}{\degree} and \SI{25}{\degree} and the largest thrust coefficients,
+around 2.4, at $\mathit{St}\approx0.6$ and angles of attack of \SIrange{30}{35}{\degree}, where efficiency drops
+to below 0.5. Hover et al.\ \cite{Hover2004} showed that the time history of the angle of attack matters as
+much as its maximum: an angle of attack held nearly constant over the stroke extends the efficient range to
+higher Strouhal numbers and thrust. Schouveiler et al.\ \cite{Schouveiler2005} reported thrust coefficients
+and efficiencies with error bars over a range of Strouhal numbers and angles of attack; one of their points
+is used as the validation case in \cref{sec:ver-v1}. Floryan et al.\ \cite{Floryan2017} derived scaling laws
+in which thrust grows with the square of the Strouhal number and efficiency favours large amplitudes at low
+frequencies. For a self-propelled swimmer, the Strouhal number is not a free parameter but follows from the
+balance of thrust and drag \cite{Eloy2012}. Three-dimensional effects reduce thrust at low aspect ratio;
+cetacean flukes have aspect ratios of about 2--6 \cite{Ayancik2020}. For the fluke of BODY2 these results fix the target: an
+angle of attack of about \SIrange{15}{25}{\degree} and a Strouhal number of 0.2--0.4, which its pitch must maintain while the
+swimming speed changes.
+
+\section{Paddling Mechanics}
+\label{sec:rw-paddle}
+
+A paddle produces net thrust only through an asymmetry between power and recovery stroke, either spatial
+(a smaller area during recovery) or temporal (a slower recovery) \cite{HerreraAmaya2024}. Kim and Gharib
+\cite{Kim2011} measured the flow around a flat plate performing a paddling rotation and showed that the thrust
+follows the growth and shedding of the starting vortex rather than the quasi-steady square of the plate
+velocity. Crustacean-inspired propulsors reach their best performance when the appendage opens quickly at
+the start of the power stroke and closes early in the recovery \cite{Santos2026}. A tendon coupling that
+shortens the transition between the open and folded states of a webbed robotic foot doubled its propulsive
+efficiency \cite{Lin2024}. For beaver-like robots, the hydrodynamics of bendable webbed feet have been modelled
+with quasi-steady methods and measured in flumes \cite{Chen2021,Chen2022}. For the fan paddle of BODY2 the levers are therefore
+the folded area, the timing of the fold and the velocity law of the power stroke; all three are varied in \cref{sec:res-drag}.
+
+\section{Swimming Legged Robots}
+\label{sec:rw-robots}
+
+Picardi et al.\ \cite{Picardi2023} reviewed underwater legged robots; most walk on the bottom and few swim.
+Li et al.\ \cite{Li2019} analysed the kinematics and hydrodynamics of a robotic dog paddling with rigid
+limbs. Qu et al.\ \cite{Qu2025} built an amphibious robotic dog and measured single-leg and whole-robot
+thrust for paddling gaits with different power-stroke fractions; a shorter power stroke produced more thrust
+but also larger roll. Wang et al.\ \cite{Wang2025} simulated quadrupedal paddling with an immersed-boundary
+CFD solver. They varied the initial swing angle, the swing amplitude and the power-stroke fraction of rigid,
+non-folding legs at zero forward speed, and found that the thrust of four legs exceeds four times the
+single-leg thrust by up to 87\,\%. Han et al.\ \cite{Han2025} trained an LSTM model of the leg forces from
+tank measurements and used it for multi-objective gait optimization. Yao et al.\ \cite{Yao2023} instead added
+thrusters to a quadruped and learned a propulsion controller.
+
+Lift-based propulsion has been demonstrated on robots with dedicated flippers. Baines et al.\
+\cite{Baines2022} built a turtle robot with morphing limbs that can paddle and flap with the same limb; the
+flapping gait produced thrust over most of the stroke and had the lower cost of transport, while paddling
+gave higher accelerations. The DuckyDog robot uses variable-stiffness legs with passive fins
+\cite{Wang2025DuckyDog}. Within the same chair as this thesis, Heber \cite{Heber2026} optimized drag-based
+paddling gaits of an amphibious quadruped by direct collocation over a reduced-order hydrodynamic model
+calibrated against an SPH simulation. \Cref{tab:rw-robots} summarizes these studies. Most measure or simulate thrust at rest, and
+none compares a drag-based and a lift-based propulsor on the same leg across forward speed, which is what the choice of propulsor
+for BODY2 requires.
+
+\begin{table}[htb]
+  \centering
+  \caption[Swimming legged robots]{Swimming legged robots and this thesis. Speeds as reported; $^\dagger$derived from the reported course
+    length and time; -- not reported.}
+  \label{tab:rw-robots}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{30mm}>{\raggedright\arraybackslash}p{34mm}>{\raggedright\arraybackslash}p{30mm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{24mm}@{}}
+    \toprule
+    Study & Propulsor & Method & Thrust vs.\ forward speed & Swimming speed \\
+    \midrule
+    Li et al.\ \cite{Li2019} & rigid paddling legs (pneumatic soft actuators) & kinematic and drag analysis, prototype & no & -- \\
+    Qu et al.\ \cite{Qu2025} & rigid two-segment paddling legs & force measurement at rest, free swimming & no & \SI{0.16}{\metre\per\second} (0.54\,BL/s) \\
+    Wang et al.\ \cite{Wang2025} & rigid paddling legs & immersed-boundary CFD, tethered & no & -- \\
+    Han et al.\ \cite{Han2025} & paddling legs with web plates & tank measurements, LSTM model, gait optimization & yes, \SIrange{0}{0.3}{\metre\per\second} & $\approx$\SI{0.1}{\metre\per\second}$^\dagger$ \\
+    Baines et al.\ \cite{Baines2022} & morphing limb: paddling and flapping & force measurement at rest, CFD at one speed & no & -- \\
+    DuckyDog \cite{Wang2025DuckyDog} & legs with passive fins & free swimming & no & 0.30\,BL/s \\
+    Heber \cite{Heber2026} & rigid paddling legs & reduced-order model, direct collocation & no & -- \\
+    \midrule
+    This thesis & folding fan paddle and fluke on the same leg & reduced-order optimization, overset CFD, hardware test & yes, \SIrange{0}{0.4}{\metre\per\second} & CFD \SIrange{0.26}{0.30}{\metre\per\second} (1.1--1.3\,BL/s); hardware \SI{0.14}{} / \SI{0.26}{\metre\per\second} mean from rest at 2 / 4\,Hz \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+
+\section{Simulation Approaches for Swimming Robots}
+\label{sec:rw-sim}
+
+The simulation methods span several orders of magnitude in cost. Reduced-order models apply quasi-steady drag,
+added mass and buoyancy to each link \cite{Morison1950,Fossen1994}. They are fast enough for optimization
+\cite{Chen2021,Heber2026,Lee2025}, but their coefficients must be identified, and a plain drag model contains
+no lift. Particle methods such as SPH and grid-based CFD resolve the flow, but one simulated second takes
+minutes to hours. Overset (Chimera) grids are an established way to simulate large prescribed body motions in
+OpenFOAM \cite{Weller1998,Windt2020}; the immersed-boundary method is an alternative \cite{Wang2025}.
+Lattice-Boltzmann solvers on adaptive block grids, such as the commercial Flare Live \cite{FlareLive}, trade
+resolution for real-time speed and can simulate a whole robot with its joints and actuators. For this thesis the consequence is
+the division of tools described in \cref{ch:intro}: the reduced-order model for the search and the CFD for the numbers.
+
+\section{Research Gap}
+\label{sec:rw-gap}
+
+The literature establishes that lift-based flapping is more efficient than drag-based paddling in animals
+and that paddling can be improved by folding, timing and velocity shaping. Robotic studies of legged swimming
+have concentrated on drag-based strokes of rigid or folding feet, mostly at zero forward speed
+\cite{Wang2025,Qu2025}, and on reduced-order models whose lift content is either absent or uncalibrated.
+To the author's knowledge, no study has compared an optimized drag-type paddle and a lift-type fluke on the
+same legged-robot leg across forward speed with a resolved flow simulation, identified what limits each
+propulsor, and translated the result into swimming speeds of the whole robot. The following combination is
+therefore missing and is addressed here:
+\begin{itemize}
+  \item a reduced-order optimization that includes actuator speed limits and a lift term, to see which
+        principle an optimizer chooses;
+  \item single-leg CFD of the same robot leg with both propulsors, each with an optimized motion, from rest to
+        cruising speed;
+  \item a self-propulsion estimate and a cross-check with a whole-robot real-time solver.
+\end{itemize}

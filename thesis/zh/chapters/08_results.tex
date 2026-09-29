@@ -1,0 +1,210 @@
+\chapter{结果}
+\label{ch:results}
+
+本章报告单腿CFD结果，以及由此对整机得出的结论。本章首先设计阻力型划水动作（drag-type stroke）（\cref{sec:res-drag}）并表征尾鳍（fluke）的性能（\cref{sec:res-lift}），随后在不同航速下比较二者（\cref{sec:res-compare}），通过使尾鳍俯仰角随航速调度来改进尾鳍（\cref{sec:res-l3}），预测机器人的巡航速度（cruising speed）（\cref{sec:res-selfprop}），最后将其与首次硬件测试进行比较（\cref{sec:res-hw}）。除非另有说明，所有力和功率均为单腿值，且仅针对推进器本身。
+
+\section{阻力型划水动作的设计}
+\label{sec:res-drag}
+
+阻力型划水动作在$\U=0$条件下按每次只改变一个因素的方式进行优化。\cref{sec:fund-paddle}中的准稳态模型（quasi-steady model）作为代理模型（surrogate）提出每一步改动，再由CFD对其进行评估；随后，在两态合成（two-state composite）结果上针对两个切换相位对折叠时机进行了优化。\Cref{tab:drag-design}列出了各个步骤。
+
+\begin{table}[t]
+  \centering
+  \caption[阻力型划水动作的设计步骤]{$\U=0$时阻力型划水动作的设计步骤。每一步均在前一步的基础上改变一个方面。$\Tm$为两态合成的周期平均推力。除最后一步外，所有步骤均在髋关节运动的换向点切换扇面状态，在该处附加质量修正式\eqref{eq:addedmass}于$\U=0$时为零；对最后一步则给出了该修正的范围。}
+  \label{tab:drag-design}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}Xcccc@{}}
+    \toprule
+    划水动作 & 改动 & $T$ (s) & DUTY & $\Tm$ (mN) & $\Pm$ (mW) \\
+    \midrule
+    机器人步态 & 基准；收拢宽度30\,mm，\SI{60}{\degree}正弦摆动 & 1.25 & 0.50 & 23.4 & 6.7 \\
+    V1 & 周期更短，推力更大 & 0.89 & 0.49 & 51.2 & -- \\
+    V2 & 划水冲程更短 & -- & 0.35 & 34.2 & -- \\
+    V3 & 摆动以竖直方向为中心（\SIrange{120}{70}{\degree}），慢速卷收 & 0.81 & 0.45 & 49.3 & 16.2 \\
+    V3c12 & 扇收拢至12\,mm而非30\,mm & 0.81 & 0.45 & 56.7 & 13.7 \\
+    V3c06 & 收拢并顺桨，迎流宽度5.6\,mm & 0.81 & 0.45 & 58.6 & 13.1 \\
+    V3trap & V3c12采用梯形速度规律（\SI{45}{\milli\second}斜坡） & 0.72 & 0.382 & 75.0 & 20.8 \\
+    V3trap，调整时机 & 在减速开始时合扇，$\tau_c=0.33$ & 0.72 & 0.382 & \textbf{73--83} & 21.6 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\paragraph{划水方向。}使摆动以竖直方向为中心，可使桨几乎笔直地向后运动，且桨面垂直于运动方向。从V1到V3，划水冲程（power stroke）合力相对于游动方向的倾角由\SI{19.5}{\degree}降至\SI{7.9}{\degree}，平均竖直力与平均水平力之比由0.52降至0.28。V2表明，若回程（recovery）无法相应地变得更省力，仅缩短划水冲程会损失推力。
+
+\paragraph{收拢宽度。}将扇收拢至\SI{12}{\milli\metre}而非\SI{30}{\milli\metre}，使回程阻力由\SI{-10.7}{}减小至\SI{-3.2}{\milli\newton}，并使平均推力提高15\,\%。有效面积比（effective area ratio）$a$定义为仅合扇算例与仅开扇算例的平均力之比，其值由0.48降至0.11。取$a=0.11$，由式\eqref{eq:duty-opt}可得$x^*=2.2$和$\mathrm{DUTY}^*=0.69$：回程应远快于划水冲程，而舵机转速不允许这样做。因此，最终冲程的DUTY为0.382，它并非由式\eqref{eq:duty-opt}得出，而是在舵机所允许的关节速度范围内（\cref{tab:actuators}）通过CFD优化求得。将收拢后的扇进一步顺桨（feathering）至\SI{5.6}{\milli\metre}的迎流宽度，仅带来3\,\%的提升：回程阻力与宽度成正比，但在\SI{12}{\milli\metre}时它仅约为平均推力的6\,\%。因此，顺桨机构并不值得采用。
+
+\paragraph{速度规律。}在峰值角速度和摆幅不变的条件下，将余弦型髋关节速度替换为带\SI{45}{\milli\second}斜坡的梯形速度规律（trapezoidal velocity law），使划水冲程冲量提高了18\,\%，与准稳态的$\int v^2\,\mathrm dt$所预测的一致；平均推力则提高了32\,\%，因为周期同时由\SI{0.81}{}缩短至\SI{0.72}{\second}。其代价是更高的髋关节峰值力矩（\SI{35.6}{}而非\SI{19.3}{\milli\newton\metre}，$\times1.84$）、更高的峰值力以及多52\,\%的功率；单位功率推力由\SI{4.1}{}降至\SI{3.6}{\newton\per\watt}。CFD中划水冲程的有效法向力系数为准稳态值的2--3倍，且在冲程开始时最高，这与对突然起动平板的预期相符\cite{Kim2011}；该系数在两种速度规律下相同。
+
+\paragraph{折叠时机。}两态合成方法（\cref{sec:cfd-composite}）允许在仿真完成后对折叠时机进行扫描。不加修正时，最佳组合为$\tau_c=0.33$、$\tau_o=-0.06$，对应\SI{87.2}{\milli\newton}。然而，在换向之前开扇所带来的增益正是\cref{sec:cfd-composite}所述的假象（artefact），因此扇在换向时打开，即$\tau_o=0$。提前合扇，即在划水冲程减速开始时合扇（$\tau_c=0.33$，0.86\,DUTY），可使未经修正的合成结果由\SI{75.0}{}提高至\SI{82.7}{\milli\newton}：处于减速中的张开扇面不再被其自身带动起来的水向后拖拽。这部分水能否保持其动量，取决于其中有多少以停止涡（stopping vortex）的形式脱落，因此附加质量修正（added-mass correction）式\eqref{eq:addedmass}给出了\SIrange{73}{83}{\milli\newton}的范围。因此在静止状态下，提前合扇的收益介于$-2$与$+8$\,mN之间。在有前进速度时，提前合扇从不更差，且最多可高出\SI{10}{\milli\newton}，因为在$\tau\approx0.33$之后，桨向后运动的速度低于迎面来流，张开的扇只会产生阻力；在\SI{0.223}{\metre\per\second}时，于$\tau_c=0.33$合扇得到\SIrange{24}{26}{\milli\newton}，而在换向点合扇则为\SIrange{14}{26}{\milli\newton}。最终的划水动作在本论文后文中称为V3trap（\cref{fig:composite,fig:kinematics}a），它在静止时每条腿产生\SIrange{73}{83}{\milli\newton}，为机器人当前步态的3.1--3.5倍，功率为\SI{21.6}{\milli\watt}，单位功率推力为\SIrange{3.4}{3.8}{\newton\per\watt}。这些规律与在甲壳类动物和蹼足推进器中发现的规律一致：在划水冲程开始时完全张开、提前收拢、并使状态转换保持短暂\cite{Santos2026,Lin2024}。
+
+\section{采用固定俯仰规律的升力型尾鳍}
+\label{sec:res-lift}
+
+\Cref{tab:lift}列出了尾鳍采用L0运动时在五个航速下的结果。静止时来流完全沿竖直方向，尾鳍处于失速状态（$\alpha_{75}=\SI{73}{\degree}$），其作用相当于一块小桨；它以\SI{18.1}{\milli\watt}的功率产生\SI{45.5}{\milli\newton}的推力，约为采用折扇桨（fan paddle）的机器人步态推力的两倍。随着航速增加，来流角（inflow angle）和攻角（angle of attack）减小，推力几乎呈线性下降，在\SI{0.30}{\metre\per\second}时降至\SI{12.7}{\milli\newton}。输入功率保持在\SI{15.6}{}至\SI{18.1}{\milli\watt}之间。效率在\SI{0.223}{\metre\per\second}时升至最大值0.29，该航速正是L0的设计航速（基于销轴位移的$\mathit{St}\approx0.35$，$\alpha_{75}=\SI{19.9}{\degree}$）。在\SI{0.30}{\metre\per\second}时，冲程中段的攻角降至约\SI{10}{\degree}，效率降至0.245，并出现\SI{-29}{\milli\newton}的平均竖直力，其大小超过推力的两倍。
+
+\begin{table}[t]
+  \centering
+  \caption[采用L0运动的尾鳍]{不同航速下采用L0运动（固定俯仰规律，fixed pitch schedule）的尾鳍。$\mathit{St}$基于\SI{39.2}{\milli\metre}的销轴峰峰位移计算。}
+  \label{tab:lift}
+  \small
+  \begin{tabular}{@{}lccccc@{}}
+    \toprule
+    $\U$ (\si{\metre\per\second}) & 0 & 0.08 & 0.15 & 0.223 & 0.30 \\
+    \midrule
+    $\Tm$ (mN) & 45.5 & 36.5 & 29.1 & 21.4 & 12.7 \\
+    $\Pm$ (mW) & 18.1 & 17.1 & 16.6 & 16.3 & 15.6 \\
+    $\etaF$ & -- & 0.171 & 0.263 & 0.293 & 0.245 \\
+    $\Tm/\Pm$ (\si{\newton\per\watt}) & 2.51 & 2.13 & 1.75 & 1.31 & 0.81 \\
+    $\mathit{St}$ & -- & 0.98 & 0.52 & 0.35 & 0.26 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\SI{0.223}{\metre\per\second}时的尾流（\cref{fig:wake}）呈现出产生推力的拍动翼所应有的形态：每半个冲程从尾缘脱落一个符号交替的涡，这些涡构成向下游对流的反卡门涡街（reverse von K\'arm\'an street）。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_wake}
+  \caption[尾鳍的尾流]{尾鳍展长中面内的展向涡量（L0，$\U=\SI{0.223}{\metre\per\second}$），取第三个周期中的四个相位，船体坐标系；相对于尾鳍，流动方向为从右向左。黑线：尾鳍弦线。}
+  \label{fig:wake}
+\end{figure}
+
+在\SI{0.223}{\metre\per\second}下，按目标攻角\SI{10}{\degree}和\SI{28}{\degree}设计的另外两种俯仰规律产生的推力均高于L0，但效率较低（分别为0.20和0.24，\cref{tab:app-fluke}）；在该航速下的各算例中，$\alpha_{75}\approx\SI{20}{\degree}$时效率最高，这与拍动翼的高效区间一致\cite{Read2003}。
+
+\section{不同航速下阻力型与升力型推进的对比}
+\label{sec:res-compare}
+
+\Cref{fig:thrust-speed}比较了各推进器从静止到\SI{0.40}{\metre\per\second}的推力、功率和效率；\cref{tab:compare}给出了具体数值。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_thrust_speed}
+  \caption[推力、功率和效率随航速的变化]{各推进器单腿的(a)推力、(b)输入功率和(c)弗劳德效率随航速的变化。阴影：桨合成结果的附加质量修正式\eqref{eq:addedmass}的范围；点线：未经修正的V3trap合成结果。}
+  \label{fig:thrust-speed}
+\end{figure}
+
+\begin{table}[t]
+  \centering
+  \caption[不同航速下的推进器对比]{不同航速下的单腿推力$\Tm$ (mN) / 输入功率$\Pm$ (mW) / 弗劳德效率$\etaF$。桨的数值以范围形式计入附加质量修正式\eqref{eq:addedmass}；V3trap未经修正的合成结果为82.7、75.6、58.2、35.7和\SI{11.7}{\milli\newton}。}
+  \label{tab:compare}
+  \footnotesize
+  \begin{tabular}{@{}ccccc@{}}
+    \toprule
+    $\U$ (\si{\metre\per\second}) & 桨，机器人步态 & 桨，V3trap & 尾鳍，固定（L0/L2） & 尾鳍，调度（L3） \\
+    \midrule
+    0     & 23.4 / 6.7 / --         & \textbf{73--83} / 21.6 / --                & 45.5 / 18.1 / --      & -- \\
+    0.08  & 4--5 / 5.8 / 0.05--0.07 & \textbf{66--71} / 21.9 / 0.24--0.26        & 36.5 / 17.1 / 0.17    & -- \\
+    0.15  & $<0$ / 6.5 / --         & \textbf{48--50} / 20.7 / \textbf{0.35--0.37} & 29.1 / 16.6 / 0.26  & -- \\
+    0.223 & --                      & 24--26 / 19.2 / 0.28--0.30               & 21.4 / 16.3 / 0.29    & -- \\
+    0.30  & --                      & $-4$--2 / 17.8 / $\approx0$                & 12.7 / 15.6 / 0.24    & \textbf{13.9} / 10.5 / \textbf{0.40} \\
+    0.40  & --                      & --                                       & --                    & 10.5 / 11.4 / 0.37 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{低航速。}在约\SI{0.15}{\metre\per\second}以下，优化后的桨明显更优。其推力为尾鳍的1.6--2.0倍，功率高19--28\,\%；在\SI{0.15}{\metre\per\second}时其效率达到0.35--0.37，高于尾鳍的最大值0.29。按单位面积计，静止时二者没有差别：桨为\SIrange{3.9}{4.5}{}，尾鳍为\SI{4.1}{\milli\newton\per\square\centi\metre}。在\SI{0.223}{\metre\per\second}时，尾鳍的单位面积推力已更高（\SI{1.9}{}对\SIrange{1.3}{1.4}{\milli\newton\per\square\centi\metre}）。相比之下，机器人步态的推力几乎随即丧失：在\SI{0.08}{\metre\per\second}时仅剩\SIrange{4}{5}{\milli\newton}，在\SI{0.15}{\metre\per\second}时净力已表现为阻力。
+
+\paragraph{桨的航速上限。}桨的推力随航速急剧下降，并在约\SI{0.30}{\metre\per\second}时消失。将其分解为划水冲程和回程两部分（\cref{fig:drag-split}，数值见\cref{tab:app-split}）即可看出原因。V3trap的划水冲程推力下降了42\,\%，由\SI{88.0}{}降至\SI{50.9}{\milli\newton}，这是因为划水冲程中的相对速度减小。然而，回程阻力增长了七倍以上，由\SI{-5.3}{}增至\SI{-39.1}{\milli\newton}，因为收拢的桨和杆件此时迎着来流向前运动。在有航速时，开扇还会在每个周期损失动量$\Delta m_a\U$，在\SIrange{0.223}{0.30}{\metre\per\second}下相当于\SIrange{12}{16}{\milli\newton}。在\SI{0.30}{\metre\per\second}时，回程与开扇共同耗尽了全部划水冲程推力。对于机器人步态，由于其收拢后的扇更宽、划水动作更慢，回程阻力在约\SI{0.1}{\metre\per\second}时便已超过划水冲程推力。因此，该腿上阻力型桨的航速上限取决于桨在划水冲程之外必须完成的动作，而非桨在划水冲程中的速度。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_drag_split}
+  \caption[桨的划水冲程与回程]{划水冲程与回程对折扇桨平均推力的贡献。(a) V3trap和机器人步态的绝对值；阴影：计入附加质量修正式\eqref{eq:addedmass}后的净推力。(b) 相对于$\U=0$时划水冲程推力的幅值。}
+  \label{fig:drag-split}
+\end{figure}
+
+\paragraph{交叉点。}尾鳍的推力下降较慢，因为它既不需要逆流回程，也不改变自身形状：其在\SI{0.30}{\metre\per\second}时的推力为静止时的28\,\%，而桨的推力已接近零。对曲线进行插值可知，尾鳍的推力在\SIrange{0.23}{0.24}{\metre\per\second}以上超过V3trap，其效率则在\SIrange{0.22}{0.23}{\metre\per\second}以上超过后者。这一结论对两种俯仰规律均成立，因为随航速调度的俯仰（speed-scheduled pitch）仅在\SIlist{0.30;0.40}{\metre\per\second}下进行了仿真，在更低航速下沿用L0的数据。计入\cref{sec:ver-drag}中的离散化不确定度后，推力的交叉点（crossover）位于$0.24\pm\SI{0.02}{\metre\per\second}$，效率的交叉点位于$0.22\pm\SI{0.02}{\metre\per\second}$。若不计附加质量修正，交叉点将分别位于\SI{0.295}{}和\SI{0.285}{\metre\per\second}；该修正使交叉点移动了约\SI{0.06}{\metre\per\second}，但并不改变其存在性。
+
+\section{随航速调度的尾鳍俯仰}
+\label{sec:res-l3}
+
+采用固定的L0运动时，尾鳍的攻角随航速增加而减小，这解释了其效率在\SI{0.223}{\metre\per\second}以上的下降。随航速调度的俯仰式\eqref{eq:l3}使攻角得以恢复（\cref{fig:l3}）。在\SI{0.30}{\metre\per\second}时，它将俯仰幅值由约\SI{40}{\degree}减小至\SI{21.6}{\degree}，攻角相应增大：$\alpha_{75}$由\SI{13.7}{\degree}增至\SI{21.0}{\degree}（\cref{tab:l3,tab:app-fluke}）。
+
+\begin{table}[t]
+  \centering
+  \caption[随航速调度的俯仰]{随航速调度的俯仰（L3）与固定L0运动（L2）的对比。$\bar F_z$：平均竖直力；$|M_h|$：绕销轴的铰链峰值力矩。}
+  \label{tab:l3}
+  \small
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    算例 & $\U$ (\si{\metre\per\second}) & $\Tm$ (mN) & $\Pm$ (mW) & $\etaF$ & $\bar F_z$ (mN) & $|M_h|$ (\si{\milli\newton\metre}) \\
+    \midrule
+    L2，固定俯仰 & 0.30 & 12.7 & 15.6 & 0.245 & $-29.4$ & 12.6 \\
+    L3，调度俯仰 & 0.30 & \textbf{13.9} & \textbf{10.5} & \textbf{0.398} & $-0.9$ & 7.4 \\
+    L3，调度俯仰 & 0.40 & 10.5 & \textbf{11.4} & \textbf{0.368} & $-0.9$ & 7.3 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+在\SI{0.30}{\metre\per\second}时，调度俯仰使推力提高9\,\%、功率降低33\,\%，并使效率由0.245提高至0.40，而桨在该航速下几乎不产生推力。它还消除了平均竖直力（由$-29$降至$\SI{-1}{\milli\newton}$），使铰链峰值力矩降低40\,\%，并使力的时间历程更加平缓：流向力的峰峰值由约\SI{600}{}降至\SI{190}{\milli\newton}。在\SI{0.40}{\metre\per\second}时，效率为0.37。在三个设计航速下，尾鳍效率分别为0.29（L0，0.223）、0.40（L3，0.30）和0.37（L3，0.40），最大值出现在\SI{0.30}{\metre\per\second}附近。在该航速下，基于销轴位移的斯特劳哈尔数（Strouhal number）为0.26，处于动物高效巡航的0.2--0.4范围之内，且接近齿鲸类的实测平均值\cite{Taylor2003,Rohr2004}；若基于尾缘位移计算，则该值略高。该调度规律无需任何流场信息，只需$\dot h_\text{max}$和$\U$。在硬件上，它对应于随航速减小的俯仰幅值；被动弹簧能在多大程度上实现这一规律，将在\cref{sec:disc-limits-prop}中讨论。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_l3}
+  \caption[随航速调度的俯仰]{固定L0运动与随航速调度的俯仰的对比。(a) 给定的尾鳍俯仰角（铰链沉浮以点线表示，右轴）。(b) 由此得到的攻角。(c) 经平滑处理的流向力。}
+  \label{fig:l3}
+\end{figure}
+
+\section{自航估计}
+\label{sec:res-selfprop}
+
+\paragraph{阻力。}三条阻力曲线界定了不含推进器的机器人所受阻力（resistance）的范围（\cref{fig:selfprop}a）：
+\begin{itemize}
+  \item $D_\text{low}=\SI{10.8}{\milli\newton}\,(\U/\SI{0.2}{\metre\per\second})^{1.72}$：裸船体，来自在\SIlist{0.1;0.2}{\metre\per\second}下单独对船体进行的两相CFD；
+  \item $D_\text{mid}=D_\text{low}+\SI{15.2}{\milli\newton}\,(\U/\SI{0.2}{\metre\per\second})^2$：船体加上水下连杆，在\SI{0.2}{\metre\per\second}时约为\SI{26}{\milli\newton}；连杆项相当于$C_DA\approx\SI{7.6}{\square\centi\metre}$，是工程估计值而非测量值；这是最佳估计；
+  \item $D_\text{up}=\SI{77.6}{\milli\newton}\,(\U/\SI{0.2}{\metre\per\second})^2$：静止且折扇桨张开状态下的整机，来自CFD；它计入了桨自身的阻力，而该阻力已包含在$\Tm$中，因此是一个上界。
+\end{itemize}
+推力曲线采用单调三次样条（monotone cubic splines）插值，并在最后一个CFD数据点之外作线性外推。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_selfprop}
+  \caption[自航估计]{自航估计。(a) 四腿推力与阻力范围的对比；圆圈标出$D_\text{mid}$下的巡航速度；阴影：桨的附加质量修正范围。点线：线性外推。在\SI{0.30}{\metre\per\second}以下未对随航速调度的俯仰进行仿真，其曲线采用固定俯仰的数据。(b) $D_\text{mid}$下从静止开始的准稳态加速过程；右侧竖条给出了从$D_\text{up}$到$D_\text{low}$的巡航速度范围。}
+  \label{fig:selfprop}
+\end{figure}
+
+\begin{table}[t]
+  \centering
+  \caption[预测的巡航速度]{$D_\text{mid}$下预测的巡航速度和四腿输入功率，以及从$D_\text{up}$到$D_\text{low}$的范围。桨的数值以附加质量修正的范围形式给出。$^*$：超出CFD数据范围的外推值。$t_{90}$：从静止达到巡航速度的90\,\%所需的时间。}
+  \label{tab:selfprop}
+  \small
+  \begin{tabular}{@{}lccccc@{}}
+    \toprule
+    推进器 & $\U_c$ (\si{\metre\per\second}) & 范围 (\si{\metre\per\second}) & $4\Pm$ (mW) & $4\Pm/\U_c$ (\si{\joule\per\metre}) & $t_{90}$ (s) \\
+    \midrule
+    阻力型，机器人步态 & 0.089--0.095 & 0.082--0.098 & 23.3 & 0.25--0.26 & 0.94--0.99 \\
+    阻力型，V3trap & 0.260--0.269 & 0.223--0.289 & 73--74 & 0.27--0.28 & 0.67--0.69 \\
+    升力型，固定俯仰 & 0.294 & 0.214--0.350$^*$ & 62.7 & 0.21 & 1.46 \\
+    升力型，调度俯仰 & \textbf{0.299} & 0.214--0.422$^*$ & \textbf{42.0} & \textbf{0.14} & 1.57 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{巡航速度。}在最佳估计阻力下，尾鳍推动机器人以\SI{0.30}{\metre\per\second}（即每秒1.3倍船体长度）的速度航行，优化后的桨则为\SIrange{0.26}{0.27}{\metre\per\second}（\cref{tab:selfprop}）。两个工作点均略高于交叉点，处于尾鳍更强的一侧，但距交叉点很近，因此速度差异很小。功率则差异明显：随航速调度俯仰的尾鳍需要\SI{42}{\milli\watt}，比固定俯仰的尾鳍（\SI{63}{\milli\watt}）低33\,\%，比桨（\SI{73}{\milli\watt}）低43\,\%，而桨的速度还更慢。机器人当前步态仅能达到约\SI{0.09}{\metre\per\second}。由于阻力存在不确定性，这些范围较宽，而哪种推进器更快取决于阻力曲线与推力曲线的交点位置。在高阻力$D_\text{up}$下，工作点移至交叉点以下，桨略快（\SIrange{0.22}{0.23}{}对\SI{0.21}{\metre\per\second}）；在低阻力$D_\text{low}$下，工作点进一步移至交叉点以上，尾鳍明显更快（\SIrange{0.35}{0.42}{\metre\per\second}，外推值，对\SIrange{0.28}{0.29}{\metre\per\second}）。
+
+\paragraph{加速。}从静止开始的加速过程按实测质量\SI{0.419}{\kilo\gram}外加10\,\%的附加质量进行积分；质量只影响时间尺度，而不影响巡航速度。桨使机器人加速更快：它在\SI{0.68}{\second}后达到其巡航速度的90\,\%，尾鳍则需\SIrange{1.46}{1.57}{\second}（\cref{fig:selfprop}b）。这反映了桨在低航速下更高的推力，并与“划桨式附肢利于加速、拍动式附肢利于巡航”的观察结果相符\cite{Walker2000}。
+
+\section{首次硬件测试}
+\label{sec:res-hw}
+
+对装配尾鳍的机器人（\cref{sec:plat-hw}）在一个\SI{1}{\metre}长的水池中进行了计时：机器人从静止起步，起步时尾部贴着一端池壁，船头撞到另一端池壁时停止计时，行程为\SI{0.738}{\metre}（水池长度减去船体总长\SI{262}{\milli\metre}）。冲程频率在固件中分别设为\SI{2}{}和\SI{4}{\hertz}，每个设定值各手动计时一次。同样的过程也用\cref{fig:selfprop}b的准定常模型进行了仿真，采用L0在\SI{2}{\hertz}下的推力和实测质量（\cref{tab:hw}）。
+
+\begin{table}[htb]
+  \centering
+  \caption[首次硬件测试]{首次硬件测试：从静止起步游过\SI{0.738}{\metre}所用的时间和平均速度。频率为固件中的设定值。模型：L0在\SI{2}{\hertz}下的推力，配合\cref{sec:res-selfprop}中的三条阻力曲线。}
+  \label{tab:hw}
+  \small
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    & 设定频率 (Hz) & 时间 (s) & 平均速度 (\si{\metre\per\second}) \\
+    \midrule
+    硬件 & 2 & 5.2 & 0.142 \\
+    硬件 & 4 & 2.8 & 0.264 \\
+    模型，$D_\text{low}$ / $D_\text{mid}$ / $D_\text{up}$ & 2 & 2.9 / 3.2 / 3.9 & 0.25 / 0.23 / 0.19 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{推力。}在\SI{2}{\hertz}下，冲程与L0接近，取$D_\text{mid}$至$D_\text{up}$时，硬件所用时间是预测值的1.3至1.6倍（取$D_\text{low}$时为1.8倍，但$D_\text{low}$不适用于硬件）。仅凭阻力无法解释这一差异：若采用CFD推力，则需要在\SI{0.2}{\metre\per\second}时有\SI{205}{\milli\newton}的阻力，为$D_\text{up}$的2.6倍。这相当于$C_DA\approx\SI{103}{\square\centi\metre}$，按船体\SI{24}{\square\centi\metre}的水下迎流面积（frontal area）计，$C_D\approx4$，远高于任何钝体。$D_\text{up}$本身已相当于$C_D\approx1.6$，即使船体以钝端在前运动，也是一个宽松的上界；而$D_\text{low}$对应尖端在前的裸船体，不适用于硬件。在$D_\text{mid}$与$D_\text{up}$之间，若推力取CFD值的27--47\,\%，即大约四分之一到一半，即可再现该测试，相应的\SI{2}{\hertz}稳态速度约为\SIrange{0.16}{0.20}{\metre\per\second}。其中一部分亏损来自冲程本身：分段线性轨迹的峰值沉浮速度比L0低约15\,\%（\cref{sec:plat-hw}），约损失10--20\,\%的推力。其余约两倍的差距有多种可能原因，这次测试无法将它们区分开：被动俯仰（passive pitch），其弹簧刚度未按L0的攻角验证过；尾鳍冲出水面处的通气（ventilation）；反装的船体；以及腿间相互作用。因此，\cref{tab:selfprop}中的自航速度是现有硬件的上限（upper bound）。
+
+\paragraph{频率。}两次测试之比与推力水平无关。若阻力随$\U^2$增长，且在斯特劳哈尔数固定时推力与冲程速度的平方成正比，则从静止起步游过给定距离所需的时间与频率和幅值的乘积成反比。实测时间之比\SI{5.2}{}比\SI{2.8}{\second}，即1.86，接近舵机在\SI{4}{\hertz}下达到完整幅值时应有的2，尽管由固件轨迹估算的舵机峰值转速约为\SI{800}{\degree\per\second}，已接近其空载转速。更精确的结论无法给出：每次计时\SI{0.2}{\second}的误差就会使该比值在1.67至2.08之间变化；而且被动俯仰随频率变化，因为水动力矩随冲程速度的平方增长，而弹簧力矩不变。若按表面值取用，同样的缩放关系给出\SI{4}{\hertz}下约\SIrange{0.3}{0.4}{\metre\per\second}的稳态速度，高于\SI{2}{\hertz}下基于CFD的估计值，但水动力功率约为其六倍。

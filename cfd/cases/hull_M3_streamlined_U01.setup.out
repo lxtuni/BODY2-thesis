@@ -1,0 +1,92 @@
+
+[1;36m==> 检查环境[0m
+[0;32m    OK  /usr/lib/openfoam/openfoam2606[0m
+[0;32m    OK  几何：/mnt/c/Users/L/Desktop/openfoam/robot_real/hull_study/hull_M3_streamlined.stl[0m
+
+[1;36m==> 复制 DTCHull 作为模板[0m
+[0;32m    OK  模板：$FOAM_TUTORIALS/multiphase/interFoam/RAS/DTCHull[0m
+[0;32m    OK  模板结构核对通过（ESI 版 DTCHull）[0m
+
+[1;36m==> 放入几何[0m
+[0;32m    OK  constant/triSurface/hull.stl[0m
+[0;32m    OK  snappyHexMeshDict / surfaceFeatureExtractDict 已指向 hull.stl / hull.eMesh[0m
+[0;32m    OK  Allrun 已重写（流程与 ESI 模板一致，去掉了复制 DTC 几何的步骤）[0m
+[0;32m    OK  refineMesh 逐级加密 5 级[0m
+[0;32m    OK  SNAPLEVEL=1：snappyHexMesh 在表面和特征边再加密 1 级[0m
+Not expanding variables or dictionary directives
+addLayers       false;
+[0;32m    OK  LAYERS=0：不加边界层（验证流程用；正式算阻力请用 LAYERS=1）[0m
+
+[1;36m==> 计算域尺寸（前进 +x，来流 -x，全模型）[0m
+    几何包围盒  x[-0.12800, 0.13800]  y[-0.05779, 0.05779]  z[-0.04485, 0.01550]   L = 0.2660 m
+    计算域      x[-1.2452, 0.5636]  y[-0.8246, 0.8246]  z[-0.7016, 0.1629]
+    竖向分层    -0.7016 | -0.0748 | -0.0118 | -0.010(水线) | -0.0082 | 0.0355 | 0.1629
+    背景网格    21 × 10 × (25+25+4+4+20+10)   COARSE=1
+[0;32m    OK  system/blockMeshDict 已写入[0m
+    c1: box (-0.4480 -0.2578 -0.1449) (0.2580 0.2578 0.1155)
+    c2: box (-0.2880 -0.1578 -0.0949) (0.1980 0.1578 0.0655)
+    c3: box (-0.2180 -0.1178 -0.0748) (0.1780 0.1178 0.0455)
+    c4: box (-0.1780 -0.0928 -0.0649) (0.1630 0.0928 0.0355)
+    c5: box (-0.1580 -0.0778 -0.0568) (0.1530 0.0778 0.0275)
+[0;32m    OK  system/topoSetDict.1 … .5 已写入[0m
+[0;32m    OK  system/setFieldsDict 已写入（水线 z = -0.010）[0m
+Not expanding variables or dictionary directives
+value           -0.01;
+[0;32m    OK  constant/hRef = -0.010（p_rgh 的参考高度，必须和水线一致）[0m
+[0;32m    OK  snappyHexMeshDict locationInMesh = (0.3428 -0.0285 -0.0414)（物体前方水下）[0m
+
+[1;36m==> 来流速度、湍流初值、力的参考点、输出控制[0m
+[0;32m    OK  来流 |U| = 0.1 m/s（改动：0.orig/U ）[0m
+Not expanding variables or dictionary directives
+internalField   uniform 6e-06;
+Not expanding variables or dictionary directives
+internalField   uniform 0.24;
+[0;32m    OK  k = 6.000e-06 m²/s²，omega = 0.24 1/s[0m
+[0;32m    OK  forces CofR = (0 0 -0.0147)（只影响力矩）[0m
+Not expanding variables or dictionary directives
+endTime         1500;
+Not expanding variables or dictionary directives
+writeControl    timeStep;
+Not expanding variables or dictionary directives
+writeInterval   50;
+[0;32m    OK  LTS：endTime=1500 步，每 50 步写一帧 → ~30 帧[0m
+Not expanding variables or dictionary directives
+purgeWrite      0;
+Not expanding variables or dictionary directives
+writeFormat     binary;
+Not expanding variables or dictionary directives
+writeCompression on;
+[0;32m    OK  并行分解 8 块（scotch）[0m
+
+[1;36m==> 立即自检（几何 + 背景网格，几秒钟）[0m
+    Triangles    : 21308 in 1 region(s)
+    Bounding Box : (-0.128 -0.0577874 -0.0448506) (0.138 0.0577874 0.0155)
+    Surface has no illegal triangles.
+    Surface is closed. All edges connected to two faces.
+    Number of unconnected parts : 1
+[0;32m    OK  blockMesh 通过：背景网格 18480 个单元[0m
+        cells:            18480
+    Mesh OK.
+
+[0;32m======================================================
+  robot_simple 配置完成
+======================================================[0m
+算例：/home/lxtuni/run/hull_M3_streamlined_U01
+设定：U = 0.1 m/s，水线 z = -0.010 m，endTime = 1500（LTS），8 核
+      COARSE=1 LAYERS=0 PARMESH=0 FULL=1 NLEVELS=5 SNAPLEVEL=1
+
+跑：
+    cd /home/lxtuni/run/hull_M3_streamlined_U01
+    ./Allrun
+    tail -f log.interFoam        # 另开终端
+
+建网格阶段（surfaceFeatureExtract → blockMesh → topoSet/refineMesh ×6 → snappyHexMesh）
+串行加边界层约 10–20 分钟；PARMESH=1 + LAYERS=0 约 2–4 分钟。看到 log.interFoam 出现就是在求解了。
+
+下次想快：
+    PARMESH=1 LAYERS=0 bash /mnt/c/Users/L/Desktop/openfoam/robot_simple/setup_robot.sh
+
+跑完：
+    python3 /mnt/c/Users/L/Desktop/openfoam/resistance.py /home/lxtuni/run/hull_M3_streamlined_U01        # 全模型：不要加 --full-ship
+
+如果哪一步报错，把对应的 log.xxx 最后 30 行发我。

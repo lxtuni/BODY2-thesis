@@ -1,0 +1,17 @@
+== 机器：April  物理核 8（逻辑 16）  内存 31 GB  磁盘可用 835G  Ubuntu 26.04 LTS
+== OpenFOAM：v2606  (/usr/lib/openfoam/openfoam2606)  overPimpleDyMFoam ✓
+== python3 3.14.4 numpy 2.3.5
+== 硬盘可用 835 GB（每个算例约 1–2 GB）
+== 已启动 run_fluke（PID 10435，CPU 0-15，8 进程）ORDER=D0U015 L0c；日志 ~/run/run_fluke.out 前 20 行：
+
+===== [09-27 03:41:22] 开始：D0U015 L0c   8 核（机器 8 物理核，OpenFOAM v2606） =====
+
+===== [09-27 03:41:22] 生成 leg_cur_U015_open =====
+    算例：/home/lxtuni/run/leg_cur_U015_open   脚蹼 open   U = 0.15 m/s   3.0 个周期 (T = 1.25 s) → endTime 3.750 s
+    部件网格盒 50×39×15 = 29250 单元（2.50 mm，表面再细化 1 级）
+    背景域 x[-0.383,0.387] y[-0.284,0.284] z[-0.376,0.187]  blockMesh 48×36×35，加密到 4.0 mm
+    桨尖最大速度 0.40 m/s → 初始 Δt = 0.0012 s，maxCo 0.8；每周期写 4 帧
+    洞切搜索盒 (-0.0464069 -0.0783731 -0.14381)–(0.154666 0.0783731 0.0967374)，体素 162×126×194（≈1.2 mm）
+
+===== [09-27 03:41:23] 跑 /home/lxtuni/run/leg_cur_U015_open（网格 + 求解；看进度 bash progress.sh /home/lxtuni/run/leg_cur_U015_open） =====
+== 退出 ssh 不影响计算。看进度见本文件开头的命令。

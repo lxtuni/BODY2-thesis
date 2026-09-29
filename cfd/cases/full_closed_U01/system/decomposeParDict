@@ -1,0 +1,13 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      decomposeParDict;
+}
+
+// overset 并行用 hierarchical（scotch 在 overset 上触发过 "Attempt to cast type patch to type lduInterface"）
+numberOfSubdomains 8;
+method          hierarchical;
+hierarchicalCoeffs { n (2 2 2); order xyz; }

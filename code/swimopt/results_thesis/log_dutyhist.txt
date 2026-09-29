@@ -1,0 +1,8 @@
+g_diag 0.5401140206849384 [(np.float64(0.25), 0.1156), (np.float64(0.3), 0.1626), (np.float64(0.35), 0.2214), (np.float64(0.4), 0.2217), (np.float64(0.45), 0.2218), (np.float64(0.5), 0.2237), (np.float64(0.55), 0.2192), (np.float64(0.6), 0.2233), (np.float64(0.65), 0.2164), (np.float64(0.7), 0.1516), (np.float64(0.75), 0.1022)]
+g2_fb 0.5555051593627396 [(np.float64(0.25), 0.0442), (np.float64(0.3), 0.0771), (np.float64(0.35), 0.0814), (np.float64(0.4), 0.1061), (np.float64(0.45), 0.0), (np.float64(0.5), 0.0), (np.float64(0.55), 0.2687), (np.float64(0.6), 0.2683), (np.float64(0.65), 0.0), (np.float64(0.7), 0.0), (np.float64(0.75), 0.0)]
+/sessions/zealous-happy-mayer/mnt/SA/swimopt/results_thesis/misc.py:115: RuntimeWarning: Mean of empty slice.
+  "stall frac", np.round((A[half, 33:37] < 1).mean(), 3))
+/usr/local/lib/python3.10/dist-packages/numpy/_core/_methods.py:145: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+ref mean Fx per fluke (mN): [5.48 3.18 3.16 5.45] alpha range -83.7 81.0 stall frac nan
+best mean Fx per fluke (mN): [11.05 10.92 10.86 10.95] alpha range -176.8 179.3 stall frac nan

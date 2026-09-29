@@ -1,0 +1,20 @@
+#!/bin/sh
+cd "${0%/*}" || exit 1
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
+( cd paddleMesh || exit 1
+  runApplication blockMesh
+  runApplication surfaceFeatureExtract
+  runApplication snappyHexMesh -overwrite
+  runApplication checkMesh )
+runApplication blockMesh
+runApplication snappyHexMesh -overwrite
+runApplication mergeMeshes . paddleMesh -overwrite
+runApplication topoSet
+restore0Dir
+runApplication setFields
+runApplication -s merged checkMesh
+runApplication decomposePar
+[ -n "$MESH_ONLY" ] && exit 0            # run_fluke.sh：先只做网格，求解由它带洞切检查启动
+runParallel $(getApplication)
+runParallel -s reconstruct redistributePar -reconstruct
+touch case.foam

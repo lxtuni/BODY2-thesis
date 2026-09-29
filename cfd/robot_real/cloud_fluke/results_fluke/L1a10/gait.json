@@ -1,0 +1,49 @@
+{
+ "kind": "fluke",
+ "ramp": 0.5,
+ "U": 0.2229,
+ "cycles": 3.0,
+ "T": 0.5,
+ "AREA": 0.00115,
+ "origin": [
+  0.06345,
+  0.004
+ ],
+ "H0": [
+  0.021102100000000006,
+  0.0,
+  -0.0164089
+ ],
+ "FIN0": 6.873428,
+ "REF": 0.0,
+ "motion": "/mnt/c/Users/L/Desktop/openfoam/robot_real/cloud_fluke/fluke/motion_a10.csv",
+ "motion_meta": {
+  "mode": "alpha",
+  "alpha_deg": 10.0,
+  "U": 0.2229,
+  "U_law": 0.2229,
+  "amp": 1.0,
+  "fan_center_deg": 8.294260887621636,
+  "smooth_harmonics": 6,
+  "freq": 2.0,
+  "T": 0.5,
+  "n": 400,
+  "hinge_travel_z_mm": 39.18222144290111,
+  "hinge_travel_x_mm": 4.311947349043159,
+  "fin_range_deg": [
+   -46.6856440566679,
+   42.1177565536303
+  ],
+  "fin_rate_max_deg_s": 1059.6589128861106,
+  "hinge_speed_max": 0.26983990519944057,
+  "alpha_act_p75": 13.124729382705986,
+  "alpha_act_max": 30.351247355840798
+ },
+ "stl": "/mnt/c/Users/L/Desktop/openfoam/robot_real/cloud_fluke/fluke/A2_blade_cfd.stl",
+ "turb": "laminar",
+ "bg": 0.0025,
+ "comp": 0.0012,
+ "vox": 0.0006987122170570942,
+ "dt0": 0.00033,
+ "vmax": 0.7295572264256069
+}

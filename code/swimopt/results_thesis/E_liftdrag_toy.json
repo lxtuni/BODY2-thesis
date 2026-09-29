@@ -1,0 +1,65 @@
+{
+ "demo": {
+  "drag_thrust_N": -0.16084596981092766,
+  "lift_thrust_N": 0.22605109171624072,
+  "lift_share": 3.466768945612869,
+  "alpha_thrust_weighted_deg": 72.27231818384719,
+  "path_transverse_ratio": 0.3812397318544801
+ },
+ "toy_s1": {
+  "drag_thrust_N": 0.1801664662934896,
+  "lift_thrust_N": -0.04889872471108437,
+  "lift_share": -0.37251135824857234,
+  "alpha_thrust_weighted_deg": 66.50216752724576,
+  "path_transverse_ratio": 0.5721221812549813
+ },
+ "toy_s2": {
+  "drag_thrust_N": -0.0853856317827303,
+  "lift_thrust_N": 0.016522612391422494,
+  "lift_share": -0.2399344748091027,
+  "alpha_thrust_weighted_deg": 67.76213794300398,
+  "path_transverse_ratio": 0.5977166538594959
+ },
+ "g_diag": {
+  "drag_thrust_N": -0.42625343194599413,
+  "lift_thrust_N": 0.9253591476087122,
+  "lift_share": 1.8540343630006524,
+  "alpha_thrust_weighted_deg": 70.08562970774712,
+  "path_transverse_ratio": 0.38083613773664393
+ },
+ "g2_diag": {
+  "drag_thrust_N": -0.321640519748041,
+  "lift_thrust_N": 0.8568061808135979,
+  "lift_share": 1.6010111319691727,
+  "alpha_thrust_weighted_deg": 69.18052992426162,
+  "path_transverse_ratio": 0.4700866138297859
+ },
+ "g_fb": {
+  "drag_thrust_N": -0.847952531983275,
+  "lift_thrust_N": 1.1697099200372814,
+  "lift_share": 3.635378591030046,
+  "alpha_thrust_weighted_deg": 65.2284497871344,
+  "path_transverse_ratio": 0.626109780728566
+ },
+ "g2_fb": {
+  "drag_thrust_N": -1.0692761700500664,
+  "lift_thrust_N": 1.7673362334219596,
+  "lift_share": 2.5317824728219795,
+  "alpha_thrust_weighted_deg": 57.77198743335514,
+  "path_transverse_ratio": 0.5205987979870984
+ },
+ "g_inphase": {
+  "drag_thrust_N": -0.19885135191909425,
+  "lift_thrust_N": 0.49542613269131874,
+  "lift_share": 1.6704931262237572,
+  "alpha_thrust_weighted_deg": 64.5908661421608,
+  "path_transverse_ratio": 0.4384632674207065
+ },
+ "g2_inphase": {
+  "drag_thrust_N": -0.1573423509400796,
+  "lift_thrust_N": 0.4699272131870361,
+  "lift_share": 1.5033588312916184,
+  "alpha_thrust_weighted_deg": 71.08383503322457,
+  "path_transverse_ratio": 0.45192653054544774
+ }
+}

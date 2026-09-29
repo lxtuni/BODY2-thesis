@@ -1,0 +1,141 @@
+\chapter{验证与确认}
+\label{ch:verification}
+
+单腿CFD提供了\cref{ch:results}中的全部定量结论。本章从三个方面对其进行检验：与拍动翼（flapping foil）实验进行对比，即确认（validation）；
+在较粗的网格上重复计算，检验空间离散（spatial discretization）；以及逐周期比较，检验时间收敛性（temporal convergence）。
+本章最后讨论由此对阻力型算例（这些算例未纳入网格研究）产生的影响，并以CFD为基准对实时求解器（real-time solver）Flare Live进行检验。
+
+\section{基于沉浮--俯仰翼型的确认}
+\label{sec:ver-v1}
+
+\paragraph{算例。}Schouveiler等人\cite{Schouveiler2005}在拖曳水池（towing tank）中测量了NACA\,0012翼型在沉浮（heave）与俯仰（pitch）复合运动下的推力和效率，并给出了误差棒。
+本文采用与尾鳍算例相同的求解器、相同的重叠网格方法以及相当的分辨率，复现了其中一个工况点：
+弦长（chord）$c=\SI{0.1}{\metre}$，展长（span）\SI{0.6}{\metre}且翼尖自由，沉浮幅值$h_0/c=0.75$，俯仰轴位于$c/3$处，
+俯仰相位超前沉浮\SI{90}{\degree}，$\mathit{St}=0.25$，最大攻角\SI{15}{\degree}，$\U=\SI{0.4}{\metre\per\second}$（$f=\SI{0.667}{\hertz}$），$\mathit{Re}=4\times10^4$。
+部件网格的单元尺寸为\SI{2.5}{\milli\metre}（$c/40$），背景网格为\SI{5}{\milli\metre}。共仿真三个周期，未设启动斜坡。
+
+\paragraph{结果。}流向力在第一个周期之后趋于稳定（\cref{fig:verification}a）；第2与第3周期相差不到0.1\,\%。
+仿真运动达到$\alpha_{75}=\SI{14.6}{\degree}$，与给定的\SI{15}{\degree}一致，平均侧向力为推力的1.3\,\%。
+平均推力为\SI{1415}{\milli\newton}，输入功率为\SI{946}{\milli\watt}。\Cref{tab:v1}将各系数与实验结果进行了比较。
+
+\begin{table}[t]
+  \centering
+  \caption[与Schouveiler等人实验的确认对比]{与Schouveiler等人\cite{Schouveiler2005}实验的确认对比（NACA\,0012，$\mathit{St}=0.25$，$\alpha_\text{max}=\SI{15}{\degree}$）。}
+  \label{tab:v1}
+  \small
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    & CFD（本文） & 实验 & 偏差 \\
+    \midrule
+    推力系数$C_T$ & 0.295 & $0.32\pm0.01$ & $-8$\,\% \\
+    弗劳德效率$\etaF$ & 0.60 & $0.73\pm0.04$ & $-18$\,\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+推力系数与测量值的偏差在8\,\%以内，处于拍动翼CFD通常报告的$\pm$10--15\,\%范围之内，并被作为主要判据。
+效率偏低18\,\%。有三方面原因的作用方向与观测到的偏差一致。
+（i）仿真翼型具有自由翼尖，展弦比（aspect ratio）为6，而实验接近二维；
+按有限翼展估计$\mathit{AR}/(\mathit{AR}+2)=0.75$，翼尖损失为10--20\,\%，由于翼尖涡（tip vortex）消耗功率，该损失对效率的影响大于对推力的影响。
+（ii）在$\mathit{Re}=4\times10^4$时边界层处于转捩状态；层流模型会使流动更早分离，并高估功率。
+（iii）该网格（$c/40$）比尾鳍算例的网格（$c/50$）粗。
+由于本文比较的是采用相同求解器和相同设置进行仿真的推进器，此类系统偏差在一阶近似下对两种推进器的影响方向相同；翼尖损失和层流分离主要作用于升力型的尾鳍，因此尾鳍的优势若有偏差，也只会被低估。
+效率的绝对值应视为保守估计。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_verification}
+  \caption[验证与确认]{单腿CFD的验证（verification）与确认（validation）。(a)确认算例：流向力系数及各周期平均值（虚线）。
+    (b)推力系数和效率与Schouveiler等人\cite{Schouveiler2005}实验结果的对比。
+    (c)尾鳍L0在细网格和粗网格上于共同时间窗口内的结果。
+    (d)所有尾鳍算例及确认算例最后一个周期与倒数第二个周期之间平均推力的变化。}
+  \label{fig:verification}
+\end{figure}
+
+\section{网格敏感性}
+\label{sec:ver-mesh}
+
+参考尾鳍算例L0在一套所有网格尺寸均乘以$r=1.33$的网格上重新计算（部件网格\SI{1.6}{\milli\metre}，背景网格\SI{3.3}{\milli\metre}）。
+粗网格计算在$t=\SI{0.91}{\second}$时停止，因此两次计算在共同窗口$t=\SIrange{0.41}{0.91}{\second}$内进行比较。
+两者的力时程在形状上几乎相同（\cref{fig:verification}c）。
+粗网格得到的推力低7.3\,\%（\SI{19.75}{}对比\SI{21.30}{\milli\newton}），功率低3.9\,\%，效率低3.4\,\%。
+
+仅有两套网格时无法计算收敛阶。假设为二阶收敛（$p=2$），并取安全系数$F_s=1.25$ \cite{Roache1994}，
+则细网格上推力的网格收敛指数（grid convergence index，GCI）为
+\begin{equation}
+  \mathrm{GCI} = F_s\,\frac{|\varepsilon|}{r^p-1} = 1.25\times\frac{0.073}{1.33^2-1} \approx 12\,\%.
+  \label{eq:gci}
+\end{equation}
+因此，尾鳍推力的离散不确定度取约$\pm12$\,\%，功率和效率的离散不确定度取约$\pm6$\,\%。
+由于粗网格给出的推力较低，细网格的结果更可能略微偏低而非偏高。
+
+\section{时间收敛性}
+\label{sec:ver-time}
+
+对于每个尾鳍算例，最后一个周期的平均推力与倒数第二个周期相差至多0.61\,\%（$\U=0$时的L2），
+其余所有算例至多相差0.31\,\%（\cref{fig:verification}d）。确认算例相差不到0.1\,\%。
+因此，在半周期启动之后对最后两个周期取平均已经足够；周期性状态在第一个完整周期内即已达到。
+折扇桨算例在其第三个周期内进行评估。对于\SI{0.08}{\metre\per\second}下的机器人步态，第2和第3周期分别给出\SI{7.3}{}和\SI{5.2}{\milli\newton}；
+该算例推力较小，其不确定度相应较大。
+
+\section{对阻力型算例的影响}
+\label{sec:ver-drag}
+
+未对折扇桨单独进行网格研究，且其网格比尾鳍网格粗（\cref{tab:meshes}）。以下三点论据可界定其对结论的影响。
+\begin{enumerate}
+  \item \emph{流动物理。}桨是一块以板面正对运动方向运动、具有锐利边缘的薄板。其分离线固定在边缘上，
+        而尾鳍的推力依赖于前缘涡（leading-edge vortex）和前缘吸力，二者对分辨率更为敏感。
+        尾鳍的$\pm12$\,\%对桨而言是一个合理的上界。
+  \item \emph{低速。}在\SI{0.15}{\metre\per\second}及以下，优化后的桨所产生的推力是尾鳍的1.6--2.0倍。
+        $\pm12$\,\%的误差不会改变这一排序。
+  \item \emph{交叉点。}在交叉点（crossover）附近，推力以约\SI{-110}{}（尾鳍）和\SI{-340}{\milli\newton\second\per\metre}（桨）的斜率下降。
+        桨推力$\pm12$\,\%的误差（约\SI{2.5}{\milli\newton}）使交叉点移动约\SI{0.01}{\metre\per\second}；
+        两侧方向相反的$\pm12$\,\%误差使其移动约\SI{0.02}{\metre\per\second}。
+        附加质量修正的不确定度（见\cref{sec:cfd-composite}）带来的额外影响小于\SI{0.01}{\metre\per\second}。
+\end{enumerate}
+尽管如此，较粗的桨网格仍是一项局限性（limitation），列于\cref{sec:disc-limits}。
+
+\section{实时求解器的交叉检验}
+\label{sec:ver-flare}
+\label{sec:res-flare}
+
+Flare Live（\cref{sec:cfd-flare}）能够实时仿真整机，但所用格子（lattice）的间距为\SIrange{2}{3}{\milli\metre}。在使用其任何结果之前，先以CFD为基准检验其尾鳍力。在拖曳仿真（tow run）中，尾鳍执行与CFD完全相同的L0运动。其攻角一致（\SI{0.223}{\metre\per\second}时$\alpha_{75}=\SI{19.7}{\degree}$，对比\SI{19.9}{\degree}），但推力并不一致（\cref{fig:flare-fin}）。在\SI{3}{\milli\metre}格子上，Flare Live在\SIlist{0;0.1;0.223}{\metre\per\second}下分别给出\SI{20.0}{}、\SI{8.5}{}和\SI{-0.1}{\milli\newton}，而CFD中为\SI{45.5}{}、约\SI{34}{}（插值）和\SI{21.4}{\milli\newton}（\cref{tab:app-flare}）：分别为其44\,\%、25\,\%和几乎为零。在全部三个航速下，差额均约为\SIrange{21}{26}{\milli\newton}，与升力型推力本身处于同一量级。
+
+保持在零位、不拍动的尾鳍在\SI{0.223}{\metre\per\second}时的阻力为\SI{12.6}{\milli\newton}。在其\SI{-25}{\degree}的入射角下，这相当于基于平面面积约0.45的阻力系数，对失速平板而言属于正常值。拍动相对于不拍动的推力增量为\SI{12.5}{\milli\newton}，仍远低于CFD推力。
+
+在\SI{2}{\milli\metre}格子上，\SI{0.223}{\metre\per\second}时的尾鳍推力升至\SI{4.1}{\milli\newton}（为CFD的19\,\%），不拍动时的阻力几乎不变（\SI{11.6}{\milli\newton}）。该结果尚未收敛，基于两套格子的理查森外推（Richardson extrapolation）也仅给出约\SIrange{8}{12}{\milli\newton}，这表明这两套格子远未进入渐近区间。原因在于分辨率：\SI{34}{\milli\metre}的弦长在\SI{3}{\milli\metre}格子上仅跨越11个单元，在\SI{2}{\milli\metre}格子上为17个，而在$\mathit{Re}\approx7600$时边界层厚度约为\SI{0.4}{\milli\metre}。驱动升力型推力的吸力作用于前缘，而前缘未能被解析。要解析前缘，需要\SI{1}{\milli\metre}或更细的格子，计算代价将成倍增加，这违背了实时求解器的初衷。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_flare_fin}
+  \caption[Flare Live与CFD的对比]{对于相同的尾鳍和运动，Flare Live与CFD中的尾鳍力。(a) 拍动与不拍动时流向力随拖曳速度的变化。(b) Flare推力与CFD推力之比。}
+  \label{fig:flare-fin}
+\end{figure}
+
+因此，Flare Live仅用于提供尾鳍的参考运动以及自由游动机器人的定性趋势（汇总于\cref{app:flare-trends}）；所有定量结论均以CFD为依据。
+
+\section{小结}
+\label{sec:ver-summary}
+
+\Cref{tab:uncertainty}汇总了本章的各项检验。
+
+\begin{table}[H]
+  \centering
+  \caption[不确定度汇总]{验证与确认汇总。}
+  \label{tab:uncertainty}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    检验项 & 结果 \\
+    \midrule
+    确认（翼型实验） & $C_T$ $-8$\,\%，$\etaF$ $-18$\,\%；偏差主要来自自由翼尖和层流模型 \\
+    网格敏感性（尾鳍） & 在粗化$\times1.33$的网格上$\Tm$ $-7.3$\,\%，GCI $\approx\pm12$\,\% \\
+    时间收敛性 & 尾鳍：最后两个周期相差$\le0.61$\,\%；机器人步态（\SI{0.08}{\metre\per\second}）：7.3对\SI{5.2}{\milli\newton} \\
+    阻力型网格 & 未研究；排序不敏感，交叉点变化在$\pm\SI{0.02}{\metre\per\second}$以内 \\
+    实时求解器（Flare Live） & 在2--3\,mm格子上尾鳍推力为CFD的0--44\,\%；仅用于趋势分析 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+单腿CFD能够很好地再现拍动翼的推力，但低估了其效率。其数值不确定度以空间离散为主，推力的不确定度约为$\pm12$\,\%。
+因此，在\cref{ch:results}中，推进器之间小于约15\,\%的差异不被视为显著。

@@ -1,0 +1,90 @@
+\chapter{机器人平台与推进器}
+\label{ch:platform}
+
+本章介绍四足机器人BODY2、本文所比较的两种推进器（propulsor）以及驱动它们的腿部运动。此处定义的运动是\cref{ch:cfd,ch:results}中CFD仿真的输入。
+
+\section{四足机器人BODY2}
+\label{sec:plat-robot}
+
+BODY2是本教研室研制的一台小型两栖四足机器人。其密封的平底船体（hull）内装有电子设备和八个舵机（servo），并为机器人提供浮力（见\cref{fig:robot}）。在设计水线（waterline）处，船体长\SI{232}{\milli\metre}、宽\SI{99}{\milli\metre}，吃水（draft）为\SI{25}{\milli\metre}，排水量（displacement）约为\SI{385}{\gram}。整机实测质量为\SI{418.8}{\gram}，因此比设计水线深\SIrange{1}{2}{\milli\metre}，与硬件上观察到的水线一致。机器人在水面游动：船体漂浮在水面上，腿部向下伸入水中。
+
+每条腿都是一个具有两个自由度的平面连杆（linkage）机构，在平行于船体对称面的竖直平面内运动。每条腿由两个PTK\,7465W舵机驱动，在\SIrange{6.0}{8.4}{\volt}电压下，其堵转力矩（stall torque）为\SIrange{0.44}{0.57}{\newton\metre}，空载转速（no-load speed）为\SIrange{650}{860}{\degree\per\second}。第一个舵机驱动曲柄（crank）绕髋（hip）轴$O_2$转动（角度$\psi$）；第二个舵机设定承载足部的平行四边形（parallelogram）机构的构型（角度$\phi$）。平行四边形的末端点$E$上安装推进器。行走时，足部为下文所述的折扇桨（fan paddle）。游动时，可在相同的安装点上为腿装配该桨或尾鳍（fluke），从而在同一条腿上比较两种推进原理。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_robot}
+  \caption[装配折扇桨与装配尾鳍的BODY2]{BODY2的两种游动构型，由CAD模型渲染而成。(a)阻力型构型，装有用于行走和划水的折扇桨（绿色）。(b)升力型构型，每条腿的直足杆上装有一个尾鳍（蓝色）。}
+  \label{fig:robot}
+\end{figure}
+
+\section{推进器}
+\label{sec:plat-propulsors}
+
+\Cref{fig:propulsors}和\cref{tab:propulsors}对两种推进器进行了汇总。
+
+\paragraph{阻力型：折扇桨。}足部是一个位于\SI{50}{\milli\metre}长杆末端、半径为\SI{42}{\milli\metre}的\SI{120}{\degree}扇面；\emph{扇面}（fan）仅指可折叠的叶片本身，\emph{桨}（paddle）则指叶片连同其杆。扇面张开时面积为\SI{18.5}{\square\centi\metre}（含杆为\SI{20.5}{\square\centi\metre}）。回程（recovery stroke）时由一根拉索将其折叠。在当前硬件中，折叠后的扇面宽度仍有\SI{30}{\milli\metre}（\SI{12.5}{\square\centi\metre}，为张开面积的68\,\%），因而空间不对称性较弱。\cref{sec:res-drag}中的优化冲程假设收拢宽度（folded width）为\SI{12}{\milli\metre}（\SI{5.9}{\square\centi\metre}）。扇面始终垂直于冲程方向；其开扇与合扇被视为两种刚性形状之间的瞬时切换（见\cref{sec:cfd-composite}）。
+
+\paragraph{升力型：尾鳍。}尾鳍（设计方案“A2”）是一个小型后掠翼，展长（span）为\SI{60}{\milli\metre}，根弦长（root chord）为\SI{34}{\milli\metre}，平面面积（planform area）为\SI{11.2}{\square\centi\metre}，展弦比（aspect ratio）约为3.2。其截面为类似NACA\,0021的厚对称翼型。尾鳍通过靠近其前缘的销轴（pin）安装在直足杆的下端，从而可以绕展向轴俯仰（pitch）。在硬件上，俯仰是被动的，俯仰角由水动力矩与一片板簧（leaf spring）及两个限位（end stop）的约束共同决定。在本文的仿真中，俯仰角$\theta(t)$是给定的；被动尾鳍能在多大程度上跟随给定的俯仰规律，本文不作研究。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_propulsors}
+  \caption[推进器几何形状]{CFD中使用的推进器几何形状，按比例绘制。(a)张开的折扇桨。(b)当前硬件的折叠扇面，宽\SI{30}{\milli\metre}。(c)优化冲程所假设的宽\SI{12}{\milli\metre}的折叠扇面。(d)尾鳍A2的俯视图及其销轴轴线。}
+  \label{fig:propulsors}
+\end{figure}
+
+\begin{table}[t]
+  \centering
+  \caption[推进器参数]{推进器参数。面积为不含连杆的推进器平面面积。}
+  \label{tab:propulsors}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    & 折扇桨（阻力型） & 尾鳍A2（升力型） \\
+    \midrule
+    形状 & \SI{120}{\degree}扇面，$r=\SI{42}{\milli\metre}$，装于\SI{50}{\milli\metre}杆上 & 后掠翼，类似NACA\,0021 \\
+    面积 & 张开时\SI{18.5}{\square\centi\metre}；折叠时\SI{12.5}{}或\SI{5.9}{\square\centi\metre}（宽30或12\,mm） & \SI{11.2}{\square\centi\metre} \\
+    尺寸 & 扇面半径\SI{42}{\milli\metre} & 弦长\SI{34}{\milli\metre}，展长\SI{60}{\milli\metre} \\
+    原理 & 阻力，折叠回程 & 升力，绕销轴俯仰 \\
+    自由度 & $\psi,\phi$ + 开扇/合扇 & $\psi,\phi$ + 俯仰$\theta$ \\
+    频率 & \SI{0.8}{\hertz}（机器人步态），\SI{1.39}{\hertz}（V3trap） & \SI{2}{\hertz} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{腿部运动}
+\label{sec:plat-motions}
+
+\Cref{fig:kinematics}给出了所研究的各种运动。
+
+\paragraph{机器人步态。}机器人目前游动时采用的步态（gait）取自机器人的视频：周期为\SI{1.25}{\second}，$\mathrm{DUTY}=0.5$，髋关节做\SI{60}{\degree}的正弦摆动，回程时扇面折叠至\SI{30}{\milli\metre}。该步态原本是为行走而设计的，在此作为基准。
+
+\paragraph{优化阻力型冲程（V3trap）。}\cref{sec:res-drag}中推导出的冲程周期为\SI{0.72}{\second}，$\mathrm{DUTY}=0.382$。髋关节以竖直方向为中心摆动\SI{50}{\degree}（\SIrange{120}{70}{\degree}），使桨几乎沿直线向后运动，并始终垂直于其运动路径。髋关节角速度遵循梯形规律，斜坡段约为\SI{45}{\milli\second}。回程时，平行四边形机构将桨向上卷收，扇面折叠至\SI{12}{\milli\metre}。扇面在$\tau_c=0.33$（即划水冲程减速段的起点）合扇，在$\tau_o=0$（即回程结束时的换向点）开扇（见\cref{fig:kinematics}a）。
+
+\paragraph{尾鳍运动。}尾鳍腿保持髋关节固定，使足杆绕膝（knee）关节摆动，从而使尾鳍的销轴沿一段平缓的圆弧上下运动：摆角为$\pm\SI{24.9}{\degree}$，频率为\SI{2}{\hertz}，竖直行程为\SI{39.2}{\milli\metre}，峰值沉浮（heave）速度约为\SI{0.28}{\metre\per\second}（见\cref{fig:kinematics}b）。参考运动称为L0，取自整机Flare Live模型（见\cref{sec:cfd-flare}）：在\SI{0.223}{\metre\per\second}的航速下，控制尾鳍俯仰角以保持目标攻角（angle of attack），同时记录一条腿的关节角和尾鳍俯仰角，再对所记录的各周期进行相位平均。由此得到该航速下$|\alpha|$的第75百分位数为\SI{19.9}{\degree}。由L0派生出三个运动族：
+\begin{itemize}
+  \item \emph{L2，固定俯仰规律：}在\SIlist{0;0.08;0.15;0.30}{\metre\per\second}下保持L0运动不变，这与螺旋桨在固定转速、变进速条件下进行试验的做法相同。由于$\gamma$随$\U$变化（见\cref{eq:gammamax}），攻角在低速时较大，在高速时较小。
+  \item \emph{L1，攻角规律：}根据沉浮速度计算俯仰规律，以保持目标$\alpha$：在\SI{0.223}{\metre\per\second}下为\SI{10}{\degree}或\SI{28}{\degree}，在\SI{0.40}{\metre\per\second}下为\SI{20}{\degree}。这些算例所用的铰链（hinge）轨迹与L0略有不同，因此并非严格意义上的攻角扫描。
+  \item \emph{L3，随航速调度的俯仰（speed-scheduled pitch）：}采用L0的铰链轨迹和俯仰规律\eqref{eq:l3}，$\theta_0=\gamma_\text{max}/2$，航速为\SIlist{0.30;0.40}{\metre\per\second}（$\theta_0=\SI{21.6}{\degree}$和\SI{17.6}{\degree}）。
+\end{itemize}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_kinematics}
+  \caption[腿部运动]{船体坐标系中的腿部运动。(a)优化阻力型冲程V3trap：每个周期25个时刻的桨位置，包括张开（粗线）和合拢（细线）状态，以及连杆末端点$E$的轨迹。(b)尾鳍运动L0：一个周期内下行冲程和上行冲程的弦线位置，以及铰链轨迹。(c)关节时间历程：V3trap和机器人步态的髋关节角（相对于各自均值），以及L0的尾鳍俯仰角和铰链沉浮位移（点线，右轴）。}
+  \label{fig:kinematics}
+\end{figure}
+
+这一设置本身决定了两种推进器之间存在两点差异，全文始终对此予以考虑。第一，两种推进器的面积（\SI{18.5}{}对\SI{11.2}{\square\centi\metre}）和频率均不同，因此本文同时报告单腿推力、单位面积推力和单位功率推力。第二，阻力型冲程经过了多轮优化，而L0是取自另一模型的运动，并未针对推力进行优化；L3是对尾鳍运动唯一的系统性改进。静止时，两种推进器每条腿所需的水动力输入功率（hydrodynamic input power）相近，为\SIrange{18}{22}{\milli\watt}，因此两者是在相近的功率预算下进行比较的。
+
+\section{硬件样机}
+\label{sec:plat-hw}
+
+升力型构型已制成硬件（见\cref{fig:hardware}）。四条腿均装有打印制作的尾鳍，尾鳍安装在带板簧的被动销轴上。固件以每周期七个控制点驱动每条腿：大腿保持固定，足杆绕水平方向摆动$\pm\SI{25}{\degree}$，各腿按对角小跑（trot）协调。在\SI{2}{\hertz}下，这一运动与L0接近：销轴的竖直行程为\SI{38.0}{\milli\metre}（L0：\SI{39.2}{\milli\metre}），平均沉浮速度约为\SI{0.15}{\metre\per\second}（L0：\SI{0.157}{\metre\per\second}），但由于控制点之间以直线段连接，其峰值沉浮速度约低15\,\%。与仿真不同，硬件上的船体是反装的，因此机器人以钝端在前游动。在水中，装配尾鳍的BODY2明显比装配折扇桨、以当前步态游动时更快。\cref{sec:res-hw}将首次计时测试与自航估计进行比较。优化后的桨未作测试，因为它需要可控的折叠和梯形速度规律，而现有硬件不具备这些条件。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.78\textwidth]{fig_hardware.jpg}
+  \caption[装配尾鳍的BODY2硬件]{BODY2的硬件样机，打印制作的尾鳍脚安装在腿部连杆上；图中另有两只尾鳍脚放在桌面上。每条腿由两个PTK\,7465W舵机驱动。}
+  \label{fig:hardware}
+\end{figure}

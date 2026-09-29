@@ -1,0 +1,57 @@
+  改了 system/controlDict
+  改了 system/fvSchemes
+  当前：maxCo 0.8  maxAlphaCo 1.0  limitU 0.0  overset trackingInverseDistance
+  旧 log → log.overPimpleDyMFoam.part1
+  从 t = 1.08 续跑，8 核（进度：bash progress.sh /home/lxtuni/run/leg_V3trap_U030_open）
+    calculated   : 242690
+    interpolated : 6736 (interpolated from local:1186  mixed local/remote:849  remote:4701  special:0)
+    hole         : 582
+
+V3trap_U030/force_open.dat  ← 5738 行，t = 0.0009 … 2.1600 s
+V3trap_U030/moment_open.dat  ← 5738 行，t = 0.0009 … 2.1600 s
+   3045 步，用时 1.28 h
+  改了 system/controlDict
+  改了 system/fvSchemes
+  当前：maxCo 0.8  maxAlphaCo 1.0  limitU 0.0  overset trackingInverseDistance
+  旧 log → log.overPimpleDyMFoam.part1
+  从 t = 0.5625 续跑，8 核（进度：bash progress.sh /home/lxtuni/run/leg_cur_U008_open）
+    calculated   : 255122
+    interpolated : 6736 (interpolated from local:1442  mixed local/remote:107  remote:5187  special:0)
+    hole         : 582
+
+cur_U008/force_open.dat  ← 5238 行，t = 0.0015 … 3.7500 s
+cur_U008/moment_open.dat  ← 5238 行，t = 0.0015 … 3.7500 s
+   4772 步，用时 2.28 h
+  改了 system/controlDict
+  改了 system/fvSchemes
+  当前：maxCo 0.8  maxAlphaCo 1.0  limitU 0.0  overset trackingInverseDistance
+  旧 log → log.overPimpleDyMFoam.part1
+  从 t = 0.75 续跑，8 核（进度：bash progress.sh /home/lxtuni/run/leg_cur_U008_closed）
+    calculated   : 195098
+    interpolated : 4454 (interpolated from local:612  mixed local/remote:562  remote:3280  special:0)
+    hole         : 364
+
+cur_U008/force_closed.dat  ← 4205 行，t = 0.0015 … 3.7500 s
+cur_U008/moment_closed.dat  ← 4205 行，t = 0.0015 … 3.7500 s
+   3567 步，用时 1.13 h
+
+===== 尾鳍 / 翼型（最后 2 个周期） =====
+算例          U m/s     T mN    Fz mN    C_T      η    P mW  T/P N/W  |M_h| mN·m   α75°   对照
+
+===== 阻力型 V3trap 两态合成 =====
+方案              U m/s  T(τ 0.33/−0.06) mN    T 最优 mN   τ_c   τ_o
+V3trap          0.000                87.2       87.2  0.33 -0.06
+V3trap_U030     0.300                 5.7       11.9  0.32  0.00
+
+===== 阻力型 真机现步态（按自身开合时机合成：τ_o 0 / τ_c = DUTY） =====
+方案              U m/s     T mN   τ_c      T 重扫最优 mN   （重扫最优只作参考：真机开合由线驱动，时机不可调）
+cur_U0          0.000     23.5  0.50           27.1
+cur_U008        0.080      5.2  0.50            6.1
+
+===== 推力–航速（单腿，mN） =====
+  U m/s      升力型 尾鳍       阻力型 现步态     阻力型 V3trap
+  0.000           —          23.5           87.2
+  0.080           —           5.2              —
+  0.300           —             —           11.9
+
+→ /mnt/c/Users/L/Desktop/openfoam/robot_real/leg_dynamics/results_fluke/summary.json

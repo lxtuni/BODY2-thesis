@@ -1,0 +1,254 @@
+\chapter{补充数据}
+\label{app:data}
+
+\section{阻力型桨：划水冲程与回程}
+\label{app:drag-split}
+
+\begin{table}[H]
+  \centering
+  \caption[划水冲程与回程的贡献]{划水冲程（power stroke）与回程（recovery）对折扇桨（fan paddle）平均推力的贡献（式\eqref{eq:split}），单位为\si{\milli\newton}，取$\tau_o=0$，以及$\tau_c=0.33$（V3trap）或$\tau_c=\mathrm{DUTY}$（机器人步态）。净值：两态合成（two-state composite）结果；修正值：附加质量（added mass）修正（式\eqref{eq:addedmass}）的范围。}
+  \label{tab:app-split}
+  \footnotesize
+  \begin{tabular}{@{}lcccc|cccc@{}}
+    \toprule
+    & \multicolumn{4}{c|}{V3trap} & \multicolumn{4}{c}{机器人步态} \\
+    $\U$ (\si{\metre\per\second}) & 划水 & 回程 & 净值 & 修正值 & 划水 & 回程 & 净值 & 修正值 \\
+    \midrule
+    0     & 88.0 & $-5.3$  & 82.7 & 72.9--82.7 & 29.4 & $-6.0$  & 23.4    & 23.4 \\
+    0.08  & 85.7 & $-10.2$ & 75.6 & 65.8--71.4 & 18.1 & $-12.9$ & 5.2     & 3.9--5.2 \\
+    0.15  & 75.4 & $-17.2$ & 58.2 & 48.4--50.4 & 12.6 & $-25.7$ & $-13.1$ & $-15.5$--$-13.1$ \\
+    0.223 & 62.5 & $-26.9$ & 35.7 & 23.9--25.9 & --   & --      & --      & -- \\
+    0.30  & 50.9 & $-39.1$ & 11.7 & $-4.1$--1.9 & --  & --      & --      & -- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{尾鳍算例}
+\label{app:fluke}
+
+\begin{table}[H]
+  \centering
+  \caption[全部尾鳍算例]{全部单腿尾鳍（fluke）算例。$\alpha_{75}$：一个周期内$|\alpha|$的第75百分位数。}
+  \label{tab:app-fluke}
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{@{}llccccc@{}}
+    \toprule
+    算例 & 运动 & $\U$ (\si{\metre\per\second}) & $\Tm$ (mN) & $\Pm$ (mW) & $\etaF$ & $\alpha_{75}$ \\
+    \midrule
+    L2U000 & L0 & 0     & 45.5 & 18.1 & --    & \SI{73}{\degree} \\
+    L2U008 & L0 & 0.08  & 36.5 & 17.1 & 0.171 & -- \\
+    L2U015 & L0 & 0.15  & 29.1 & 16.6 & 0.263 & -- \\
+    L0     & L0 & 0.223 & 21.4 & 16.3 & 0.293 & \SI{19.9}{\degree} \\
+    L2U030 & L0 & 0.30  & 12.7 & 15.6 & 0.245 & \SI{13.7}{\degree} \\
+    L1a10  & $\alpha$规律\SI{10}{\degree} & 0.223 & $\approx31$ & $\approx35$ & $\approx0.20$ & \SI{13}{\degree} \\
+    L1a28  & $\alpha$规律\SI{28}{\degree} & 0.223 & 26.2 & 23.9 & 0.244 & \SI{30}{\degree} \\
+    L1a20  & $\alpha$规律\SI{20}{\degree}，沿桨腿铰链轨迹 & 0.40 & 15.4 & 24.3 & 0.25 & \SI{21.7}{\degree} \\
+    L3U030 & 调度，$\theta_0=\SI{21.6}{\degree}$ & 0.30 & 13.9 & 10.5 & 0.398 & \SI{21.0}{\degree} \\
+    L3U040 & 调度，$\theta_0=\SI{17.6}{\degree}$ & 0.40 & 10.5 & 11.4 & 0.368 & \SI{16.4}{\degree} \\
+    L0c    & L0，粗网格 & 0.223 & \multicolumn{4}{l}{公共时间窗内推力$-7.3$\,\%（\cref{sec:ver-mesh}）} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{执行器需求}
+\label{app:actuators}
+
+\begin{table}[H]
+  \centering
+  \caption[执行器需求]{各运动的峰值关节角速度和峰值水动力力矩（仅推进器；未计入连杆的惯性和阻力），并与机器人的舵机（servo）进行比较。}
+  \label{tab:actuators}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    & 桨，V3trap & 尾鳍，L0 & 尾鳍，\SI{0.30}{\metre\per\second}下的L3 \\
+    \midrule
+    腿部关节 & 髋\SI{214}{\degree\per\second}，卷曲\SI{459}{\degree\per\second} & 膝$\approx$\SI{310}{\degree\per\second} & 同L0 \\
+    推进器关节 & 在$\tau_c$处于\SIrange{45}{60}{\milli\second}内完成折叠 & 俯仰\SI{712}{\degree\per\second} & 俯仰\SI{366}{\degree\per\second} \\
+    水动力力矩 & 绕髋\SI{35.6}{\milli\newton\metre} & 绕销轴\SI{12.6}{\milli\newton\metre}（\SI{0.30}{\metre\per\second}时） & 绕销轴\SI{7.4}{\milli\newton\metre} \\
+    \midrule
+    现有条件 & \multicolumn{3}{>{\raggedright\arraybackslash}p{0.70\textwidth}}{PTK\,7465W，\SIrange{6.0}{8.4}{\volt}：堵转力矩
+      \SIrange{0.44}{0.57}{\newton\metre}，空载转速\SIrange{650}{860}{\degree\per\second}；硬件上无可控折叠} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\chapter{降阶模型中的四肢协调}
+\label{app:coord}
+
+本附录报告降阶模型（reduced-order model）关于四条腿之间协调方式的结果。这些结果不影响\cref{ch:mujoco}中阻力型与升力型推进的比较，但表明了姿态限值在多大程度上塑造了最优步态。
+
+\section{不含升力时的步态族}
+
+在纯阻力和适中限值条件下，全部五个步态族（gait family）都能找到可行步态（\cref{tab:mj-families}、\cref{fig:mj-families}a）。跳跃步（bound）最快，达$0.481\pm\SI{0.034}{\metre\per\second}$，约合每秒两个体长，其领先幅度大于种子间的离散。该步态左右对称，因此航向偏差和横滚均消失，所有自由度都服务于推进；三个跳跃步解全部位于\SI{15}{\degree}的俯仰限值处，并处于\SI{2.5}{\hertz}的频率上界。所有解中约有三分之二最终落在距某一限值\SI{1}{\degree}以内的位置，15个解中有14个的舵机始终处于力矩限值。限值塑造了结果，因此与结果一同报告。
+
+在严格限值和纯阻力条件下，跳跃步的优势消失：其速度降至$0.159\pm\SI{0.020}{\metre\per\second}$，全部十个步态族解都位于\SI{5}{\degree}的俯仰限值处，且行走步（walk）、同侧步（pace）和对角小跑（trot）之间的差异小于种子间的离散（\cref{fig:mj-families}b）。俯仰是所有协调方式的瓶颈。
+
+\begin{table}[t]
+  \centering
+  \caption[各步态族的最快步态]{各步态族的最快步态（速度单位为\si{\metre\per\second}，各种子上的均值$\pm$标准差）。适中限值为$10/10/\SI{15}{\degree}$，严格限值为$10/5/\SI{5}{\degree}$。每个步态族的种子数：3（纯阻力，适中限值），2（纯阻力，严格限值），跳跃步、同侧步和对角小跑为5，行走步和四足齐跳为2（阻力+升力，严格限值）。}
+  \label{tab:mj-families}
+  \small
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    步态族 & 纯阻力，适中 & 纯阻力，严格 & 阻力+升力，严格 \\
+    \midrule
+    跳跃步 & $\mathbf{0.481\pm0.034}$ & $0.159\pm0.020$ & $\mathbf{0.295\pm0.139}$ \\
+    同侧步  & $0.345\pm0.064$ & $0.191\pm0.062$ & $0.204\pm0.085$ \\
+    对角小跑  & $0.344\pm0.048$ & $0.172\pm0.013$ & $0.139\pm0.051$ \\
+    行走步  & $0.344\pm0.098$ & $0.209\pm0.089$ & $0.143\pm0.077$ \\
+    四足齐跳 & $0.265\pm0.038$ & $0.145\pm0.043$ & $0.118\pm0.064$ \\
+    \midrule
+    自由相位，$10^4$次评估 & -- & -- & $0.303\pm0.078$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_mj_families}
+  \caption[MuJoCo中各步态族的最快步态]{降阶模型中各步态族的最快步态；柱为各种子的均值，点为单个种子的结果。(a)纯阻力，适中限值。(b)纯阻力，严格限值。(c)阻力与升力，严格限值，包括三次$10^4$次评估的自由相位搜索。2500次评估的自由相位搜索未予显示，因为它们尚未收敛。}
+  \label{fig:mj-families}
+\end{figure}
+
+\section{严格限值下含升力的腿间协调}
+
+在含升力和严格限值的条件下，五个种子上全部十五个对角小跑、同侧步和跳跃步解都是升力推进的、可行的，且不出水（\cref{tab:mj-families}、\cref{fig:mj-families}c）。跳跃步再次最快，其中一个种子达到\SI{0.483}{\metre\per\second}，与适中限值下最快的纯阻力步态一样快，但其舵机几乎始终处于饱和状态。对角小跑的平均功率最低（$1.23\pm\SI{0.90}{\watt}$），但也是三者中最慢的，因此其较低的每米能耗混淆了“经济”与“缓慢”。
+
+为区分二者，在含升力和严格限值的条件下按步态族计算了等速下的最低功率（五个种子，\cref{fig:mj-coord}）。在\SI{0.10}{\metre\per\second}时，对角小跑需要\SI{0.10}{\watt}，而跳跃步需要\SI{0.17}{\watt}；在\SI{0.15}{\metre\per\second}时分别为\SI{0.48}{}和\SI{0.51}{\watt}；各种子的中位数相近。在\SI{0.20}{\metre\per\second}时，对角小跑需要\SI{1.68}{\watt}，而四足齐跳（pronk）和跳跃步分别需要\SI{0.96}{}和\SI{0.98}{\watt}，且五个对角小跑种子中只有三个可行；严格限值下对角小跑的速度极限约为\SI{0.22}{\metre\per\second}。本实验全部55个可行解都是升力推进的。因此，对角协调在低速时至多略为经济；在约\SI{0.15}{\metre\per\second}以上，前后协调既更经济也更快。\Cref{fig:mj-trot}展示了一个速度为\SI{0.221}{\metre\per\second}、功率为\SI{1.03}{\watt}的升力推进对角小跑步态，其舵机从未饱和。
+
+自由相位（free phase）搜索需要更大的评估预算。在2500次评估下，它仅达到\SIrange{0.05}{0.07}{\metre\per\second}；在$10^4$次评估下，三个种子达到$0.303\pm\SI{0.078}{\metre\per\second}$，全部为升力推进，且都收敛到接近跳跃步或四足齐跳的前后协调（偏差为周期的15--19\,\%），而非对角小跑。最佳自由步态以\SI{3.3}{\watt}达到\SI{0.369}{\metre\per\second}，比五个跳跃步最优解中的三个更快，且每米能耗低于全部五个，这表明在固定步态族之外存在更好的协调方式。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_mj_trot_frames.png}\\[1mm]
+  {\small (a)}\\[2mm]
+  \includegraphics[width=\textwidth]{fig_mj_trot.png}\\
+  {\small (b)}
+  \caption[MuJoCo中的升力推进对角小跑]{在严格限值下找到的升力推进对角小跑步态（\SI{0.90}{\hertz}，$\mathrm{DUTY}=0.59$，\SI{0.221}{\metre\per\second}，\SI{1.03}{\watt}）。(a) MuJoCo动画中的四帧画面，相邻两帧间隔\SIrange{0.25}{0.30}{\second}，覆盖一个\SI{1.11}{\second}的划动周期；相机跟随躯干。(b) 上图：最后三个周期内四条腿的划水冲程，对角腿同步动作。下图：斜坡引入阶段之后躯干的前进速度，点线为均值。}
+  \label{fig:mj-trot}
+\end{figure}
+
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.58\textwidth]{fig_mj_coord}
+  \caption[各步态族的最低功率]{各步态族达到所需速度的最低机械功率，含升力、严格限值（五个种子中的最优值）。}
+  \label{fig:mj-coord}
+\end{figure}
+
+\section{电功率}
+
+由于大多数最快步态的舵机持续处于力矩限值，基于机械功率的排序可能掩盖了较大的铜损。因此，对全部222个有效最优解重新计算了电功率。按步态族平均，电功率与机械功率的偏差约在$\pm30$\,\%以内，因为在饱和时反电动势项抵消了大部分堵转力矩。例外是适中限值下纯阻力的对角小跑和四足齐跳，其电功率分别高出71\,\%和44\,\%（对角小跑为\SI{19.6}{}而非\SI{11.5}{\watt}）。这使对角小跑在每米能耗上落后于同侧步和行走步；除此之外，本附录的各项结论对电功率同样成立。
+
+\chapter{实时求解器：拖曳仿真与整机趋势}
+\label{app:flare-trends}
+
+本附录汇集Flare Live的结果。拖曳仿真（tow run）是\cref{sec:ver-flare}中交叉校核的基础；自航仿真（self-propelled run）反映了整机的趋势，但不能给出可靠的量级。
+
+\section{拖曳仿真}
+\label{app:flare}
+
+\begin{table}[H]
+  \centering
+  \caption[Flare Live拖曳仿真]{采用L0运动的Flare Live拖曳仿真：尾鳍上的流向流体力（尾鳍坐标系）以及整条拍动腿的净推力，单位为\si{\milli\newton}，在$t=\SIrange{3}{9}{\second}$内取平均。}
+  \label{tab:app-flare}
+  \footnotesize
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    $\U$ (\si{\metre\per\second}) & 格子 & 尾鳍，拍动 & 尾鳍，不拍动 & 腿净推力 & CFD尾鳍 & $\alpha_{75}$ \\
+    \midrule
+    0     & \SI{3}{\milli\metre} & 20.0  & --      & 25.7 & 45.5 & \SI{73.8}{\degree} \\
+    0.1   & \SI{3}{\milli\metre} & 8.5   & --      & 15.9 & $\approx34$ & \SI{41.1}{\degree} \\
+    0.223 & \SI{3}{\milli\metre} & $-0.1$ & $-12.6$ & 9.6  & 21.4 & \SI{19.7}{\degree} \\
+    0.223 & \SI{2}{\milli\metre} & 4.1   & $-11.6$ & 5.8  & 21.4 & \SI{19.8}{\degree} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{自航仿真}
+
+鉴于\cref{sec:ver-flare}中的推力亏缺，Flare Live自航仿真仅用于分析趋势（\cref{fig:flare-robot}、\cref{tab:flare}）。取阻力$K=\SI{0.65}{\newton\second\squared\per\metre\squared}$（$D_\text{mid}$），以\SI{2}{\hertz}、目标攻角\SI{18}{\degree}进行对角小跑（trot）时，游速为\SI{0.154}{\metre\per\second}，约为基于CFD预测值的一半，这与所缺失的尾鳍推力相符。
+\begin{itemize}
+  \item \emph{频率。}在$K=0.65$时，速度随频率按$\U\propto f^{0.71}$增长（$K=3.95$时为$f^{0.51}$），而功率按$f^{1.8}$增长；运输代价（cost of transport）随频率升高。斯特劳哈尔数几乎保持不变。
+  \item \emph{攻角。}目标攻角\SI{18}{\degree}给出最高的速度和最低的运输代价；\SI{28}{\degree}略慢，\SI{10}{\degree}则慢得多。控制器确实能保持目标值：在\SI{10}{\degree}的算例中，冲程中段攻角的中位数为\SI{10.1}{\degree}，但尾鳍每个周期需转动\SI{122}{\degree}，且有11\,\%的时间处于限位处。在CFD中，\SI{10}{\degree}规律在该航速下产生的推力最大（\cref{sec:res-lift}）。Flare Live中小攻角所受的惩罚与其未被解析的升力相符；只有“效率在\SIrange{18}{20}{\degree}附近最高”这一结论得到了两种求解器的共同支持。
+  \item \emph{阻力。}将$K$由0.65降至0.27（裸船体）仅使速度由\SI{0.154}{}提高到\SI{0.160}{\metre\per\second}，因此在Flare Live中，机器人受限于其推力而非船体。
+  \item \emph{姿态。}在对角小跑中，船体的沉浮小于\SI{0.6}{\milli\metre}，俯仰小于\SI{0.3}{\degree}：对角协调使漂浮的机器人保持水平。
+\end{itemize}
+
+\begin{table}[t]
+  \centering
+  \caption[Flare Live自航仿真]{Flare Live自航仿真，对角小跑，$K=\SI{0.65}{\newton\second\squared\per\metre\squared}$。COT $=P_\text{j}/(mg\U)$，其中$P_\text{j}$为关节驱动功率，$m=\SI{0.863}{\kilo\gram}$。}
+  \label{tab:flare}
+  \small
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    算例 & $\U$ (\si{\milli\metre\per\second}) & $P_\text{j}$ (mW) & COT \\
+    \midrule
+    \SI{2}{\hertz}, $\alpha$ \SI{10}{\degree} & 100.2 & 261 & 0.31 \\
+    \SI{2}{\hertz}, $\alpha$ \SI{18}{\degree} & \textbf{153.8} & 239 & \textbf{0.18} \\
+    \SI{2}{\hertz}, $\alpha$ \SI{28}{\degree} & 143.8 & 249 & 0.20 \\
+    \SI{2.5}{\hertz}, $\alpha$ \SI{18}{\degree} & 183.1 & 355 & 0.23 \\
+    \SI{3}{\hertz}, $\alpha$ \SI{18}{\degree} & 205.0 & 488 & 0.28 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_flare_robot}
+  \caption[Flare Live自由游动趋势]{Flare Live中的自航机器人（对角小跑）。(a) 两种船体阻力下速度随划水频率的变化。(b) \SI{2}{\hertz}时速度随目标攻角的变化。(c) 运输代价随频率的变化。}
+  \label{fig:flare-robot}
+\end{figure}
+
+Flare Live中的关节驱动功率（\SIrange{240}{490}{\milli\watt}）比CFD中的水动力功率（四个尾鳍约\SI{65}{\milli\watt}）高出一个数量级，因为它包含了驱动连杆运动的功率、连杆的惯性以及控制器的控制作用。
+
+\chapter{可复现性}
+\label{app:repro}
+
+\section{软件}
+
+\begin{sloppypar}
+\begin{itemize}
+  \item OpenFOAM v2606，\texttt{overPimpleDyMFoam}；网格由\texttt{blockMesh}和\texttt{snappyHexMesh}生成。算例生成器、运行脚本和后处理均以Python编写（\texttt{make\_leg\_cfd.py}、\texttt{make\_fluke\_cfd.py}、\texttt{fluke\_traj.py}、\texttt{fluke\_forces.py}）。
+  \item MuJoCo 3.14及Python包\texttt{cma}；步态优化代码\texttt{swimopt}（\url{https://github.com/lxtuni/swimopt}），其中包括全部234次运行（其中222次有效）的原始结果（\texttt{thesis\_notes/data/all\_runs.csv}）。纯阻力最优解在开启升力后的回放结果（\cref{sec:mj-liftshare}）记录在代码仓库的说明文档中，不在\texttt{all\_runs.csv}内。
+  \item Flare Live及脚本\texttt{run\_float.py}（自航仿真，self-propelled run）和\texttt{bench\_foil.py}（拖曳仿真，tow run）。
+\end{itemize}
+\end{sloppypar}
+\TODO{补充CFD与Flare Live脚本的代码仓库以及最终版本的提交哈希值。}
+
+\section{MuJoCo设置}
+
+\begin{table}[H]
+  \centering
+  \caption[MuJoCo设置]{基于降阶模型的步态优化（reduced-order gait optimization）的设置。}
+  \label{tab:app-mujoco}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    项目 & 取值 \\
+    \midrule
+    时间步长，积分器 & \SI{2}{\milli\second}，implicit-fast \\
+    评估 & 稳定\SI{1.0}{\second}，渐入\SI{1.5}{\second}，计分\SI{8}{\second}并向上取整为整数个周期 \\
+    舵机 & 位置舵机，刚度60，临界阻尼，$\tau_s=\SI{3}{\newton\metre}$，$\omega_\text{max}=\SI{400}{\degree\per\second}$ \\
+    脚蹼系数 & $C_D=(2.2,0.10,0.10)$，$C_a=1.0$，$c_v=0.05$，$c_l=1.1$ \\
+    杆件系数 & $C_D=(0.5,0.5,0.25)$，$C_a=0.3$，$c_v=0.02$ \\
+    躯干系数 & $C_D=(0.9,1.6,1.8)$，$C_a=0.2$，$c_v=0.10$ \\
+    步态 & $H=2$；$f\in[0.2,2.5]$\,Hz；DUTY $\in[0.25,0.75]$；$A\in[0,0.9]$\,rad；$q_0\in[-0.5,0.5]$\,rad \\
+    CMA-ES & 种群规模16，$\sigma_0=0.25$，2500次评估（自由相位为$10^4$次），非零种子 \\
+    限值 & 航向/横滚/俯仰RMS $10/10/\SI{15}{\degree}$或$10/5/\SI{5}{\degree}$；注明之处另要求出水比例$\le5$\,\%；\cref{sec:mj-liftshare}中的阻力型划动另加升力推力占比$s_L\le0.1$ \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{发现并修正的模型错误}
+
+工作过程中发现了仿真设置中的若干错误，并在生成本文所报告的结果之前予以修正。之所以列出这些错误，是因为它们很容易重犯。
+\begin{itemize}
+  \item MJCF默认以度为单位读取关节范围；本意以弧度表示的$\pm1.3$范围将每个关节都锁定在了$\pm\SI{1.3}{\degree}$。此次修正之前的所有结果均已舍弃。
+  \item 在运行时更改刚体质量而未重新计算MuJoCo的派生常量，导致附加质量对单个自由刚体失效，并在一项动量守恒测试中造成36\,\%的误差。
+  \item 从URDF导入的视觉几何体和碰撞几何体都被施加了水动力，使浮力、阻力和附加质量加倍。
+  \item 一旦腿部可以自由运动，对速度和姿态的加性加权便会产生强烈横滚和偏航的最优解；它已被式\eqref{eq:feasibility}的可行性优先（feasibility-first）表述所取代。
+  \item 升力占比最初定义为$|I_L|/(|I_L|+|I_\text{drag}|)$。由于稳态游动时升力冲量与阻力冲量相互抵消，该值对任何含升力的步态都约为0.5；将其用作限值时，只有几乎不动的步态才能满足。该指标已被式\eqref{eq:liftshare}中的$s_L$取代，使用旧指标的运行均已作废。
+  \item 在尾鳍CFD中，一个未在尾鳍周围加密的粗背景网格（background mesh）导致了挖洞（hole cutting）失败，几乎整个背景网格都被移除；现在会自动检查洞单元的数量。
+\end{itemize}

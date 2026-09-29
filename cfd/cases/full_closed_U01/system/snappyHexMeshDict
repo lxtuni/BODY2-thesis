@@ -1,0 +1,57 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      snappyHexMeshDict;
+}
+
+// 背景网格：船体贴体（level 2 = 4 mm）+ 区域加密（腿扫掠区 / 自由面 / 船体周围）
+castellatedMesh true;
+snap            true;
+addLayers       false;
+geometry
+{
+    hull.stl { type triSurfaceMesh; name hull; }
+    ref2_FL { type searchableBox; min (-0.0461545 0.0139874 -0.142172); max (0.152325 0.136013 0.0967423); }
+    ref1_FL { type searchableBox; min (-0.106155 -0.0460126 -0.202172); max (0.212325 0.196013 0.156742); }
+    ref2_FR { type searchableBox; min (-0.0461545 -0.136013 -0.142172); max (0.152325 -0.0139874 0.0967423); }
+    ref1_FR { type searchableBox; min (-0.106155 -0.196013 -0.202172); max (0.212325 0.0460126 0.156742); }
+    ref2_RL { type searchableBox; min (-0.189655 0.00898735 -0.142172); max (0.00882467 0.131013 0.0967423); }
+    ref1_RL { type searchableBox; min (-0.249655 -0.0510126 -0.202172); max (0.0688247 0.191013 0.156742); }
+    ref2_RR { type searchableBox; min (-0.189655 -0.131013 -0.142172); max (0.00882467 -0.00898735 0.0967423); }
+    ref1_RR { type searchableBox; min (-0.249655 -0.191013 -0.202172); max (0.0688247 0.0510126 0.156742); }
+    fs2 { type searchableBox; min (-0.369255 -0.252248 -0.04); max (0.2146 0.252248 0.02); }
+    fs1 { type searchableBox; min (-0.552655 -0.378371 -0.09); max (0.267 0.378371 0.05); }
+    hull1 { type searchableBox; min (-0.226 -0.118079 -0.095); max (0.196 0.11809 0.0455); }
+}
+castellatedMeshControls
+{
+    maxLocalCells 4000000; maxGlobalCells 8000000; minRefinementCells 10; maxLoadUnbalance 0.1;
+    nCellsBetweenLevels 3;
+    features ( { file "hull.eMesh"; level 3; } );
+    refinementSurfaces { hull { level (3 3); patchInfo { type wall; inGroups (wall); } } }
+    resolveFeatureAngle 30;
+    refinementRegions
+    {
+        ref2_FL { mode inside; levels ((1e15 2)); }
+        ref1_FL { mode inside; levels ((1e15 1)); }
+        ref2_FR { mode inside; levels ((1e15 2)); }
+        ref1_FR { mode inside; levels ((1e15 1)); }
+        ref2_RL { mode inside; levels ((1e15 2)); }
+        ref1_RL { mode inside; levels ((1e15 1)); }
+        ref2_RR { mode inside; levels ((1e15 2)); }
+        ref1_RR { mode inside; levels ((1e15 1)); }
+        fs2 { mode inside; levels ((1e15 2)); }
+        fs1 { mode inside; levels ((1e15 1)); }
+        hull1 { mode inside; levels ((1e15 1)); }
+    }
+    locationInMesh (-0.764655 -0.370413 -0.376573);
+    allowFreeStandingZoneFaces true;
+}
+snapControls { nSmoothPatch 3; tolerance 2.0; nSolveIter 30; nRelaxIter 5; nFeatureSnapIter 10; implicitFeatureSnap false; explicitFeatureSnap true; multiRegionFeatureSnap false; }
+addLayersControls { relativeSizes true; layers { } expansionRatio 1.2; finalLayerThickness 0.4; minThickness 0.1; nGrow 0; featureAngle 60; nRelaxIter 3; nSmoothSurfaceNormals 1; nSmoothNormals 3; nSmoothThickness 10; maxFaceThicknessRatio 0.5; maxThicknessToMedialRatio 0.3; minMedialAxisAngle 90; nBufferCellsNoExtrude 0; nLayerIter 50; }
+meshQualityControls { maxNonOrtho 65; maxBoundarySkewness 20; maxInternalSkewness 4; maxConcave 80; minVol 1e-13; minTetQuality 1e-15; minArea -1; minTwist 0.02; minDeterminant 0.001; minFaceWeight 0.05; minVolRatio 0.01; minTriangleTwist -1; nSmoothScale 4; errorReduction 0.75; }
+writeFlags ();
+mergeTolerance 1e-6;

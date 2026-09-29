@@ -1,0 +1,19 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      zoneID;
+}
+
+dimensions      [0 0 0 0 0 0 0];
+internalField   uniform 0;
+boundaryField
+{
+    ".*"         { type zeroGradient; }      // 通配写在前面：OpenFOAM 正则按倒序匹配，后面的精确名优先
+    overset_FL { type overset; value uniform 0; }
+    overset_FR { type overset; value uniform 0; }
+    overset_RL { type overset; value uniform 0; }
+    overset_RR { type overset; value uniform 0; }
+}

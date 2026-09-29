@@ -1,0 +1,54 @@
+{
+ "design": {
+  "LWL": 233.37619999999998,
+  "BWL": 98.8016751420489,
+  "T3": 37.63711225900145,
+  "a": 0.21687912580009755,
+  "deepest_x": 17.23991144999998,
+  "deepest_y": -48.42870944336825,
+  "draft": 38.42870944336825,
+  "V_cm3": 385.09999999999997,
+  "LCB": 11.34,
+  "Awp_cm2": 181.9602801273085,
+  "Cb": 0.434607129968267,
+  "xmin": -117.4765,
+  "xmax": 115.8997
+ },
+ "wall_mm": 2.0,
+ "collar_mm": 1.5,
+ "mass": {
+  "shell_cm3": 47.62894492541718,
+  "upper_cm3": 40.96710695394494,
+  "total_cm3": 88.59605187936212,
+  "PLA_g": 109.85910433040902,
+  "PETG_g": 112.5169858867899,
+  "ring_cm3": 1.9857229523441173
+ },
+ "frame": "零件坐标同 0826.STEP：x 船长（尖端 −x）、y 向上（水线 −10、顶缘 +15）、z 横向；x_CFD = −x, z_CFD = y",
+ "original_body": {
+  "volume_cm3": 91.40455438471439,
+  "displacement_below_WL_cm3": 385.1,
+  "LCB": 11.34,
+  "bbox": "262 × 116 × 50 (y −35…+15)"
+ },
+ "keel_law": "D(x) = T3 (1-xi)^0.8 (1+xi)^0.85 (1+a xi); section b(t) = b_w (1-k t) sqrt(1-t^2), k = s D/b_w (C1 at WL)",
+ "print_stl": {
+  "file": "BODY2_M3_hull_print.stl",
+  "watertight": true,
+  "shells": 1,
+  "volume_cm3": 88.53,
+  "faces": 59280,
+  "chord_tol_mm": 0.015
+ },
+ "bbox_full": "262 x 116.2 x 63.4 (x, z, y); y from -48.43 to +15",
+ "wall_check_mm": {
+  "min": 1.84,
+  "median": 1.98,
+  "max": 2.9
+ },
+ "seam_check_mm": {
+  "median": 0.23,
+  "max": 0.69,
+  "note": "normal distance lower(y=-10.3) to upper(y=-9.7) contour = flare over 0.6 mm, no step"
+ }
+}

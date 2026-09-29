@@ -1,0 +1,66 @@
+
+===== [09-15 20:42:23] 开始：方案 V3c12 V3c06 V3trap   U=0  周期数 3  8 核（机器 16 核，OpenFOAM v2606） =====
+
+===== [09-15 20:42:23] 生成 V3c12/closed → /home/lxtuni/run/leg_V3c12_closed   (T=0.81 DUTY=0.45 SWEEP=50 PSI_START=120 SWITCH_FRAC=0.5 CLOSED_W=0.012 ) =====
+    算例：/home/lxtuni/run/leg_V3c12_closed   脚蹼 closed   U = 0.0 m/s   3.0 个周期 (T = 0.81 s) → endTime 2.430 s
+    部件网格盒 50×14×15 = 10500 单元（2.50 mm，表面再细化 1 级）
+    背景域 x[-0.392,0.361] y[-0.254,0.254] z[-0.376,0.184]  blockMesh 47×32×35，加密到 4.0 mm
+    桨尖最大速度 0.38 m/s → 初始 Δt = 0.0013 s，maxCo 0.8；每周期写 20 帧
+
+===== [09-15 20:42:24] 跑 /home/lxtuni/run/leg_V3c12_closed（网格 + 求解，看 bash progress.sh /home/lxtuni/run/leg_V3c12_closed） =====
+    用时：ExecutionTime = 3457.95 s  ClockTime = 3459 s   步数：3537
+V3c12/force_closed.dat  ← 3537 行，t = 0.0016 … 2.4300 s
+V3c12/moment_closed.dat  ← 3537 行，t = 0.0016 … 2.4300 s
+   3537 步，用时 0.96 h
+    V3c12 的 open 用 V3 的（closed-only 方案）
+
+===== [09-15 21:40:31] V3c12 收集完毕，汇总 =====
+    V3       DUTY 0.45: base Fx   49.3 mN, P  16.2 mW | best τ_c 0.36 →   51.7 mN | early −0.05:  +1.8, late +0.05:  -1.5 mN | best τ_o -0.06 →   51.4 mN | open−closed 推力差过零 τ ≈ 0.363
+    V3c12    DUTY 0.45: base Fx   56.7 mN, P  13.7 mW | best τ_c 0.37 →   60.3 mN | early −0.05:  +3.1, late +0.05:  -2.6 mN | best τ_o -0.06 →   60.0 mN | open−closed 推力差过零 τ ≈ 0.37399999999999994
+
+===== [09-15 21:40:39] 生成 V3c06/closed → /home/lxtuni/run/leg_V3c06_closed   (T=0.81 DUTY=0.45 SWEEP=50 PSI_START=120 SWITCH_FRAC=0.5 CLOSED_W=0.006 ) =====
+    算例：/home/lxtuni/run/leg_V3c06_closed   脚蹼 closed   U = 0.0 m/s   3.0 个周期 (T = 0.81 s) → endTime 2.430 s
+    部件网格盒 50×12×15 = 9000 单元（2.50 mm，表面再细化 1 级）
+    背景域 x[-0.392,0.361] y[-0.251,0.251] z[-0.376,0.184]  blockMesh 47×31×35，加密到 4.0 mm
+    桨尖最大速度 0.38 m/s → 初始 Δt = 0.0013 s，maxCo 0.8；每周期写 20 帧
+
+===== [09-15 21:40:40] 跑 /home/lxtuni/run/leg_V3c06_closed（网格 + 求解，看 bash progress.sh /home/lxtuni/run/leg_V3c06_closed） =====
+    用时：ExecutionTime = 2168.48 s  ClockTime = 2169 s   步数：2352
+V3c06/force_closed.dat  ← 2352 行，t = 0.0016 … 2.4300 s
+V3c06/moment_closed.dat  ← 2352 行，t = 0.0016 … 2.4300 s
+   2352 步，用时 0.60 h
+    V3c06 的 open 用 V3 的（closed-only 方案）
+
+===== [09-15 22:17:17] V3c06 收集完毕，汇总 =====
+    V3       DUTY 0.45: base Fx   49.3 mN, P  16.2 mW | best τ_c 0.36 →   51.7 mN | early −0.05:  +1.8, late +0.05:  -1.5 mN | best τ_o -0.06 →   51.4 mN | open−closed 推力差过零 τ ≈ 0.363
+    V3c06    DUTY 0.45: base Fx   58.6 mN, P  13.1 mW | best τ_c 0.37 →   62.4 mN | early −0.05:  +3.4, late +0.05:  -2.9 mN | best τ_o -0.06 →   62.0 mN | open−closed 推力差过零 τ ≈ 0.37399999999999994
+
+===== [09-15 22:17:26] 生成 V3trap/open → /home/lxtuni/run/leg_V3trap_open   (T=0.72 DUTY=0.382 SWEEP=50 PSI_START=120 SWITCH_FRAC=0.5 VEL_LAW=trap RAMP=0.15 CLOSED_W=0.012 ) =====
+    算例：/home/lxtuni/run/leg_V3trap_open   脚蹼 open   U = 0.0 m/s   3.0 个周期 (T = 0.72 s) → endTime 2.160 s
+    部件网格盒 50×39×15 = 29250 单元（2.50 mm，表面再细化 1 级）
+    背景域 x[-0.392,0.361] y[-0.284,0.284] z[-0.376,0.184]  blockMesh 47×36×35，加密到 4.0 mm
+    桨尖最大速度 0.40 m/s → 初始 Δt = 0.0012 s，maxCo 0.8；每周期写 20 帧
+
+===== [09-15 22:17:26] 跑 /home/lxtuni/run/leg_V3trap_open（网格 + 求解，看 bash progress.sh /home/lxtuni/run/leg_V3trap_open） =====
+    用时：ExecutionTime = 9004.06 s  ClockTime = 9005 s   步数：4866
+V3trap/force_open.dat  ← 4866 行，t = 0.0014 … 2.1600 s
+V3trap/moment_open.dat  ← 4866 行，t = 0.0014 … 2.1600 s
+   4866 步，用时 2.50 h
+
+===== [09-16 00:48:14] 生成 V3trap/closed → /home/lxtuni/run/leg_V3trap_closed   (T=0.72 DUTY=0.382 SWEEP=50 PSI_START=120 SWITCH_FRAC=0.5 VEL_LAW=trap RAMP=0.15 CLOSED_W=0.012 ) =====
+    算例：/home/lxtuni/run/leg_V3trap_closed   脚蹼 closed   U = 0.0 m/s   3.0 个周期 (T = 0.72 s) → endTime 2.160 s
+    部件网格盒 50×14×15 = 10500 单元（2.50 mm，表面再细化 1 级）
+    背景域 x[-0.392,0.361] y[-0.254,0.254] z[-0.376,0.184]  blockMesh 47×32×35，加密到 4.0 mm
+    桨尖最大速度 0.40 m/s → 初始 Δt = 0.0012 s，maxCo 0.8；每周期写 20 帧
+
+===== [09-16 00:48:14] 跑 /home/lxtuni/run/leg_V3trap_closed（网格 + 求解，看 bash progress.sh /home/lxtuni/run/leg_V3trap_closed） =====
+    用时：ExecutionTime = 3541.36 s  ClockTime = 3542 s   步数：3591
+V3trap/force_closed.dat  ← 3591 行，t = 0.0014 … 2.1600 s
+V3trap/moment_closed.dat  ← 3591 行，t = 0.0014 … 2.1600 s
+   3591 步，用时 0.98 h
+
+===== [09-16 01:47:46] V3trap 收集完毕，汇总 =====
+    V3       DUTY 0.45: base Fx   49.3 mN, P  16.2 mW | best τ_c 0.36 →   51.7 mN | early −0.05:  +1.8, late +0.05:  -1.5 mN | best τ_o -0.06 →   51.4 mN | open−closed 推力差过零 τ ≈ 0.363
+    V3trap   DUTY 0.38: base Fx   75.1 mN, P  20.8 mW | best τ_c 0.33 →   82.7 mN | early −0.05:  +7.5, late +0.05:  -4.9 mN | best τ_o -0.06 →   79.6 mN | open−closed 推力差过零 τ ≈ 0.33050000000000024
+
+===== [09-16 01:47:55] 全部完成：results_verify/<方案>/ 与 results/papers/fold_timing_sweep.json =====

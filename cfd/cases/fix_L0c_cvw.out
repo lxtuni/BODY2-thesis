@@ -1,0 +1,41 @@
+  改了 system/fvSchemes
+  当前：maxCo 0.8  maxAlphaCo 1.0  limitU 0.0  overset cellVolumeWeight
+  旧 log → log.overPimpleDyMFoam.part2
+  从 t = 0.875 续跑，8 核（进度：bash progress.sh /home/lxtuni/run/fluke_L0c）
+    calculated   : 288230
+    interpolated : 8811 (interpolated from local:3442  mixed local/remote:479  remote:4890  special:0)
+    hole         : 394
+
+L0c/force.dat ← 4277 行，t = 0.0005 … 0.9097 s
+L0c/moment.dat ← 4277 行，t = 0.0005 … 0.9097 s
+
+===== 尾鳍 / 翼型（最后 2 个周期） =====
+算例          U m/s     T mN    Fz mN    C_T      η    P mW  T/P N/W  |M_h| mN·m   α75°   对照
+L0          0.223     21.4    -22.1   0.75   0.29    16.3     1.32       13.45   19.6   Flare 9.7 mN → CFD/Flare = 2.20
+L0c         0.223     20.0     -3.4   0.70   0.31    14.5     1.37       15.81   23.0   
+L1a10       0.223     32.8     -9.4   1.15   0.24    30.1     1.09      197.08   14.3   
+L1a28       0.223     26.2     -0.7   0.92   0.24    23.9     1.09       16.55   30.1   
+L2U000      0.000     45.5     -8.0      —      —    18.1     2.52       15.33   72.8   
+L2U008      0.080     36.5    -11.0   9.92   0.17    17.1     2.13       14.31   46.9   
+L2U015      0.150     29.1    -15.8   2.25   0.26    16.6     1.76       13.78   28.9   
+
+===== 阻力型 V3trap 两态合成 =====
+方案              U m/s  T(τ 0.33/−0.06) mN    T 最优 mN   τ_c   τ_o
+V3trap          0.000                87.2       87.2  0.33 -0.06
+V3trap_U008     0.080                77.4       77.9  0.33 -0.04
+V3trap_U015     0.150                57.3       59.0  0.33 -0.03
+V3trap_U02229   0.223                32.6       35.9  0.33 -0.02
+
+===== 阻力型 真机现步态（按自身开合时机合成：τ_o 0 / τ_c = DUTY） =====
+方案              U m/s     T mN   τ_c      T 重扫最优 mN   （重扫最优只作参考：真机开合由线驱动，时机不可调）
+cur_U0          0.000     23.5  0.50           27.1
+cur_U015        0.150    -13.1  0.50          -12.0
+
+===== 推力–航速（单腿，mN） =====
+  U m/s      升力型 尾鳍       阻力型 现步态     阻力型 V3trap
+  0.000        45.5          23.5           87.2
+  0.080        36.5             —           77.9
+  0.150        29.1         -13.1           59.0
+  0.223        21.4             —           35.9
+
+→ /mnt/c/Users/L/Desktop/openfoam/robot_real/cloud_fluke/results_fluke/summary.json

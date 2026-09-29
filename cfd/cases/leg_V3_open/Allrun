@@ -1,0 +1,27 @@
+#!/bin/sh
+cd "${0%/*}" || exit 1
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
+
+# 1 部件网格（桨板，贴体）
+( cd paddleMesh || exit 1
+  runApplication blockMesh
+  runApplication surfaceFeatureExtract
+  runApplication snappyHexMesh -overwrite
+  runApplication checkMesh )
+
+# 2 背景网格（只做区域加密）
+runApplication blockMesh
+runApplication snappyHexMesh -overwrite
+
+# 3 合并 → 分区 → zoneID
+runApplication mergeMeshes . paddleMesh -overwrite
+runApplication topoSet
+restore0Dir
+runApplication setFields
+runApplication -s merged checkMesh
+
+# 4 求解
+runApplication decomposePar
+runParallel $(getApplication)
+runParallel -s reconstruct redistributePar -reconstruct
+touch case.foam

@@ -1,0 +1,143 @@
+\chapter{Discussion}
+\label{ch:discussion}
+
+\section{Evaluation of the Hypotheses}
+\label{sec:disc-hyp}
+
+\paragraph{H1 (reduced-order optimization)} is supported within the model. Whenever the model contains lift and it is not
+suppressed, all 101 feasible optima are lift-propelled. H1 is tested not only across models, where the lift-propelled gaits
+need one half to one third of the power of the best drag-only gaits, but also within one model: drag-based strokes forced by
+a lift-share limit need four to ten times the power and do not reach \SI{0.30}{\metre\per\second}, although this second factor
+rests on only 3 feasible strokes. The statement is conditional on an uncalibrated lift model, as discussed below.
+
+\paragraph{H2 (drag versus lift across speed)} is supported. As expected, the optimized paddle
+is much stronger at low speed and its thrust falls steeply with speed, to about zero at \SI{0.30}{\metre\per\second}; the
+fluke keeps a larger fraction of its thrust and becomes stronger above \SIrange{0.23}{0.24}{\metre\per\second}. The cause of
+the paddle's speed limit is identified: the recovery drag, which grows more than sevenfold between rest and
+\SI{0.30}{\metre\per\second}, and the momentum needed to open the fan in the oncoming flow, while the power-stroke thrust falls
+by less than half. The efficiency crossover lies slightly below the thrust crossover, at about \SI{0.22}{\metre\per\second}; below it, the optimized paddle is both stronger and more efficient than the fluke, reaching $\etaF=0.35$--0.37 at \SI{0.15}{\metre\per\second}. This differs from the biological picture, in which lift-based swimmers are more efficient than paddlers at all speeds \cite{Fish1996}; for a small robot leg with a well-folding paddle it holds only above the crossover. The second part of H2 is confirmed: scheduling the fluke
+pitch so that the angle of attack stays near \SI{20}{\degree} raises the efficiency at \SI{0.30}{\metre\per\second} from 0.24 to 0.40.
+
+The paddle's efficiency exceeds the maximum of about 0.33 that Fish reported for paddling animals \cite{Fish1984,Fish1996}. The two
+values are not directly comparable: the animal values are whole-animal estimates, while $\etaF$ here is the hydrodynamic Froude
+efficiency of an isolated propulsor whose folded fan produces only about one ninth of the force of the open fan ($a=0.11$, against an area ratio of 0.445 for the muskrat). It also
+stays below the quasi-steady bound $\U/v_p\approx0.6$ at \SI{0.15}{\metre\per\second}, with the mean power-stroke speed
+$v_p\approx\SI{0.25}{\metre\per\second}$ of the fan centroid.
+
+\paragraph{H3 (whole robot)} is largely supported. With the best-estimate resistance the fluke reaches \SI{0.30}{\metre\per\second}
+and the paddle \SIrange{0.26}{0.27}{\metre\per\second}, so the speeds are similar but not equal, and the speed-scheduled fluke needs
+43\,\% less power than the paddle (\SI{42}{} versus \SI{73}{\milli\watt}). A first hardware test, however, is 1.3 to 1.6 times slower than predicted (\cref{sec:res-hw}). The predicted speeds are therefore upper bounds for the present robot, and the comparison
+of the propulsors rests on the CFD.
+
+\section{Why the Reduced-Order Model and the CFD Differ at Low Speed}
+\label{sec:disc-models}
+
+The reduced-order model and the CFD agree that drag-based paddling has a speed limit and that lift-based flapping wins at cruising
+speed. They disagree at low speed: MuJoCo finds lift-propelled gaits more economical already at
+\SI{0.10}{\metre\per\second}, by a factor of about two to four (up to ten at \SI{0.20}{\metre\per\second}), whereas the CFD finds the optimized paddle more efficient below about
+\SI{0.22}{\metre\per\second}. Four differences explain this.
+\begin{enumerate}
+  \item \emph{The lift model is optimistic.} The flat-plate law $c_l\sin2\alpha$ produces lift without the induced drag and
+        tip losses of a finite wing, and the flipper of the toy model has an aspect ratio of only 1.4. The validation case suggests that even at an aspect ratio of 6 the finite span is a likely cause of an efficiency deficit of up to 18\,\%, with tip losses estimated at 10--20\,\%. The model also has no dynamic stall,
+        no delay in the build-up of circulation and no interaction of the flipper with its own wake.
+  \item \emph{The drag model is pessimistic for a starting paddle.} A constant $C_D=2.2$ misses the starting vortex and added-mass
+        effects that raise the effective force coefficient of the paddle's power stroke to 2--3 times its quasi-steady value in
+        the CFD (\cref{sec:res-drag}).
+  \item \emph{The drag-type strokes differ.} The MuJoCo flipper can only feather by rotating; it has no folding and no controlled
+        fold timing, and it is limited to the smooth harmonic motion \eqref{eq:gait}. Because a flipper that crosses the water at an
+        angle produces lift, a drag-based stroke in the lift model is a stroke from which lift has been suppressed, and most
+        paddling strokes of the drag-only model become lift-propelled once lift is added (\cref{sec:mj-liftshare}). The CFD
+        paddle, in contrast, is a dedicated drag device: it moves broadside to its path, folds to 12\,mm at optimized phases and
+        uses a trapezoidal velocity law, each feature being worth up to about 30\,\% in thrust. MuJoCo thus compares lift-based strokes with
+        lift-suppressed flipper strokes, the CFD a fluke with an optimized folding paddle.
+  \item \emph{The optimization effort is asymmetric in both directions.} In MuJoCo the lift gaits were optimized for power at a
+        required speed, while the drag-only front has not converged and the constrained search for drag-based strokes in the
+        lift model found a feasible stroke in only 3 of 30 runs. In the CFD, the paddle was optimized in several rounds,
+        while the fluke motion L0 was taken from another model; only its pitch amplitude was later scheduled with speed. The
+        areas also differ (\SI{18.5}{} versus \SI{11.2}{\square\centi\metre}).
+\end{enumerate}
+The reduced-order model is therefore best read as an argument about \emph{mechanism}, which propulsion principle an
+optimizer exploits when it can, and the CFD as the argument about \emph{magnitude} and about the speed at which one
+principle overtakes the other. Where the two disagree, the CFD, which resolves the flow and is validated, is taken as
+authoritative. A calibration of the reduced-order coefficients, especially $c_l$ with an aspect-ratio correction, against
+the CFD would reconcile the two and is the natural next step.
+
+\section{Implications for BODY2}
+\label{sec:disc-design}
+\label{sec:disc-limits-prop}
+
+\paragraph{Recommendation.} For crossing open water at the surface, the recommended propulsor for BODY2 is the fluke with a pitch
+that decreases with speed. For the best-estimate resistance it is slightly faster than the optimized paddle V3trap, needs 43\,\% less
+hydrodynamic power, and requires neither a controlled fold nor a trapezoidal velocity law. Compared with the robot's present
+configuration, it roughly triples the predicted cruising speed, and in an untimed comparison on the hardware the flukes swam visibly faster than the paddles
+(\cref{sec:plat-hw}). The
+paddle remains the better choice where acceleration, station keeping at low speed or walking matter; it then needs a fold narrowed to
+about \SI{12}{\milli\metre} that can be commanded within \SIrange{45}{60}{\milli\second} at a specific phase, which the current cable
+fold cannot do. This division of labour, rowing for starting and low speed, flapping for cruising, is the one found in animals
+\cite{Walker2000,Fish1996}; a leg that could change from paddle to fluke, like the morphing turtle limbs of Baines et
+al.\ \cite{Baines2022}, would cover both regimes.
+
+\paragraph{Fluke.} The fluke's thrust at rest is limited because it is stalled: without forward speed, a flapping foil acts
+as a small paddle. At speed, its performance depends on keeping the angle of attack near the efficient range, which a fixed
+pitch schedule does not do. The schedule $\theta_0=\gamma_\text{max}/2$ is a single-parameter rule that achieves this and also
+removes the large mean vertical force that a mismatched schedule produces. On the hardware the pitch is passive: it follows from
+the balance between the hydrodynamic moment about the pin, which turns the fluke towards the inflow, and the leaf spring. A passive
+fluke therefore adapts to speed, but not in the ratio required. The hydrodynamic moment grows with the square of the relative speed
+while the spring moment does not, so the ratio $\theta/\gamma$ rises with speed. A linear spring can match
+$\theta_0=\gamma_\text{max}/2$ at one design speed only; below it the fluke pitches too little and its angle of attack is too large,
+above it the fluke aligns too far with the inflow and its angle of attack falls below the efficient range. Matching a range of
+speeds requires a progressive spring, an adjustable preload or an active pitch actuator. The hardware test, which reached only
+roughly a quarter to a half of the CFD thrust (\cref{sec:res-hw}), is consistent with a passive pitch that is not tuned to the efficient angle of attack, although
+other causes cannot be excluded.
+
+\paragraph{Equal area.} The fluke used here has 61\,\% of the paddle's area. At rest both produce the same thrust per area
+(\SIrange{3.9}{4.5}{} versus \SI{4.1}{\milli\newton\per\square\centi\metre}), and at \SI{0.223}{\metre\per\second} the fluke already
+produces more (\SI{1.9}{} versus \SIrange{1.3}{1.4}{\milli\newton\per\square\centi\metre}). If the thrust and power coefficients stayed
+the same, a fluke of the paddle's area, \SI{18.5}{\square\centi\metre}, moved with the same kinematics would produce about
+\SI{75}{\milli\newton} at rest, as much as the paddle, and more than the paddle from about \SI{0.15}{\metre\per\second} on. Its power would
+grow in the same proportion, to about \SI{30}{\milli\watt} at rest, so the efficiency crossover would not move. A lunate fluke of this area
+(span \SI{86}{\milli\metre}, $\mathit{AR}\approx4$) has been designed for the robot; its larger aspect ratio should reduce tip losses, but its
+larger hinge moment, about 1.6 times that of A2 at the same pitch schedule, must be carried by the pitch spring or actuator. This is an
+estimate, not a simulation result.
+
+\paragraph{Actuators.} The hydrodynamic moments of all motions are small compared with the servos: the largest, \SI{36}{\milli\newton\metre}
+about the hip for the trapezoidal paddle stroke, is 6--8\,\% of the stall torque of the PTK\,7465W (\SIrange{0.44}{0.57}{\newton\metre}).
+The limits that matter are joint speed and the ability to switch the fold (\cref{tab:actuators}). The prescribed pitch of L0 needs
+\SI{712}{\degree\per\second}, more than the no-load speed at \SI{6}{\volt} (\SI{650}{\degree\per\second}) and close to that at
+\SI{8.4}{\volt} (\SI{860}{\degree\per\second}), whereas the speed-scheduled pitch at \SI{0.30}{\metre\per\second} needs only \SI{366}{\degree\per\second}.
+
+\section{Limitations}
+\label{sec:disc-limits}
+
+\begin{itemize}
+  \item \emph{Single leg.} The CFD simulates one propulsor without the linkage, the hull or the other legs. Interaction between
+        legs can raise the thrust of four paddling legs above four times the single-leg value \cite{Wang2025} and may differ between
+        paddle and fluke. The self-propulsion balance neglects it.
+  \item \emph{Free surface.} All propulsor CFD is single-phase with a rigid lid. On the hardware and in Flare Live the fluke breaks the
+        surface by about \SI{7}{\milli\metre} at the top of its stroke, and the paddle's recovery path is close to it; ventilation
+        and waves are not modelled.
+  \item \emph{Prescribed pitch and fold.} The fluke pitch is prescribed rigidly, while the hardware fluke is passive. The fan's
+        folding is modelled as an instantaneous switch between two separately simulated states. The change of added mass at the
+        switches is corrected analytically within bounds, with an added mass identified from the CFD; the effect of the open run's
+        own recovery wake on its power stroke is not corrected and makes the paddle results slightly optimistic.
+  \item \emph{CFD accuracy.} The flow is laminar, which is one of the causes of the 18\,\% efficiency deficit in the validation at
+        $\mathit{Re}=4\times10^4$; at the lower Reynolds numbers of the fluke the effect is expected to be smaller. The fluke thrust carries
+        about $\pm12$\,\% discretization uncertainty. The paddle mesh is coarser and was not studied separately; the conclusions were argued in \cref{sec:ver-drag} to be insensitive to an error of that size.
+  \item \emph{Power.} The power is the hydrodynamic input power of the propulsor. Servo losses, the inertia of the leg and the drag of
+        the linkage are not included, so the power ratios between propulsors are not the ratios of battery power.
+  \item \emph{Unequal propulsors.} The paddle stroke was optimized more thoroughly than the fluke motion, so the fluke results are
+        conservative; a systematic optimization of heave amplitude, frequency and pitch would likely move the crossover to lower speed.
+        The propulsors also run at different frequencies (\SI{1.39}{} and \SI{2}{\hertz}) and have different areas; thrust per area and
+        per power are reported, but no comparison at equal area and frequency was made.
+  \item \emph{Resistance.} The hull resistance is known only within bounds, and the cruising speeds are correspondingly
+        uncertain. The linkage term of $D_\text{mid}$ is an engineering estimate, not a measurement, and the hull resistance was computed
+        for the pointed end first, whereas the hardware swims with its blunt end first.
+  \item \emph{Reduced-order model.} The MuJoCo model is a stand-in of similar size, not BODY2, and its coefficients are not
+        calibrated. Its servo model (\SI{3}{\newton\metre}, \SI{400}{\degree\per\second}) is stronger and slower than the PTK\,7465W
+        (\SIrange{0.44}{0.57}{\newton\metre}, \SIrange{650}{860}{\degree\per\second}). Its searches are not fully converged, and the
+        within-model comparison rests on 3 feasible drag-based strokes from 30 searches with two seeds, so its power factor may
+        be overestimated.
+  \item \emph{Hardware.} The hardware test consists of one hand-timed run per frequency from rest, with a reversed hull, a passive
+        pitch and an unmeasured stroke amplitude. It shows that the self-propulsion estimate is an upper bound but does not identify
+        the causes of the difference.
+\end{itemize}

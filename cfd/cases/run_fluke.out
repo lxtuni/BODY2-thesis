@@ -1,0 +1,96 @@
+
+===== [09-27 03:41:22] 开始：D0U015 L0c   8 核（机器 8 物理核，OpenFOAM v2606） =====
+
+===== [09-27 03:41:22] 生成 leg_cur_U015_open =====
+    算例：/home/lxtuni/run/leg_cur_U015_open   脚蹼 open   U = 0.15 m/s   3.0 个周期 (T = 1.25 s) → endTime 3.750 s
+    部件网格盒 50×39×15 = 29250 单元（2.50 mm，表面再细化 1 级）
+    背景域 x[-0.383,0.387] y[-0.284,0.284] z[-0.376,0.187]  blockMesh 48×36×35，加密到 4.0 mm
+    桨尖最大速度 0.40 m/s → 初始 Δt = 0.0012 s，maxCo 0.8；每周期写 4 帧
+    洞切搜索盒 (-0.0464069 -0.0783731 -0.14381)–(0.154666 0.0783731 0.0967374)，体素 162×126×194（≈1.2 mm）
+
+===== [09-27 03:41:23] 跑 /home/lxtuni/run/leg_cur_U015_open（网格 + 求解；看进度 bash progress.sh /home/lxtuni/run/leg_cur_U015_open） =====
+    用时：ExecutionTime = 10662.68 s  ClockTime = 10664 s   步数：5614
+cur_U015/force_open.dat  ← 5614 行，t = 0.0014 … 3.7500 s
+cur_U015/moment_open.dat  ← 5614 行，t = 0.0014 … 3.7500 s
+   5614 步，用时 2.96 h
+    省硬盘：删了 processor* 和三维流场（postProcessing 的力 / 表面 / 截面都在）
+    56M   硬盘剩 835G
+
+===== [09-27 06:39:29] 生成 leg_cur_U015_closed =====
+    算例：/home/lxtuni/run/leg_cur_U015_closed   脚蹼 closed   U = 0.15 m/s   3.0 个周期 (T = 1.25 s) → endTime 3.750 s
+    部件网格盒 50×22×15 = 16500 单元（2.50 mm，表面再细化 1 级）
+    背景域 x[-0.383,0.387] y[-0.263,0.263] z[-0.376,0.187]  blockMesh 48×33×35，加密到 4.0 mm
+    桨尖最大速度 0.40 m/s → 初始 Δt = 0.0012 s，maxCo 0.8；每周期写 4 帧
+    洞切搜索盒 (-0.0464069 -0.057 -0.14381)–(0.154666 0.057 0.0967374)，体素 162×92×194（≈1.2 mm）
+
+===== [09-27 06:39:30] 跑 /home/lxtuni/run/leg_cur_U015_closed（网格 + 求解；看进度 bash progress.sh /home/lxtuni/run/leg_cur_U015_closed） =====
+!! leg_cur_U015_closed 没有正常结束：看 /home/lxtuni/run/leg_cur_U015_closed/log.overPimpleDyMFoam 末尾与 /home/lxtuni/run/leg_cur_U015_closed/allrun.out
+Running setFields on /home/lxtuni/run/leg_cur_U015_closed
+Running checkMesh on /home/lxtuni/run/leg_cur_U015_closed
+Running decomposePar on /home/lxtuni/run/leg_cur_U015_closed
+Running overPimpleDyMFoam (8 processes) on /home/lxtuni/run/leg_cur_U015_closed 
+Running redistributePar (8 processes) on /home/lxtuni/run/leg_cur_U015_closed 
+
+===== [09-27 06:55:56] D0U015 完成，汇总 =====
+    
+    ===== 尾鳍 / 翼型（最后 2 个周期） =====
+    算例          U m/s     T mN    Fz mN    C_T      η    P mW  T/P N/W  |M_h| mN·m   α75°   对照
+    L1a10       0.223     32.8     -9.4   1.15   0.24    30.1     1.09      197.08   14.3   
+    L1a28       0.223     26.2     -0.7   0.92   0.24    23.9     1.09       16.55   30.1   
+    
+    ===== 阻力型 V3trap 两态合成 =====
+    方案              U m/s  T(τ 0.33/−0.06) mN    T 最优 mN   τ_c   τ_o
+    V3trap          0.000                87.2       87.2  0.33 -0.06
+    
+    ===== 阻力型 真机现步态（按自身开合时机合成：τ_o 0 / τ_c = DUTY） =====
+    方案              U m/s     T mN   τ_c      T 重扫最优 mN   （重扫最优只作参考：真机开合由线驱动，时机不可调）
+    cur_U0          0.000     23.5  0.50           27.1
+    
+    ===== 推力–航速（单腿，mN） =====
+      U m/s      升力型 尾鳍       阻力型 现步态     阻力型 V3trap
+      0.000           —          23.5           87.2
+    
+    → /mnt/c/Users/L/Desktop/openfoam/robot_real/cloud_fluke/results_fluke/summary.json
+
+===== [09-27 06:55:56] 生成 fluke_L0c =====
+    算例：/home/lxtuni/run/fluke_L0c   U = 0.2229 m/s   3.0 个周期 (T = 0.5000 s) → endTime 1.500 s   参考面积 11.50 cm²
+    部件网格盒 42×52×24 = 52416 单元（1.60 mm，表面再细化 1 级）
+    背景域 x[-0.402,0.307] y[-0.278,0.278] z[-0.346,0.139]  blockMesh 54×42×37，加密到 3.3 mm
+    表面最大速度 0.53 m/s → 初始 Δt = 0.0006 s，maxCo 0.8；每周期写 4 帧
+    洞切搜索盒 (-0.0648337 -0.072 -0.114121)–(0.0749859 0.072 0.0489882)，体素 234×240×240（≈0.68 mm）
+
+===== [09-27 06:55:57] 网格 /home/lxtuni/run/fluke_L0c =====
+    背景网格：blockMesh 83916 → snappy 加密后 230216
+
+===== [09-27 06:56:18] 求解 /home/lxtuni/run/fluke_L0c（看进度 bash progress.sh /home/lxtuni/run/fluke_L0c） =====
+    洞切设置 → id | inverseDistance; searchBoxDivisions  (234 240 240);
+    [id] 第一步：总单元 297435，洞 343（0.12 %）
+!! fluke_L0c 没有正常结束：看 /home/lxtuni/run/fluke_L0c/log.overPimpleDyMFoam 末尾与 /home/lxtuni/run/fluke_L0c/allrun.out
+Running topoSet on /home/lxtuni/run/fluke_L0c
+Restore 0/ from 0.orig/
+Running setFields on /home/lxtuni/run/fluke_L0c
+Running checkMesh on /home/lxtuni/run/fluke_L0c
+Running decomposePar on /home/lxtuni/run/fluke_L0c
+
+===== [09-27 09:54:43] L0c 完成，汇总 =====
+    
+    ===== 尾鳍 / 翼型（最后 2 个周期） =====
+    算例          U m/s     T mN    Fz mN    C_T      η    P mW  T/P N/W  |M_h| mN·m   α75°   对照
+    L1a10       0.223     32.8     -9.4   1.15   0.24    30.1     1.09      197.08   14.3   
+    L1a28       0.223     26.2     -0.7   0.92   0.24    23.9     1.09       16.55   30.1   
+    
+    ===== 阻力型 V3trap 两态合成 =====
+    方案              U m/s  T(τ 0.33/−0.06) mN    T 最优 mN   τ_c   τ_o
+    V3trap          0.000                87.2       87.2  0.33 -0.06
+    
+    ===== 阻力型 真机现步态（按自身开合时机合成：τ_o 0 / τ_c = DUTY） =====
+    方案              U m/s     T mN   τ_c      T 重扫最优 mN   （重扫最优只作参考：真机开合由线驱动，时机不可调）
+    cur_U0          0.000     23.5  0.50           27.1
+    
+    ===== 推力–航速（单腿，mN） =====
+      U m/s      升力型 尾鳍       阻力型 现步态     阻力型 V3trap
+      0.000           —          23.5           87.2
+    
+    → /mnt/c/Users/L/Desktop/openfoam/robot_real/cloud_fluke/results_fluke/summary.json
+
+===== [09-27 09:54:43] 全部完成：results_fluke/summary.json（尾鳍）与 results_verify/V3trap_U*/（阻力型） =====

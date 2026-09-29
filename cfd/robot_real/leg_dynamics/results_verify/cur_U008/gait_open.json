@@ -1,0 +1,28 @@
+{
+ "fan": "open",
+ "U": 0.08,
+ "cycles": 3.0,
+ "T": 1.25,
+ "DUTY": 0.5,
+ "SWEEP": 60.0,
+ "PHI_EXT": 105.0,
+ "PHI_RET": 40.0,
+ "FAN_DEG": 120.0,
+ "FAN_CLOSE": -1.0,
+ "CLOSED_W": 0.03,
+ "SWITCH_FRAC": 0.3,
+ "VEL_LAW": "cos",
+ "RAMP": 0.15,
+ "turb": "laminar",
+ "bg": 0.004,
+ "comp": 0.0025,
+ "E0": [
+  0.033918129745414693,
+  -0.01989869053268918
+ ],
+ "psi0_deg": 136.0,
+ "dt0": 0.0012,
+ "tip_speed_max": 0.400312358396951,
+ "leg": false,
+ "WL": -0.01
+}

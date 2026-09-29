@@ -1,0 +1,114 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+
+application     overInterDyMFoam;
+libs            ("liboverset.so" "libfvMotionSolvers.so");
+
+startFrom       latestTime;
+startTime       0;
+stopAt          endTime;
+endTime         2.5000;
+deltaT          0.001;
+writeControl    adjustableRunTime;
+writeInterval   0.06250;
+purgeWrite      0;
+writeFormat     binary;
+writePrecision  8;
+writeCompression on;
+timeFormat      general;
+timePrecision   7;
+runTimeModifiable true;
+adjustTimeStep  yes;
+maxCo           0.8;
+maxAlphaCo      0.6;
+maxDeltaT       0.004;
+
+functions
+{
+    forces_FL
+    {
+        type            forces;
+        libs            ("libforces.so");
+        patches         (paddle_FL);
+        rhoInf          998.8;
+        CofR            (0.0050 0 -0.0100);      // 力矩参考点：船体中点、水线高度
+        writeControl    timeStep;
+        writeInterval   1;
+        log             false;
+    }
+    forces_FR
+    {
+        type            forces;
+        libs            ("libforces.so");
+        patches         (paddle_FR);
+        rhoInf          998.8;
+        CofR            (0.0050 0 -0.0100);      // 力矩参考点：船体中点、水线高度
+        writeControl    timeStep;
+        writeInterval   1;
+        log             false;
+    }
+    forces_RL
+    {
+        type            forces;
+        libs            ("libforces.so");
+        patches         (paddle_RL);
+        rhoInf          998.8;
+        CofR            (0.0050 0 -0.0100);      // 力矩参考点：船体中点、水线高度
+        writeControl    timeStep;
+        writeInterval   1;
+        log             false;
+    }
+    forces_RR
+    {
+        type            forces;
+        libs            ("libforces.so");
+        patches         (paddle_RR);
+        rhoInf          998.8;
+        CofR            (0.0050 0 -0.0100);      // 力矩参考点：船体中点、水线高度
+        writeControl    timeStep;
+        writeInterval   1;
+        log             false;
+    }
+    forces_hull
+    {
+        type            forces;
+        libs            ("libforces.so");
+        patches         (hull);
+        rhoInf          998.8;
+        CofR            (0.0050 0 -0.0100);      // 力矩参考点：船体中点、水线高度
+        writeControl    timeStep;
+        writeInterval   1;
+        log             false;
+    }
+    forces_all
+    {
+        type            forces;
+        libs            ("libforces.so");
+        patches         (paddle_FL paddle_FR paddle_RL paddle_RR hull);
+        rhoInf          998.8;
+        CofR            (0.0050 0 -0.0100);      // 力矩参考点：船体中点、水线高度
+        writeControl    timeStep;
+        writeInterval   1;
+        log             false;
+    }
+    vorticity1
+    {
+        type            vorticity;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    writeTime;
+    }
+    zoneOut                   // 每个写出时刻把 zoneID 也写出来，后处理里用它把背景网格和桨部件网格分开（画自由面）
+    {
+        type            writeObjects;
+        libs            ("libutilityFunctionObjects.so");
+        objects         (zoneID);
+        writeControl    writeTime;
+    }
+    maxU { type fieldMinMax; libs ("libfieldFunctionObjects.so"); mode magnitude; fields (U); location yes; writeControl timeStep; writeInterval 1; log true; }
+}

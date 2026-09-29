@@ -1,0 +1,2 @@
+g_lr: n=110 done=False best_speed=0.0201 yaw=2.5 wall=136s
+g_lr: n=150 done=True best_speed=0.0201 yaw=2.5 wall=185s

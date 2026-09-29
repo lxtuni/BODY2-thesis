@@ -1,0 +1,12 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      decomposeParDict;
+}
+
+numberOfSubdomains 16;
+method          hierarchical;           // scotch 在重叠网格上会触发 lduInterface 转型错误（v2606 实测），用 hierarchical
+hierarchicalCoeffs { n (4 4 1); order xyz; }

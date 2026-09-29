@@ -1,0 +1,69 @@
+\chapter{相关工作}
+\label{ch:related}
+
+本章综述以下内容：关于动物和翼型的阻力型（drag-based）与升力型（lift-based）游泳的已有认识，游泳腿式机器人是如何设计和仿真的，以及本文所针对的研究空白。
+
+\section{动物的阻力型与升力型游泳}
+\label{sec:rw-bio}
+
+Fish \cite{Fish1996}按照产生推力的力的类型对哺乳动物的游泳方式进行了分类。麝鼠、水貂或狗等划水型游泳者在划水冲程（power stroke）中将足或手逆着水向后移动，并在回程（recovery stroke）中将其收回。它们的推进效率最高仅约0.33。横向于游动方向摆动尾鳍（fluke）或鳍状肢（flipper）的游泳者则产生升力，效率可超过0.8。Fish认为，水生哺乳动物在演化中从划水向升力型游泳的转变正是由这一效率差异所驱动的，而中间形态则兼具两种原理。
+
+麝鼠是记录最为详尽的划水型游泳者\cite{Fish1984}。其划水冲程持续\SI{0.18}{\second}，回程持续\SI{0.22}{\second}，占空比（duty factor）为0.45。在回程中它将脚趾并拢，使足的迎流面积减小55.5\,\%，但回程阻力仍约为划水冲程推力的三分之一。其最大机械效率为0.33。狗采用一种固定模式的对角划水步态，其中每只足沿封闭轨迹运动，且对侧的前肢与后肢同步运动\cite{Fish2021DogPaddle}。鸭子用蹼足划水，其水动力性能更接近船桨而非三角翼\cite{Ribak2023}。
+
+鲸目动物是升力型游泳的参照。宽吻海豚游动的推进效率约为0.8\cite{Fish1993}。齿鲸类以$0.26\pm0.05$的斯特劳哈尔数（Strouhal number）巡航\cite{Rohr2004}；而一般而言，飞行和游泳动物都在$0.2<\mathit{St}<0.4$范围内巡航，这正是振荡翼型功率效率较高的区间\cite{Taylor2003}。Walker和Westneat \cite{Walker2000}用叶素模型（blade-element model）比较了划桨式（rowing）与拍动式（flapping）附肢，得出结论：划桨式在低速以及机动和加速方面更有利，而拍动式在较高速度下效率更高。对BODY2而言，这提示了本文所检验的分工：桨用于起动和低速，尾鳍用于巡航；而其中一者超过另一者的速度则成为待求的量。
+
+\section{拍动翼水动力学}
+\label{sec:rw-foil}
+
+以一定相位差做沉浮（heave）和俯仰（pitch）运动的翼型（foil），通过每个半冲程上的前缘涡（leading-edge vortex）及其尾流中的反卡门涡街（reverse von K\'arm\'an street）产生推力\cite{Triantafyllou1991}。尾流稳定性分析预测最高效率出现在$0.25\lesssim\mathit{St}\lesssim0.35$范围内\cite{Triantafyllou1991}。Anderson等人\cite{Anderson1998}测得NACA\,0012翼型的效率最高可达0.87，对应工况为沉浮幅值$0.75$倍弦长、最大攻角（angle of attack）约\SI{20}{\degree}、俯仰相位超前\SI{75}{\degree}。Read等人\cite{Read2003}扩展了这些测量，发现当最大攻角介于\SI{15}{\degree}与\SI{25}{\degree}之间时存在一个0.5--0.6的宽阔效率平台；而最大的推力系数（thrust coefficient）约为2.4，出现在$\mathit{St}\approx0.6$、攻角为\SIrange{30}{35}{\degree}时，此时效率降至0.5以下。Hover等人\cite{Hover2004}表明，攻角的时间历程与其最大值同样重要：在整个冲程中保持攻角近似恒定，可将高效区间扩展到更高的斯特劳哈尔数和推力。Schouveiler等人\cite{Schouveiler2005}给出了一系列斯特劳哈尔数和攻角下带误差棒的推力系数和效率；\cref{sec:ver-v1}将其中一个数据点用作确认（validation）算例。Floryan等人\cite{Floryan2017}推导了标度律（scaling law）：推力随斯特劳哈尔数的平方增长，而效率则有利于低频下的大幅值。对于自航（self-propelled）游动体，斯特劳哈尔数并非自由参数，而是由推力与阻力的平衡决定\cite{Eloy2012}。在低展弦比（aspect ratio）下，三维效应会降低推力；鲸目动物尾鳍的展弦比约为2--6\cite{Ayancik2020}。对BODY2的尾鳍而言，这些结果确定了目标：攻角约为\SIrange{15}{25}{\degree}，斯特劳哈尔数为0.2--0.4，其俯仰角必须在游动速度变化时保持这一目标。
+
+\section{划水力学}
+\label{sec:rw-paddle}
+
+桨（paddle）只有依靠划水冲程与回程之间的不对称性才能产生净推力，这种不对称可以是空间上的（回程时面积更小），也可以是时间上的（回程更慢）\cite{HerreraAmaya2024}。Kim和Gharib \cite{Kim2011}测量了做划水转动的平板周围的流场，表明推力跟随起动涡（starting vortex）的增长与脱落（shedding），而非准定常（quasi-steady）意义下平板速度的平方。受甲壳动物启发的推进器（propulsor），在附肢于划水冲程开始时迅速张开、并在回程早期闭合时性能最佳\cite{Santos2026}。一种缩短机器人蹼足在张开与折叠状态之间过渡时间的肌腱耦合机构，使其推进效率提高了一倍\cite{Lin2024}。对于仿河狸机器人，已有研究用准定常方法对可弯曲蹼足的水动力进行了建模，并在水槽中进行了测量\cite{Chen2021,Chen2022}。因此，对BODY2的折扇桨（fan paddle）而言，可调节的杠杆是收拢面积、折叠时机和划水冲程的速度规律；这三者均在\cref{sec:res-drag}中加以变化。
+
+\section{游泳腿式机器人}
+\label{sec:rw-robots}
+
+Picardi等人\cite{Picardi2023}综述了水下腿式机器人；其中大多数在水底行走，能游泳的很少。Li等人\cite{Li2019}分析了以刚性肢体划水的机器狗的运动学和水动力学。Qu等人\cite{Qu2025}制作了一台两栖机器狗，并针对不同划水冲程占比的划水步态测量了单腿推力和整机推力；较短的划水冲程产生的推力更大，但横滚也更大。Wang等人\cite{Wang2025}采用浸入边界（immersed-boundary）CFD求解器对四足划水进行了仿真。他们在零前进速度下改变刚性、不可折叠腿的初始摆角、摆动幅值和划水冲程占比，发现四条腿的推力比单腿推力的四倍最多高出87\,\%。Han等人\cite{Han2025}基于水池测量数据训练了腿部受力的LSTM模型，并将其用于多目标步态优化。Yao等人\cite{Yao2023}则为四足机器人加装了推力器，并通过学习得到推进控制器。
+
+升力型推进已在配备专用鳍状肢的机器人上得以实现。Baines等人\cite{Baines2022}制作了一台具有变形肢体的海龟机器人，同一肢体既能划水也能拍动；拍动步态在冲程的大部分时间内产生推力，且运输代价（cost of transport）更低，而划水则能提供更大的加速度。DuckyDog机器人采用带被动鳍的变刚度腿\cite{Wang2025DuckyDog}。在本文所在的同一教席，Heber \cite{Heber2026}基于经SPH仿真标定的降阶水动力模型，采用直接配点法（direct collocation）优化了一台两栖四足机器人的阻力型划水步态。\Cref{tab:rw-robots}汇总了这些研究。其中大多数在静止状态下测量或仿真推力，且没有一项在同一条腿上跨前进速度比较阻力型与升力型推进器，而这正是为BODY2选择推进器所需要的。
+
+\begin{table}[htb]
+  \centering
+  \caption[游泳腿式机器人]{游泳腿式机器人与本文。速度按原文报道；$^\dagger$由报道的航程长度与时间推得；--为未报道。}
+  \label{tab:rw-robots}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{30mm}>{\raggedright\arraybackslash}p{34mm}>{\raggedright\arraybackslash}p{30mm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{24mm}@{}}
+    \toprule
+    研究 & 推进器 & 方法 & 推力随前进速度变化 & 游动速度 \\
+    \midrule
+    Li等人\cite{Li2019} & 刚性划水腿（气动软执行器） & 运动学与阻力分析，样机 & 否 & -- \\
+    Qu等人\cite{Qu2025} & 刚性两段式划水腿 & 静止受力测量，自由游动 & 否 & \SI{0.16}{\metre\per\second}（0.54\,BL/s） \\
+    Wang等人\cite{Wang2025} & 刚性划水腿 & 浸入边界CFD，系留 & 否 & -- \\
+    Han等人\cite{Han2025} & 带蹼板的划水腿 & 水池测量，LSTM模型，步态优化 & 是，\SIrange{0}{0.3}{\metre\per\second} & $\approx$\SI{0.1}{\metre\per\second}$^\dagger$ \\
+    Baines等人\cite{Baines2022} & 变形肢体：划水与拍动 & 静止受力测量，单一速度下的CFD & 否 & -- \\
+    DuckyDog \cite{Wang2025DuckyDog} & 带被动鳍的腿 & 自由游动 & 否 & 0.30\,BL/s \\
+    Heber \cite{Heber2026} & 刚性划水腿 & 降阶模型，直接配点法 & 否 & -- \\
+    \midrule
+    本文 & 同一条腿上的折扇桨与尾鳍 & 降阶优化，重叠网格CFD，硬件试验 & 是，\SIrange{0}{0.4}{\metre\per\second} & CFD \SIrange{0.26}{0.30}{\metre\per\second}（1.1--1.3\,BL/s）；硬件\SI{0.14}{} / \SI{0.26}{\metre\per\second}（2 / 4\,Hz下自静止起步的平均值） \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+
+\section{游泳机器人的仿真方法}
+\label{sec:rw-sim}
+
+各类仿真方法的计算代价相差数个数量级。降阶模型（reduced-order model）对每个连杆施加准定常阻力、附加质量（added mass）和浮力\cite{Morison1950,Fossen1994}。这类模型的速度足以用于优化\cite{Chen2021,Heber2026,Lee2025}，但其系数必须经过辨识，而且单纯的阻力模型不包含升力。SPH等粒子方法和基于网格的CFD能够解析流场，但仿真一秒的物理时间需要数分钟到数小时。重叠网格（overset/Chimera grid）是在OpenFOAM中仿真大幅度给定物体运动的成熟方法\cite{Weller1998,Windt2020}；浸入边界法是另一种选择\cite{Wang2025}。基于自适应块网格的格子玻尔兹曼（lattice Boltzmann）求解器，如商业软件Flare Live \cite{FlareLive}，以牺牲分辨率换取实时速度，能够仿真包含关节和执行器的整台机器人。对本文而言，由此得出的便是\cref{ch:intro}所述的工具分工：降阶模型用于搜索，CFD用于给出数值。
+
+\section{研究空白}
+\label{sec:rw-gap}
+
+已有文献表明，在动物中升力型拍动比阻力型划水效率更高，并且划水可以通过折叠、时机控制和速度曲线设计加以改进。机器人腿式游泳的研究主要集中在两方面：一是刚性足或折叠足的阻力型冲程，且大多在零前进速度下进行\cite{Wang2025,Qu2025}；二是降阶模型，而其中的升力成分要么缺失，要么未经标定。
+据作者所知，尚无研究在同一条腿式机器人的腿上，借助解析流场的仿真，在不同前进速度下比较优化后的阻力型桨与升力型尾鳍，找出限制各推进器的因素，并将结果转化为整机的游动速度。因此，以下几方面的组合尚属空白，也正是本文所要解决的：
+\begin{itemize}
+  \item 包含执行器速度限值和升力项的降阶优化，以考察优化器会选择哪种原理；
+  \item 对同一机器人腿分别装配两种推进器、且各自采用优化运动的单腿CFD，覆盖从静止到巡航速度的范围；
+  \item 自航估计，以及与整机实时求解器的交叉校核。
+\end{itemize}

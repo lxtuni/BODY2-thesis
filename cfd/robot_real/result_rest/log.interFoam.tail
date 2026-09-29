@@ -1,0 +1,40 @@
+        Pressure : (2.12098e-06 0.0437542 -0.00105767)
+        Viscous  : (6.99058e-06 2.09969e-05 1.48232e-05)
+    writing force and moment files.
+
+Flow time scale min/max = 0.000237959, 1
+Smoothed flow time scale min/max = 0.000237959, 0.0101877
+Damped flow time scale min/max = 0.000237959, 0.0101877
+Time = 1500
+
+PIMPLE: iteration 1
+smoothSolver:  Solving for alpha.water, Initial residual = 1.1861e-06, Final residual = 7.80677e-10, No Iterations 1
+Phase-1 volume fraction = 0.800141  Min(alpha.water) = -1.44508e-09  Max(alpha.water) = 1
+Applying the previous iteration compression flux
+MULES: Correcting alpha.water
+MULES: Correcting alpha.water
+MULES: Correcting alpha.water
+Phase-1 volume fraction = 0.800141  Min(alpha.water) = -5.84589e-07  Max(alpha.water) = 1
+GAMG:  Solving for p_rgh, Initial residual = 0.000776934, Final residual = 1.2382e-06, No Iterations 2
+time step continuity errors : sum local = 5.33297e-07, global = 4.22609e-08, cumulative = 1.66465e-05
+GAMG:  Solving for p_rgh, Initial residual = 2.12134e-05, Final residual = 9.91942e-08, No Iterations 6
+time step continuity errors : sum local = 4.27475e-08, global = 1.0409e-09, cumulative = 1.66476e-05
+smoothSolver:  Solving for omega, Initial residual = 4.65934e-07, Final residual = 3.29103e-09, No Iterations 1
+bounding omega, min: -150.526 max: 471508 average: 287.347
+smoothSolver:  Solving for k, Initial residual = 3.13061e-05, Final residual = 9.75385e-08, No Iterations 1
+ExecutionTime = 1653.26 s  ClockTime = 1653 s
+
+forces forces write:
+    Sum of forces
+        Total    : (-0.0790722 0.00484509 3.84727)
+        Pressure : (-0.0721675 0.00479995 3.84761)
+        Viscous  : (-0.00690472 4.51365e-05 -0.000343004)
+    Sum of moments
+        Total    : (1.31974e-05 0.0437585 -0.00104131)
+        Pressure : (6.20684e-06 0.0437374 -0.00105614)
+        Viscous  : (6.99054e-06 2.10233e-05 1.48252e-05)
+    writing force and moment files.
+
+End
+
+Finalising parallel run

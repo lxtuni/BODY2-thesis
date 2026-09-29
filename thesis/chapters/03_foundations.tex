@@ -1,0 +1,193 @@
+\chapter{Fundamentals}
+\label{ch:foundations}
+
+This chapter introduces the forces on a moving appendage, two simple models of drag-based and lift-based
+thrust, the metrics used to compare propulsors and the balance that turns single-leg thrust into a swimming
+speed. The models are used to interpret the simulations, not to replace them.
+
+\section{Forces on a Moving Appendage}
+\label{sec:fund-forces}
+
+A rigid appendage that moves through still water with velocity $\bm v$ relative to the water experiences a
+pressure and shear force. Its components along and normal to $\bm v$ are the drag and the lift. For a
+thin plate the drag depends strongly on the orientation: moved broadside, a plate has a drag coefficient of
+about 1.2--2 \cite{Newman1977}; moved edgewise, it has only skin friction. Accelerating the plate also
+accelerates the surrounding water, which appears as an added-mass force proportional to the acceleration.
+Reduced-order models sum these contributions per body \cite{Morison1950,Fossen1994}:
+\begin{equation}
+  \bm F = -\tfrac12\rho\, C_D A\, |\bm v|\,\bm v \;+\; \bm L \;-\; C_a \rho V \dot{\bm v} \;+\; \bm F_\text{b},
+  \label{eq:morison}
+\end{equation}
+with density $\rho$, reference area $A$, volume $V$, added-mass coefficient $C_a$ and buoyancy
+$\bm F_\text{b}$. A pure drag model ($\bm L=\bm 0$) can only push water backwards; it is the model of a
+\emph{paddle}. A lift term normal to $\bm v$ makes it possible to produce thrust with a foil that moves
+mostly across the swimming direction; it is the model of a \emph{fin} or \emph{fluke}.
+
+The flows of this thesis are unsteady and separated. With a paddle-tip speed of about
+\SI{0.35}{\metre\per\second} and a fan radius of \SI{42}{\milli\metre}, the paddle works at a Reynolds number
+$\mathit{Re}=vc/\nu\approx1.5\times10^4$. The fluke, with a chord of \SI{34}{\milli\metre} at
+\SI{0.22}{\metre\per\second}, works at $\mathit{Re}\approx7.6\times10^3$. At these Reynolds numbers a starting
+paddle forms a vortex whose growth sets the force \cite{Kim2011}, and a flapping foil carries a leading-edge
+vortex \cite{Triantafyllou1991,Anderson1998}. Equation~\eqref{eq:morison} with constant coefficients misses both
+effects. It is used here to derive trends, while magnitudes come from CFD.
+
+\section{Quasi-Steady Paddling}
+\label{sec:fund-paddle}
+
+Consider a paddle that sweeps a path of length $L$ backwards (power stroke) with speed $v_p$ and area
+$A$, and returns (recovery stroke) with speed $v_r=x\,v_p$ and a reduced area $aA$, $0<a\le 1$. At zero
+forward speed the quasi-steady impulses of the two strokes are $\tfrac12\rho C_D A v_p L$ and
+$-\tfrac12\rho C_D\,aA\,x v_p L$, and the period is $L(1+x)/(x v_p)$. The cycle-mean thrust is
+\begin{equation}
+  \Tm = \tfrac12\rho C_D A v_p^2\;\frac{x\,(1-a x)}{1+x}.
+  \label{eq:paddle-mean}
+\end{equation}
+Both asymmetries identified by Herrera-Amaya and Byron \cite{HerreraAmaya2024} appear: a spatial one ($a<1$)
+and a temporal one ($x\neq1$). For a fixed power-stroke speed, which is the natural constraint of a
+speed-limited servo, \eqref{eq:paddle-mean} is maximal at
+\begin{equation}
+  x^* = \sqrt{1+1/a}-1, \qquad \mathrm{DUTY}^* = \frac{x^*}{1+x^*},
+  \label{eq:duty-opt}
+\end{equation}
+where DUTY is the fraction of the cycle spent in the power stroke. A well-folding paddle (small $a$) should
+return quickly, a poorly folding one slowly. For the muskrat, whose foot area is reduced by 55.5\,\% during
+recovery ($a=0.445$), \eqref{eq:duty-opt} gives $\mathrm{DUTY}^*=0.445$, close to the measured 0.45
+\cite{Fish1984}. For BODY2's fan paddle the effective ratio $a$ follows from the CFD
+(\cref{sec:res-drag}); when $x^*>1$, the recovery would have to be faster than the power stroke, and the
+servo speed limit then sets DUTY instead of \eqref{eq:duty-opt}.
+
+Three further conclusions follow from the same model.
+\begin{itemize}
+  \item \emph{Velocity law.} For a given peak speed and stroke time, a trapezoidal velocity profile (short
+        ramps, constant speed in between) produces a larger impulse $\int v^2\,\mathrm dt$ than a sinusoidal
+        one. For a given impulse, H\"older's inequality shows that the energy $\int v^3\,\mathrm dt$ is
+        minimal when $v$ is constant.
+  \item \emph{Forward speed.} When the robot moves with speed $\U$, the power stroke acts on the relative
+        velocity $v_p-\U$ and the recovery on $v_r+\U$. The thrust of the power stroke falls and the drag of
+        the recovery rises with $\U$. The paddle should be open only while $v>\U$.
+  \item \emph{Efficiency.} The useful power is $\Tm\U$, while the paddle delivers $\Tm v_p$ to the water during
+        the power stroke. The Froude efficiency of a drag-based stroke is therefore bounded by
+        $\U/v_p<1$ and is highest for a large paddle moved slowly \cite{Fish1996,Walker2000}.
+\end{itemize}
+
+\section{Flapping-Foil Kinematics}
+\label{sec:fund-foil}
+
+A foil that is carried with forward speed $\U$ and heaves with vertical position $h(t)$ meets the water at
+the inflow angle
+\begin{equation}
+  \gamma(t) = \arctan\frac{\dot h(t)}{\U}.
+  \label{eq:gamma}
+\end{equation}
+If the chord is pitched by $\theta(t)$ from the swimming direction, the effective angle of attack is
+\begin{equation}
+  \alpha(t) = \gamma(t) - \theta(t),
+  \label{eq:alpha}
+\end{equation}
+with signs chosen so that $\theta$ and $\gamma$ rotate the same way (\cref{fig:foil-sketch}). The lift $L$
+acts normal to the relative inflow and the drag $D$ along it; the thrust is
+\begin{equation}
+  F_x = L\sin\gamma - D\cos\gamma .
+  \label{eq:foil-thrust}
+\end{equation}
+Thrust is produced as long as the lift is tilted forwards enough to overcome the drag. Because $\sin\gamma$
+multiplies the lift, the same foil at the same $\alpha$ produces a forward force whenever it heaves; unlike the
+paddle, it does not need a recovery stroke against the flow.
+
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[scale=1.1,>=Latex]
+    \draw[->,gray] (1.8,-2.0) -- (-1.2,-2.0) node[left,font=\small,black]{swimming direction $x$};
+    \draw[gray,dashed] (-3.4,0) -- (2.2,0);
+    \begin{scope}[rotate=-15]
+      \fill[TUMblue!75] (-1.3,0) .. controls (-1.2,0.2) and (-0.4,0.16) .. (1.3,0)
+                        .. controls (-0.4,-0.12) and (-1.2,-0.18) .. (-1.3,0);
+      \draw[TUMblue!40!black,dotted] (-2.2,0) -- (2.0,0);
+    \end{scope}
+    \draw[->] (1.9,0) arc (0:-15:1.9); \node[font=\small] at (2.15,-0.28) {$\theta$};
+    \draw[->,thick] (-3.3,1.87) -- (-1.55,0.40) node[pos=0.25,above right,font=\small]{relative inflow};
+    \draw[->] (-2.35,0) arc (180:140:0.9); \node[font=\small] at (-2.55,0.35) {$\gamma$};
+    \draw[->,thick,TUMblue] (0.9,0.35) -- (0.9,1.25) node[above,font=\small]{heave $\dot h$};
+    \draw[->,very thick,todo] (0,0) -- (-0.84,-1.0) node[below left,font=\small]{$L$};
+    \draw[->,very thick,todo!55] (0,0) -- (0.54,-0.45) node[right,font=\small]{$D$};
+  \end{tikzpicture}
+  \caption[Flapping-foil angles]{Angles of a heaving and pitching foil. The relative inflow is tilted by the
+    inflow angle $\gamma=\arctan(\dot h/\U)$ below the swimming direction; the chord is pitched by $\theta$
+    in the same sense; the angle of attack between chord and inflow is $\alpha=\gamma-\theta$. Lift $L$ acts
+    normal and drag $D$ parallel to the relative inflow; the thrust is their net component along $x$. Shown
+    for the upstroke.}
+  \label{fig:foil-sketch}
+\end{figure}
+
+The Strouhal number $\mathit{St}=fA/\U$, with the peak-to-peak excursion $A$ of the trailing edge, is the ratio of heave speed to forward speed. In this thesis $A$ is taken as the excursion of the pin, which is known from the prescribed motion; the trailing-edge value is somewhat larger. Efficient cruising lies at $0.2<\mathit{St}<0.4$
+\cite{Taylor2003,Triantafyllou1991}. A leg driven by a speed-limited servo has an approximately fixed heave
+speed $\dot h_\text{max}$. The Strouhal number, and with it the inflow angle, then decreases with swimming speed:
+\begin{equation}
+  \gamma_\text{max}(\U) = \arctan\frac{\dot h_\text{max}}{\U}.
+  \label{eq:gammamax}
+\end{equation}
+If the pitch schedule $\theta(t)$ is kept fixed while $\U$ changes, the angle of attack changes as well. At rest
+($\U\to0$) the inflow is vertical, $\gamma=\SI{90}{\degree}$, and the fluke is stalled; it works as a small
+paddle. At high speed $\gamma_\text{max}$ becomes small and a fixed pitch amplitude can make $\alpha$ too small
+or even negative.
+
+A simple way to keep $\alpha$ in the efficient range of \SIrange{15}{25}{\degree} \cite{Read2003,Hover2004} is to
+scale the pitch with the inflow angle,
+\begin{equation}
+  \theta(t) = \theta_0\,\frac{\dot h(t)}{\dot h_\text{max}}, \qquad \theta_0=\tfrac12\,\gamma_\text{max}(\U),
+  \label{eq:l3}
+\end{equation}
+so that at mid-stroke, where $\dot h=\dot h_\text{max}$, the foil takes half of the inflow angle as pitch and
+the other half as angle of attack. This \emph{speed-scheduled pitch} is evaluated in
+\cref{sec:res-l3}. It requires one parameter per speed and no knowledge of the flow. For BODY2's leg,
+$\dot h_\text{max}\approx\SI{0.28}{\metre\per\second}$, so $\gamma_\text{max}=\SI{52}{\degree}$,
+\SI{43}{\degree} and \SI{35}{\degree} at \SIlist{0.223;0.30;0.40}{\metre\per\second}.
+
+\section{Performance Metrics}
+\label{sec:fund-metrics}
+
+All single-leg quantities are cycle means over complete stroke periods $T=1/f$. For a propulsor with
+position $\bm x_H(t)$ of its reference point, angular velocity $\bm\omega(t)$ and fluid force and moment
+$\bm F$, $\bm M_H$ about that point:
+\begin{align}
+  \Tm &= \big\langle F_x \big\rangle, \label{eq:thrust}\\
+  \Pm &= -\big\langle \bm F\cdot\dot{\bm x}_H + \bm M_H\cdot\bm\omega \big\rangle, \label{eq:power}\\
+  \etaF &= \frac{\Tm\,\U}{\Pm}, \qquad C_T=\frac{\Tm}{\tfrac12\rho\U^2S}. \label{eq:eta}
+\end{align}
+The $x$ axis points in the swimming direction, so that $\Tm>0$ is thrust and $\Pm>0$ is power delivered
+to the fluid. $\Pm$ is the hydrodynamic input power: it does not include the inertia of the parts, friction
+or motor losses. $\etaF$ is the Froude (propulsive) efficiency; it vanishes at $\U=0$, where the thrust per
+power $\Tm/\Pm$ is reported instead. $S$ is the planform area of the propulsor. For the whole robot the cost of
+transport is reported either as energy per distance $\Pm/\U$ (J/m) or dimensionless as $\Pm/(mg\U)$; the
+form used is stated with each value.
+
+For the drag-type paddle, the thrust is also split into the contributions of the power stroke and the
+recovery,
+\begin{equation}
+  \Tm = \Tm_\text{pow} + \Tm_\text{rec}, \qquad
+  \Tm_\text{pow} = \frac1T\int_{\text{power}} F_x\,\mathrm dt, \quad
+  \Tm_\text{rec} = \frac1T\int_{\text{recovery}} F_x\,\mathrm dt,
+  \label{eq:split}
+\end{equation}
+which shows directly which half of the cycle limits the thrust at speed.
+
+\section{Self-Propulsion Balance}
+\label{sec:fund-selfprop}
+
+A robot swims steadily at the speed where the propulsive force of its legs equals the resistance of the
+hull and the parts that do not propel. If each of the four legs produces the cycle-mean thrust $\Tm(\U)$
+measured in isolation and the legs do not interact, the cruising speed $\U_c$ solves
+\begin{equation}
+  4\,\Tm(\U_c) = D(\U_c),
+  \label{eq:selfprop}
+\end{equation}
+and the time history from rest follows from the quasi-steady surge equation
+\begin{equation}
+  (m+m_a)\,\dot\U = 4\,\Tm(\U) - D(\U).
+  \label{eq:surge}
+\end{equation}
+Equation~\eqref{eq:selfprop} neglects the interaction between the legs, which can raise the thrust of four
+paddling legs above four times the single-leg value \cite{Wang2025}, and the effect of the leg motion on the
+hull resistance. It also assumes that the legs keep their prescribed motion at every speed. Because the
+resistance of BODY2 is known only within bounds, \eqref{eq:selfprop} is solved for three resistance
+curves in \cref{sec:res-selfprop}, and the result is reported as a range.

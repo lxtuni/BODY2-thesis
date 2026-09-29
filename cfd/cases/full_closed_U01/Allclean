@@ -1,0 +1,6 @@
+#!/bin/sh
+cd "${0%/*}" || exit 1
+. "$WM_PROJECT_DIR/bin/tools/CleanFunctions"
+cleanCase
+for d in paddleMesh_*; do rm -rf $d/constant/polyMesh $d/constant/extendedFeatureEdgeMesh $d/constant/triSurface/*.eMesh $d/log.*; done
+rm -rf constant/extendedFeatureEdgeMesh constant/triSurface/*.eMesh postProcessing 0

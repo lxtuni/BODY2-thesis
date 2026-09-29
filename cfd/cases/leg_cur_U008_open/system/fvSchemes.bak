@@ -1,0 +1,30 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+
+ddtSchemes { default Euler; }
+gradSchemes { default Gauss linear; }
+divSchemes
+{
+    default         none;
+    div(phi,U)      Gauss limitedLinearV 1;
+    div((nuEff*dev2(T(grad(U))))) Gauss linear;
+}
+laplacianSchemes { default Gauss linear corrected; }
+interpolationSchemes { default linear; }
+snGradSchemes { default corrected; }
+// 重叠网格洞切 (hole cutting)：默认 30³ 体素铺满整个背景域，分辩不了 5.6 mm 厚的桨板 → 泄漏成全洞。
+// 把搜索盒限制在桨的运动包络内、体素 ~1.2 mm。v2606 若报 searchBoxDivisions 类型错误，改成每个 zone 一组：((nx ny nz) (nx ny nz))
+oversetInterpolation
+{
+    method              inverseDistance;
+    searchBox           (-0.0464069 -0.0783731 -0.14381) (0.154666 0.0783731 0.0967374);
+    searchBoxDivisions  (162 126 194);
+}
+fluxRequired { default no; p; }
+wallDist { method meshWave; }

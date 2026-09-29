@@ -1,0 +1,169 @@
+\chapter{Verification and Validation}
+\label{ch:verification}
+
+The single-leg CFD provides all quantitative statements of \cref{ch:results}. This chapter checks it in three
+ways: against a flapping-foil experiment (validation), on a coarser mesh (spatial discretization) and from cycle
+to cycle (temporal convergence). It closes with the consequences for the drag-type cases, which were not part of
+the mesh study, and with a check of the real-time solver Flare Live against the CFD.
+
+\section{Validation with a Heaving and Pitching Foil}
+\label{sec:ver-v1}
+
+\paragraph{Case.} Schouveiler et al.\ \cite{Schouveiler2005} measured the thrust and efficiency of a NACA\,0012
+foil in combined heave and pitch in a towing tank, with error bars. One of their points is reproduced with the
+same solver, the same overset method and comparable resolution as the fluke cases: chord $c=\SI{0.1}{\metre}$,
+span \SI{0.6}{\metre} with free tips, heave amplitude $h_0/c=0.75$, pitch axis at $c/3$, pitch leading heave by
+\SI{90}{\degree}, $\mathit{St}=0.25$, maximum angle of attack \SI{15}{\degree}, $\U=\SI{0.4}{\metre\per\second}$
+($f=\SI{0.667}{\hertz}$) and $\mathit{Re}=4\times10^4$. The component mesh has \SI{2.5}{\milli\metre} cells
+($c/40$), the background \SI{5}{\milli\metre}. Three cycles were simulated without a start-up ramp.
+
+\paragraph{Results.} The streamwise force settles after the first cycle (\cref{fig:verification}a); cycles 2 and 3
+differ by less than 0.1\,\%. The simulated motion reaches $\alpha_{75}=\SI{14.6}{\degree}$, consistent with the
+prescribed \SI{15}{\degree}, and the mean lateral force is 1.3\,\% of the thrust. The mean thrust is
+\SI{1415}{\milli\newton} and the input power \SI{946}{\milli\watt}. \Cref{tab:v1} compares the coefficients
+with the experiment.
+
+\begin{table}[t]
+  \centering
+  \caption[Validation against Schouveiler et al.]{Validation against the experiment of Schouveiler et
+    al.\ \cite{Schouveiler2005} (NACA\,0012, $\mathit{St}=0.25$, $\alpha_\text{max}=\SI{15}{\degree}$).}
+  \label{tab:v1}
+  \small
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    & CFD (this work) & Experiment & Deviation \\
+    \midrule
+    Thrust coefficient $C_T$ & 0.295 & $0.32\pm0.01$ & $-8$\,\% \\
+    Froude efficiency $\etaF$ & 0.60 & $0.73\pm0.04$ & $-18$\,\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The thrust coefficient is within 8\,\% of the measurement, inside the $\pm$10--15\,\% usually reported for
+flapping-foil CFD, and is taken as the main criterion. The efficiency is 18\,\% too low. Three causes act in the
+direction observed. (i) The simulated foil has free tips and an aspect ratio of 6, while the experiment was close
+to two-dimensional; a finite-wing estimate $\mathit{AR}/(\mathit{AR}+2)=0.75$ suggests tip losses of 10--20\,\%, which
+affect efficiency more than thrust because tip vortices cost power. (ii) At $\mathit{Re}=4\times10^4$ the boundary
+layer is transitional; a laminar model separates earlier and overestimates the power. (iii) The mesh ($c/40$) is
+coarser than in the fluke cases ($c/50$). Because this thesis compares propulsors simulated with the same solver
+and settings, such systematic deviations affect both propulsors in the same direction to first order; the tip losses and the laminar separation act mainly on the lift-based fluke, so its advantage is, if anything, underestimated. Absolute efficiencies should be read as conservative.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_verification}
+  \caption[Verification and validation]{Verification and validation of the single-leg CFD. (a) Validation case:
+    streamwise force coefficient with cycle means (dashed). (b) Thrust coefficient and efficiency against the
+    experiment of Schouveiler et al.\ \cite{Schouveiler2005}. (c) Fluke L0 on the fine and the coarse mesh over the
+    common time window. (d) Change of the mean thrust between the last and the second-last cycle for all fluke cases
+    and the validation case.}
+  \label{fig:verification}
+\end{figure}
+
+\section{Mesh Sensitivity}
+\label{sec:ver-mesh}
+
+The reference fluke case L0 was repeated on a mesh in which all cell sizes were multiplied by $r=1.33$ (component
+\SI{1.6}{\milli\metre}, background \SI{3.3}{\milli\metre}). The coarse run was stopped at $t=\SI{0.91}{\second}$,
+so both runs are compared over the common window $t=\SIrange{0.41}{0.91}{\second}$. The force histories are
+nearly identical in shape (\cref{fig:verification}c). The coarse mesh gives 7.3\,\% less thrust
+(\SI{19.75}{} versus \SI{21.30}{\milli\newton}), 3.9\,\% less power and 3.4\,\% lower efficiency.
+
+With two meshes the order of convergence cannot be computed. Assuming second order ($p=2$) and a safety factor of
+$F_s=1.25$ \cite{Roache1994}, the grid convergence index of the thrust on the fine mesh is
+\begin{equation}
+  \mathrm{GCI} = F_s\,\frac{|\varepsilon|}{r^p-1} = 1.25\times\frac{0.073}{1.33^2-1} \approx 12\,\%.
+  \label{eq:gci}
+\end{equation}
+The discretization uncertainty of the fluke thrust is therefore taken as about $\pm12$\,\%, and that of power and
+efficiency as about $\pm6$\,\%. Since the coarse mesh gives lower thrust, the fine-mesh values are more likely to
+be slightly low than high.
+
+\section{Temporal Convergence}
+\label{sec:ver-time}
+
+For every fluke case, the mean thrust of the last cycle differs from that of the second-last cycle by at most
+0.61\,\% (L2 at $\U=0$), and by at most 0.31\,\% for all other cases (\cref{fig:verification}d). The validation
+case differs by less than 0.1\,\%. Averaging over the last two cycles after a half-cycle start-up is therefore
+sufficient; the periodic state is reached within the first full cycle. The fan-paddle cases were evaluated in their
+third cycle. For the robot gait at \SI{0.08}{\metre\per\second}, cycles 2 and 3 give \SI{7.3}{} and
+\SI{5.2}{\milli\newton}; this case, whose thrust is small, has a correspondingly larger uncertainty.
+
+\section{Consequences for the Drag-Type Cases}
+\label{sec:ver-drag}
+
+No separate mesh study was run for the fan paddle, and its mesh is coarser than that of the fluke
+(\cref{tab:meshes}). Three arguments bound the effect on the conclusions.
+\begin{enumerate}
+  \item \emph{Flow physics.} The paddle is a thin plate with sharp edges moved broadside. Its separation lines are
+        fixed at the edges, whereas the fluke's thrust depends on a leading-edge vortex and leading-edge suction
+        that are more sensitive to resolution. The fluke's $\pm12$\,\% is a plausible upper bound for the paddle.
+  \item \emph{Low speed.} Up to \SI{0.15}{\metre\per\second} the optimized paddle produces 1.6--2.0 times the thrust
+        of the fluke. An error of $\pm12$\,\% does not change this ranking.
+  \item \emph{Crossover.} Near the crossover the thrust falls with slopes of about \SI{-110}{} (fluke) and
+        \SI{-340}{\milli\newton\second\per\metre} (paddle). A $\pm12$\,\% error of the paddle thrust
+        (about \SI{2.5}{\milli\newton}) shifts the crossover by about \SI{0.01}{\metre\per\second}; opposite
+        errors of $\pm12$\,\% on both sides shift it by about \SI{0.02}{\metre\per\second}. The uncertainty of the
+        added-mass correction (\cref{sec:cfd-composite}) adds less than \SI{0.01}{\metre\per\second}.
+\end{enumerate}
+The coarser paddle mesh is nevertheless a limitation and is listed in \cref{sec:disc-limits}.
+
+\section{Cross-Check of the Real-Time Solver}
+\label{sec:ver-flare}
+\label{sec:res-flare}
+
+Flare Live (\cref{sec:cfd-flare}) simulates the whole robot in real time but on a lattice of \SIrange{2}{3}{\milli\metre}. Before
+any of its results can be used, its fluke force is checked against the CFD. In the tow runs, the fluke performs exactly the L0 motion of the CFD. Its
+angle of attack agrees ($\alpha_{75}=\SI{19.7}{\degree}$ versus \SI{19.9}{\degree} at \SI{0.223}{\metre\per\second}), but its
+thrust does not (\cref{fig:flare-fin}). On the \SI{3}{\milli\metre} lattice, Flare Live gives \SI{20.0}{},
+\SI{8.5}{} and \SI{-0.1}{\milli\newton} at \SIlist{0;0.1;0.223}{\metre\per\second}, against \SI{45.5}{}, about \SI{34}{} (interpolated) and \SI{21.4}{\milli\newton} in CFD (\cref{tab:app-flare}): 44\,\%, 25\,\% and practically zero. The deficit is about
+\SIrange{21}{26}{\milli\newton} at all three speeds, which is the order of the lift-based thrust itself.
+
+The idle fluke, held at its zero position, has a drag of \SI{12.6}{\milli\newton} at \SI{0.223}{\metre\per\second}. At its
+incidence of \SI{-25}{\degree} this corresponds to a drag coefficient of about 0.45 based on the planform, a normal value for a
+stalled plate. The thrust increment of flapping over idling is \SI{12.5}{\milli\newton}, still well below the CFD thrust.
+
+On a \SI{2}{\milli\metre} lattice the fluke thrust at \SI{0.223}{\metre\per\second} rises to \SI{4.1}{\milli\newton} (19\,\% of
+CFD) and the idle drag hardly changes (\SI{11.6}{\milli\newton}). The result is not converged, and a Richardson extrapolation from
+the two lattices gives only about \SIrange{8}{12}{\milli\newton}, which indicates that the lattices are far from the asymptotic
+range. The cause is resolution: the \SI{34}{\milli\metre} chord spans only 11 cells at \SI{3}{\milli\metre} and 17 at
+\SI{2}{\milli\metre}, while the boundary layer at $\mathit{Re}\approx7600$ is about \SI{0.4}{\milli\metre} thick. The leading edge,
+where the suction that drives lift-based thrust acts, is not resolved. Resolving it would need a lattice of \SI{1}{\milli\metre}
+or finer at many times the cost, which defeats the purpose of a real-time solver.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_flare_fin}
+  \caption[Flare Live compared with CFD]{Fluke force in Flare Live and in CFD for the same fluke and motion. (a) Streamwise force
+    versus tow speed, flapping and idle. (b) Ratio of the Flare to the CFD thrust.}
+  \label{fig:flare-fin}
+\end{figure}
+
+Flare Live is therefore used only for the reference motion of the fluke and for qualitative trends of the free-swimming
+robot, which are collected in \cref{app:flare-trends}; all quantitative statements rest on the CFD.
+
+\section{Summary}
+\label{sec:ver-summary}
+
+\Cref{tab:uncertainty} collects the checks of this chapter.
+
+\begin{table}[H]
+  \centering
+  \caption[Uncertainty summary]{Summary of the verification and validation.}
+  \label{tab:uncertainty}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    Check & Result \\
+    \midrule
+    Validation (foil experiment) & $C_T$ $-8$\,\%, $\etaF$ $-18$\,\%; deviations mainly from free tips and laminar model \\
+    Mesh sensitivity (fluke) & $\Tm$ $-7.3$\,\% on the $\times1.33$ coarser mesh, GCI $\approx\pm12$\,\% \\
+    Temporal convergence & fluke: last two cycles differ by $\le0.61$\,\%; robot gait at \SI{0.08}{\metre\per\second}: 7.3 vs.\ \SI{5.2}{\milli\newton} \\
+    Drag-type mesh & not studied; ranking insensitive, crossover within $\pm\SI{0.02}{\metre\per\second}$ \\
+    Real-time solver (Flare Live) & fluke thrust 0--44\,\% of CFD on 2--3\,mm lattices; used for trends only \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+The single-leg CFD reproduces the thrust of a flapping foil well and underestimates its efficiency. Its numerical
+uncertainty is dominated by spatial discretization, about $\pm12$\,\% in thrust. Differences between propulsors of
+less than about 15\,\% are therefore not interpreted as significant in \cref{ch:results}.

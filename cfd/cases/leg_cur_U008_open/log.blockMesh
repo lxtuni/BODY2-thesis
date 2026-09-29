@@ -1,0 +1,85 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2606                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _481094f-20260618 OPENFOAM=2606 version=2606
+Arch   : "LSB;label=32;scalar=64"
+Exec   : blockMesh
+Date   : Sep 27 2026
+Time   : 22:19:45
+Host   : April
+PID    : 14593
+I/O    : uncollated
+Case   : /home/lxtuni/run/leg_cur_U008_open
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+memory pool : not available
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+
+--> FOAM Warning : allowSystemOperations : Allowing user-supplied system call operations.
+                   This can be a security risk if running untrusted cases
+                   through e.g. 'coded' on-the-fly-compilation functionality.
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+--> FOAM Warning : 
+    From virtual void Foam::Time::readDict()
+    in file db/Time/TimeIO.C at line 407
+    Reading "system/controlDict" at line 10 to 49
+    Disabled output compression for non-ascii format (inefficient/ineffective)
+Creating block mesh from "system/blockMeshDict"
+Creating block edges
+No non-planar block faces defined
+Creating topology blocks
+
+Creating topology patches - from boundary section
+
+Creating block mesh topology
+
+Check topology
+
+	Basic statistics
+		Number of internal faces : 0
+		Number of boundary faces : 6
+		Number of defined boundary faces : 6
+		Number of undefined boundary faces : 0
+	Checking patch -> block consistency
+
+Creating block offsets
+Creating merge list (topological search)...
+
+Creating polyMesh from blockMesh
+Creating patches
+Creating cells
+Creating points with scale (1 1 1)
+    Block 0 cell size :
+        i : 0.016039583 .. 0.016039583
+        j : 0.015788889 .. 0.015788889
+        k : 0.016071429 .. 0.016071429
+
+No patch pairs to merge
+
+Writing polyMesh with 0 cellZones
+----------------
+Mesh Information
+----------------
+  boundingBox: (-0.3832 -0.2842 -0.3758) (0.3867 0.2842 0.1867)
+  nPoints: 65268
+  nCells: 60480
+  nFaces: 186108
+  nInternalFaces: 176772
+----------------
+Patches
+----------------
+  patch 0 (start: 176772 size: 1260) name: inlet
+  patch 1 (start: 178032 size: 1260) name: outlet
+  patch 2 (start: 179292 size: 3360) name: sides
+  patch 3 (start: 182652 size: 1728) name: bottom
+  patch 4 (start: 184380 size: 1728) name: top
+
+End
+

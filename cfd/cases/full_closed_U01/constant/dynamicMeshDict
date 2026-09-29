@@ -1,0 +1,53 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      dynamicMeshDict;
+}
+
+dynamicFvMesh       dynamicOversetFvMesh;
+dynamicOversetFvMeshCoeffs { }
+
+// v2606 若报 "solver" 关键字：改成 motionSolver multiSolidBodyMotionSolver; 并把 Coeffs 内容保留
+solver          multiSolidBodyMotionSolver;
+multiSolidBodyMotionSolverCoeffs
+{
+    c1
+    {
+        solidBodyMotionFunction tabulated6DoFMotion;
+        tabulated6DoFMotionCoeffs
+        {
+            CofG            (0.033918 0.075000 -0.019899);
+            timeDataFileName "<constant>/6DoF_FL.dat";
+        }
+    }
+    c2
+    {
+        solidBodyMotionFunction tabulated6DoFMotion;
+        tabulated6DoFMotionCoeffs
+        {
+            CofG            (0.027962 -0.075000 0.017583);
+            timeDataFileName "<constant>/6DoF_FR.dat";
+        }
+    }
+    c3
+    {
+        solidBodyMotionFunction tabulated6DoFMotion;
+        tabulated6DoFMotionCoeffs
+        {
+            CofG            (-0.115538 0.070000 0.017583);
+            timeDataFileName "<constant>/6DoF_RL.dat";
+        }
+    }
+    c4
+    {
+        solidBodyMotionFunction tabulated6DoFMotion;
+        tabulated6DoFMotionCoeffs
+        {
+            CofG            (-0.109582 -0.070000 -0.019899);
+            timeDataFileName "<constant>/6DoF_RR.dat";
+        }
+    }
+}

@@ -1,0 +1,33 @@
+\thispagestyle{empty}
+\vspace*{25mm}
+\noindent{\sffamily\bfseries\Large 摘要\par}
+\vspace{6mm}
+\noindent
+两栖四足机器人可以通过摆动腿部来游泳，但为行走而设计的腿并不是好的推进器。本文研究哪种推进原理适合四足机器人BODY2的腿，以及每种推进器应如何运动。本文将采用折扇桨的阻力型划水与装在同一条腿上的小型尾鳍的升力型拍动进行比较。研究采用了三种作用各不相同的仿真工具。首先，将一个含有作用于各连杆的Morison型力和执行器速度限制的MuJoCo降阶模型与CMA-ES步态优化相结合。只要模型中包含升力且升力未被抑制，所有可行的优化步态都是升力推进的，且在相同航速下，升力步态所需功率仅为纯阻力模型中最佳步态的二分之一到三分之一。其次，在OpenFOAM中采用重叠网格CFD对单腿进行仿真。对于折扇桨，采用梯形速度规律、12\,mm的收拢宽度并在减速开始时合扇，可使静止状态下每条腿的推力从机器人当前步态的\SI{23.4}{\milli\newton}提高到\SIrange{73}{83}{\milli\newton}；该范围涵盖了折叠时附加质量的变化，而折扇的两态模型并不解析这一变化。桨的推力在航速约\SI{0.30}{\metre\per\second}时消失，因为其回程阻力以及在迎面来流中开扇的代价不断增大，而划水冲程推力则逐渐衰减。尾鳍在静止时产生相同的单位面积推力，且其推力随航速下降得更慢。二者的推力和效率分别在约\SI{0.24}{}和\SI{0.22}{\metre\per\second}处出现交叉。使尾鳍俯仰角随航速调度，可将攻角保持在\SI{20}{\degree}附近，并使\SI{0.30}{\metre\per\second}时的弗劳德效率从0.24提高到0.40。准定常自航平衡预测尾鳍的巡航速度为\SI{0.30}{\metre\per\second}，优化后的桨为\SIrange{0.26}{0.27}{\metre\per\second}，且采用随航速调度俯仰的尾鳍所需功率低43\,\%。装配尾鳍的机器人在\SI{2}{\hertz}下的首次硬件测试比预测慢1.3至1.6倍，因此这些速度是现有机器人的上限。第三，实时求解器Flare Live提供尾鳍的参考运动，但其格子未能解析翼型、低估了尾鳍推力，因此仅用于趋势分析。所用CFD设置对一项拍动翼实验推力系数的复现误差在8\,\%以内。
+
+\vspace{12mm}
+\noindent{\sffamily\bfseries\Large Abstract\par}
+\vspace{6mm}
+\noindent
+Amphibious quadruped robots can swim by moving their legs, but a leg designed for walking makes a poor
+propulsor. This thesis asks which propulsion principle suits the legs of the quadruped BODY2 and how each
+propulsor should move. Drag-based paddling with a folding fan paddle is compared with lift-based flapping of a
+small fluke fitted to the same leg. Three simulation tools with different roles are used. First, a reduced-order
+MuJoCo model with Morison-type link forces and an actuator speed limit is combined with CMA-ES gait
+optimization. Whenever the model contains lift and lift is not suppressed, every feasible optimized gait is lift-propelled, and at equal speed the lift gaits
+need one half to one third of the power of the best gaits of a drag-only model. Second, the single leg is simulated
+with overset-grid CFD in OpenFOAM. For the fan paddle, a trapezoidal velocity law, a 12-mm folded width and
+closing the fan at the start of the deceleration raise the thrust from \SI{23.4}{\milli\newton} for the robot's
+current gait to \SIrange{73}{83}{\milli\newton} per leg at rest; the range bounds the change of added mass at the
+fold, which the two-state model of the folding fan does not resolve. The paddle loses its thrust by about
+\SI{0.30}{\metre\per\second}, because its recovery drag and the cost of opening the fan in the oncoming flow grow
+while its power-stroke thrust decays. The fluke produces the same thrust per area at rest and loses it more slowly with speed.
+Thrust and efficiency cross over at about \SI{0.24}{} and \SI{0.22}{\metre\per\second}. Scheduling the fluke pitch with speed keeps the angle of attack near
+\SI{20}{\degree} and raises the Froude efficiency at \SI{0.30}{\metre\per\second} from 0.24 to 0.40. A
+quasi-steady self-propulsion balance predicts a cruising speed of \SI{0.30}{\metre\per\second} for the fluke and
+\SIrange{0.26}{0.27}{\metre\per\second} for the optimized paddle, with 43\,\% less power for the fluke with
+speed-scheduled pitch. A first hardware test with flukes at \SI{2}{\hertz} is 1.3 to 1.6 times slower than predicted, so these
+speeds are upper bounds for the present robot. Third, the real-time solver Flare Live supplies the reference fluke motion, but its lattice does not resolve the
+foil and it underpredicts the fluke thrust, so it is used for trends only. The CFD set-up
+reproduces the thrust coefficient of a flapping-foil experiment to within 8\,\%.
+\cleardoublepage

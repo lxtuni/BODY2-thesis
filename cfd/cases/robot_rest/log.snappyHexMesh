@@ -1,0 +1,2753 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2606                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _481094f-20260618 OPENFOAM=2606 version=2606
+Arch   : "LSB;label=32;scalar=64"
+Exec   : snappyHexMesh -overwrite
+Date   : Sep 03 2026
+Time   : 16:14:44
+Host   : April
+PID    : 13502
+I/O    : uncollated
+Case   : /home/lxtuni/run/robot_rest
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+memory pool : not available
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+
+--> FOAM Warning : allowSystemOperations : Allowing user-supplied system call operations.
+                   This can be a security risk if running untrusted cases
+                   through e.g. 'coded' on-the-fly-compilation functionality.
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+--> FOAM Warning : 
+    From virtual void Foam::Time::readDict()
+    in file db/Time/TimeIO.C at line 407
+    Reading "system/controlDict" at line 17 to 58
+    Disabled output compression for non-ascii format (inefficient/ineffective)
+Create mesh for time = 0
+
+Read mesh in = 0.14 s
+
+Overall mesh bounding box  : (-1.2264 -0.8122 -0.6912) (0.5552 0.8122 0.1603)
+Relative tolerance         : 1e-06
+Absolute matching distance : 2.55692e-06
+
+Reading refinement surfaces.
+Read refinement surfaces in = 0.02 s
+
+Reading refinement shells.
+Read refinement shells in = 0 s
+
+Setting refinement level of surface to be consistent with shells.
+For geometry hull.stl detected 0 uncached triangles out of 51324
+Checked shell refinement in = 0.25 s
+
+Reading features.
+Read edgeMesh hull.eMesh
+    points      : 20319
+    edges       : 20428
+    boundingBox : (-0.126 -0.085 -0.0924558) (0.136 0.085 0.0233204)
+
+Refinement level according to distance to "hull.eMesh" (20319 points, 20428 edges).
+    level 1 for all cells within 0 metre.
+Read features in = 0.02 s
+
+
+Determining initial surface intersections
+-----------------------------------------
+
+Edge intersection testing:
+    Number of edges             : 848244
+    Number of edges to retest   : 0
+    Number of intersected edges : 0
+Edge intersection testing:
+    Number of edges             : 848244
+    Number of edges to retest   : 848244
+    Number of intersected edges : 16452
+Calculated surface intersections in = 1 s
+
+Initial mesh : cells:276960  faces:848244  points:294620
+Cells per refinement level:
+    0	276960
+Setting refinement level of surface to be consistent with curvature.
+Checked curvature refinement in = 0 s
+
+
+Adding patches for surface regions
+----------------------------------
+
+Patch Type                Region                        
+----- ----                ------                        
+hull:
+
+6     wall                hull                          
+
+Added patches in = 0.02 s
+
+Edge intersection testing:
+    Number of edges             : 848244
+    Number of edges to retest   : 0
+    Number of intersected edges : 16452
+Decomposition method none [1]
+
+Refinement phase
+----------------
+
+Found point (0.3377 -0.028 -0.0409) in cell 9132 on processor 0
+
+Feature refinement iteration 0
+------------------------------
+
+Marked for refinement due to explicit features             : 3945 cells.
+Determined cells to refine in = 3.2 s
+Selected for feature refinement : 3945 cells (out of 276960)
+Edge intersection testing:
+    Number of edges             : 946545
+    Number of edges to retest   : 142410
+    Number of intersected edges : 33067
+Refined mesh in = 1 s
+After refinement feature refinement iteration 0 : cells:304575  faces:946545  points:338924
+Cells per refinement level:
+    0	273015
+    1	31560
+
+Feature refinement iteration 1
+------------------------------
+
+Marked for refinement due to explicit features             : 0 cells.
+Determined cells to refine in = 3.74 s
+Selected for feature refinement : 0 cells (out of 304575)
+Stopping refining since too few cells selected.
+
+
+Surface refinement iteration 0
+------------------------------
+
+Marked for refinement due to surface intersection          : 16663 cells.
+Determined cells to refine in = 0.03 s
+Selected for refinement : 16663 cells (out of 304575)
+Edge intersection testing:
+    Number of edges             : 1314294
+    Number of edges to retest   : 534029
+    Number of intersected edges : 73873
+Refined mesh in = 1.6 s
+After refinement surface refinement iteration 0 : cells:421216  faces:1314294  points:472654
+Cells per refinement level:
+    0	256352
+    1	164864
+
+Surface refinement iteration 1
+------------------------------
+
+Marked for refinement due to surface intersection          : 36 cells.
+Determined cells to refine in = 0.05 s
+Selected for refinement : 36 cells (out of 421216)
+Edge intersection testing:
+    Number of edges             : 1315050
+    Number of edges to retest   : 3442
+    Number of intersected edges : 73873
+Refined mesh in = 1.22 s
+After refinement surface refinement iteration 1 : cells:421468  faces:1315050  points:472906
+Cells per refinement level:
+    0	256316
+    1	165152
+
+Surface refinement iteration 2
+------------------------------
+
+Marked for refinement due to surface intersection          : 0 cells.
+Determined cells to refine in = 0.05 s
+Selected for refinement : 0 cells (out of 421468)
+Stopping refining since too few cells selected.
+
+
+Removing mesh beyond surface intersections
+------------------------------------------
+
+Setting cellZones according to locationsInMesh:
+Location : (0.3377 -0.028 -0.0409)
+    cellZone : none
+
+For cellZone none found point (0.3377 -0.028 -0.0409) in global region 0 out of 184 regions.
+--> FOAM Warning : 
+    From void Foam::meshRefinement::nearestFace(const Foam::labelUList&, const Foam::bitSet&, Foam::autoPtr<Foam::mapDistribute>&, Foam::labelList&, Foam::label) const
+    in file meshRefinement/meshRefinement.C at line 526
+    Did not visit some faces, e.g. face 0 at (-1.14156 -0.73098 -0.656292)
+Keeping all cells containing inside points
+Selected for keeping : 377614 cells.
+Edge intersection testing:
+    Number of edges             : 1187940
+    Number of edges to retest   : 28572
+    Number of intersected edges : 73873
+
+Shell refinement iteration 0
+----------------------------
+
+Marked for refinement due to distance to explicit features : 0 cells.
+Marked for refinement due to refinement shells             : 0 cells.
+Determined cells to refine in = 1.37 s
+Selected for internal refinement : 0 cells (out of 377614)
+Stopping refining since too few cells selected.
+
+
+Dangling coarse cells refinement iteration 0
+--------------------------------------------
+
+Determined cells to refine in = 0.01 s
+Selected for refinement : 10 cells (out of 377614)
+Edge intersection testing:
+    Number of edges             : 1188090
+    Number of edges to retest   : 1239
+    Number of intersected edges : 73873
+Refined mesh in = 1.06 s
+After refinement coarse cell refinement iteration 0 : cells:377684  faces:1188090  points:433353
+Cells per refinement level:
+    0	236150
+    1	141534
+
+Dangling coarse cells refinement iteration 1
+--------------------------------------------
+
+Determined cells to refine in = 0.01 s
+Selected for refinement : 2 cells (out of 377684)
+Edge intersection testing:
+    Number of edges             : 1188120
+    Number of edges to retest   : 242
+    Number of intersected edges : 73873
+Refined mesh in = 0.99 s
+After refinement coarse cell refinement iteration 1 : cells:377698  faces:1188120  points:433357
+Cells per refinement level:
+    0	236148
+    1	141550
+
+Dangling coarse cells refinement iteration 2
+--------------------------------------------
+
+Determined cells to refine in = 0.01 s
+Selected for refinement : 0 cells (out of 377698)
+Stopping refining since too few cells selected.
+
+
+Dangling coarse cells refinement iteration 0
+--------------------------------------------
+
+Determined cells to refine in = 0.02 s
+Selected for refinement : 0 cells (out of 377698)
+Stopping refining since too few cells selected.
+
+
+Refinement transition refinement iteration 0
+--------------------------------------------
+
+Determined cells to refine in = 0.01 s
+Selected for refinement : 0 cells (out of 377698)
+Stopping refining since too few cells selected.
+
+
+Splitting mesh at surface intersections
+---------------------------------------
+
+Introducing baffles for 73873 faces that are intersected by the surface.
+
+Setting cellZones according to locationsInMesh:
+Location : (0.3377 -0.028 -0.0409)
+    cellZone : none
+
+For cellZone none found point (0.3377 -0.028 -0.0409) in global region 0 out of 340 regions.
+Edge intersection testing:
+    Number of edges             : 1261993
+    Number of edges to retest   : 409632
+    Number of intersected edges : 147544
+Created baffles in = 1.27 s
+
+
+After introducing baffles : cells:377698  faces:1261993  points:433357
+Cells per refinement level:
+    0	236148
+    1	141550
+
+Introducing baffles to block off problem cells
+----------------------------------------------
+
+markFacesOnProblemCells : marked 76822 additional internal faces to be converted into baffles.
+Analyzed problem cells in = 0.81 s
+
+
+Introducing baffles to delete problem cells.
+
+Edge intersection testing:
+    Number of edges             : 1338815
+    Number of edges to retest   : 267714
+    Number of intersected edges : 147679
+Created baffles in = 1.01 s
+
+
+After introducing baffles : cells:377698  faces:1338815  points:433357
+Cells per refinement level:
+    0	236148
+    1	141550
+Setting cellZones according to locationsInMesh:
+Location : (0.3377 -0.028 -0.0409)
+    cellZone : none
+
+For cellZone none found point (0.3377 -0.028 -0.0409) in global region 0 out of 44116 regions.
+Edge intersection testing:
+    Number of edges             : 1338815
+    Number of edges to retest   : 486298
+    Number of intersected edges : 147679
+
+Remove unreachable sections of mesh
+-----------------------------------
+
+Keeping all cells containing points 1((0.3377 -0.028 -0.0409))
+Selected for keeping : 318908 cells.
+Edge intersection testing:
+    Number of edges             : 1021127
+    Number of edges to retest   : 0
+    Number of intersected edges : 47073
+Split mesh in = 2.31 s
+
+
+After subsetting : cells:318908  faces:1021127  points:381958
+Cells per refinement level:
+    0	236148
+    1	82760
+
+Introducing zones for interfaces
+--------------------------------
+
+Setting cellZones according to locationsInMesh:
+Location : (0.3377 -0.028 -0.0409)
+    cellZone : none
+
+For cellZone none found point (0.3377 -0.028 -0.0409) in global region 0 out of 1 regions.
+Setting faceZones according to neighbouring cellZones:
+
+Edge intersection testing:
+    Number of edges             : 1021127
+    Number of edges to retest   : 0
+    Number of intersected edges : 47073
+
+Handling cells with snap problems
+---------------------------------
+
+Introducing baffles for 47073 faces that are intersected by the surface.
+
+Setting cellZones according to locationsInMesh:
+Location : (0.3377 -0.028 -0.0409)
+    cellZone : none
+
+For cellZone none found point (0.3377 -0.028 -0.0409) in global region 0 out of 1 regions.
+Edge intersection testing:
+    Number of edges             : 1021127
+    Number of edges to retest   : 168657
+    Number of intersected edges : 47073
+Created baffles in = 1.69 s
+
+
+After introducing baffles : cells:318908  faces:1021127  points:381958
+Cells per refinement level:
+    0	236148
+    1	82760
+
+Introducing baffles to block off problem cells
+----------------------------------------------
+
+markFacesOnProblemCells : marked 0 additional internal faces to be converted into baffles.
+Analyzed problem cells in = 0.65 s
+
+
+Introducing baffles to delete problem cells.
+
+Created baffles in = 0.08 s
+
+
+After introducing baffles : cells:318908  faces:1021127  points:381958
+Cells per refinement level:
+    0	236148
+    1	82760
+Setting cellZones according to locationsInMesh:
+Location : (0.3377 -0.028 -0.0409)
+    cellZone : none
+
+For cellZone none found point (0.3377 -0.028 -0.0409) in global region 0 out of 1 regions.
+Edge intersection testing:
+    Number of edges             : 1021127
+    Number of edges to retest   : 168657
+    Number of intersected edges : 47073
+
+Remove unreachable sections of mesh
+-----------------------------------
+
+Split mesh in = 1.06 s
+
+
+After subsetting : cells:318908  faces:1021127  points:381958
+Cells per refinement level:
+    0	236148
+    1	82760
+
+Merge free-standing baffles
+---------------------------
+
+freeStandingBaffles : detected 274 free-standing baffles out of 669
+
+freeStandingBaffles : detected 7 planar (within 45 degrees) free-standing baffles out of 274
+
+Detected free-standing baffles : 7
+Edge intersection testing:
+    Number of edges             : 1021120
+    Number of edges to retest   : 7
+    Number of intersected edges : 47066
+
+Introducing baffles to block off problem cells
+----------------------------------------------
+
+markFacesOnProblemCells : marked 0 additional internal faces to be converted into baffles.
+Analyzed problem cells in = 1.33 s
+
+
+Introducing baffles to delete problem cells.
+
+Created baffles in = 0.08 s
+
+
+After introducing baffles : cells:318908  faces:1021120  points:381958
+Cells per refinement level:
+    0	236148
+    1	82760
+
+Remove unreachable sections of mesh
+-----------------------------------
+
+Merged free-standing baffles in = 0.18 s
+
+
+dupNonManifoldPoints : Found : 785 non-manifold points (out of 381958)
+Edge intersection testing:
+    Number of edges             : 1021120
+    Number of edges to retest   : 0
+    Number of intersected edges : 47066
+Detected unsplittable baffles : 2
+Edge intersection testing:
+    Number of edges             : 1021118
+    Number of edges to retest   : 2
+    Number of intersected edges : 47064
+Merged free-standing baffles in = 1.5 s.
+
+Merge refined boundary faces
+----------------------------
+
+Merging 0 sets of faces.
+
+No faces merged ...
+
+Merging all points on surface that
+- are used by only two boundary faces and
+- make an angle with a cosine of more than 0.707107.
+
+No straight edges simplified and no points removed ...
+Refined mesh : cells:318908  faces:1021118  points:382743
+Cells per refinement level:
+    0	236148
+    1	82760
+Writing mesh to time constant
+Wrote mesh in = 0.03 s.
+Mesh refined in = 26.75 s.
+
+Morphing phase
+--------------
+
+Duplicating 0 points on faceZones of type boundary
+Snapping to features in 10 iterations ...
+Constructing mesh displacer ...
+Using mesh parameters 
+{
+    maxNonOrtho     70;
+    maxBoundarySkewness 20;
+    maxInternalSkewness 4;
+    maxConcave      80;
+    minVol          1e-13;
+    minTetQuality   1e-30;
+    minArea         -1;
+    minTwist        0.05;
+    minDeterminant  0.001;
+    minFaceWeight   0.05;
+    minVolRatio     0.01;
+    minTriangleTwist -1;
+    nSmoothScale    4;
+    errorReduction  0.75;
+    relaxed
+    {
+        maxNonOrtho     75;
+    }
+}
+
+
+Checking initial mesh ...
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1408
+    faces with face pyramid volume < 1e-13                 : 0
+    faces with face-decomposition tet quality < 1e-30      : 0
+    faces with concavity > 80  degrees                     : 0
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 204
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 0
+    faces on cells with determinant < 0.001                : 5018
+Detected 6630 illegal faces (concave, zero area or negative cell pyramid volume)
+Checked initial mesh in = 1.23 s
+
+
+Smoothing patch points ...
+Smoothing iteration 0
+Found 1570 non-manifold point(s).
+
+Scaling iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1408
+    faces with face pyramid volume < 1e-13                 : 0
+    faces with face-decomposition tet quality < 1e-30      : 0
+    faces with concavity > 80  degrees                     : 0
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 162
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 0
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+
+Smoothing iteration 1
+Found 0 non-manifold point(s).
+
+Scaling iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1408
+    faces with face pyramid volume < 1e-13                 : 0
+    faces with face-decomposition tet quality < 1e-30      : 1
+    faces with concavity > 80  degrees                     : 0
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 152
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 0
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+
+Smoothing iteration 2
+Found 0 non-manifold point(s).
+
+Scaling iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1408
+    faces with face pyramid volume < 1e-13                 : 0
+    faces with face-decomposition tet quality < 1e-30      : 2
+    faces with concavity > 80  degrees                     : 6
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 152
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 0
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+
+Patch points smoothed in = 3.04 s
+
+
+
+Morph iteration 0
+-----------------
+Calculating patchDisplacement as distance to nearest surface point ...
+    non-zone points : attract to nearest of all non-zone surfaces
+    zone points     : attract to zone surface only
+
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:42 coordinate:(0.10971 0.0686031 0.00853051) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:43 coordinate:(0.108466 0.0687497 0.00852922) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:44 coordinate:(0.108466 0.0687643 0.00725105) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2871 coordinate:(0.0461701 -0.0687661 0.000810491) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2874 coordinate:(0.046149 -0.0686814 -0.00047078) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2880 coordinate:(0.0474934 -0.0687195 0.00338763) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2881 coordinate:(0.0474749 -0.0686766 0.00210374) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2882 coordinate:(0.0461741 -0.0687585 0.00209909) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2889 coordinate:(0.0475147 -0.0686705 0.00467137) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2911 coordinate:(0.0885945 -0.0688165 -0.0117591) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2912 coordinate:(0.0899134 -0.0688189 -0.0117548) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2915 coordinate:(0.0885771 -0.0686843 -0.0111251) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2916 coordinate:(0.0899155 -0.0688408 -0.0111252) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2917 coordinate:(0.0899156 -0.0688413 -0.0113684) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2918 coordinate:(0.08857 -0.0687747 -0.0113683) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2920 coordinate:(0.0899241 -0.068835 -0.0106751) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2921 coordinate:(0.0899202 -0.0688366 -0.0109002) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2924 coordinate:(0.0899225 -0.0688297 -0.0102251) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2925 coordinate:(0.0899249 -0.0688349 -0.01045) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2928 coordinate:(0.0899027 -0.0686843 -0.00977515) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:2929 coordinate:(0.0898957 -0.0687768 -0.00999987) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3070 coordinate:(-0.0373733 0.0510141 -0.00863974) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3071 coordinate:(-0.037347 0.0510717 -0.00832645) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3072 coordinate:(-0.0386932 0.05101 -0.00832611) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3224 coordinate:(0.0673823 -0.0285184 0.0109237) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3225 coordinate:(0.0687115 -0.0285261 0.0109228) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3323 coordinate:(0.0991952 -0.0687096 -0.0017625) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3329 coordinate:(0.100521 -0.0687096 -0.000475) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3429 coordinate:(-0.0267081 0.0510086 -0.00932359) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3430 coordinate:(-0.0280619 0.0510575 -0.00932343) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3431 coordinate:(-0.0280619 0.0510874 -0.00910013) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3432 coordinate:(-0.0267296 0.0510781 -0.00909999) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3433 coordinate:(-0.0267352 0.0510887 -0.00887506) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3434 coordinate:(-0.0280619 0.05109 -0.008875) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3639 coordinate:(0.0779857 -0.028561 0.0108962) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:3640 coordinate:(0.0793113 -0.028561 0.0108962) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4561 coordinate:(0.0514696 -0.0688169 0.0111111) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4562 coordinate:(0.0527463 -0.0688724 0.0110736) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4564 coordinate:(0.0514699 -0.0687677 0.00982417) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4573 coordinate:(0.0514351 -0.0687948 0.0136133) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4574 coordinate:(0.0514588 -0.0688104 0.0123845) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4591 coordinate:(0.0939062 -0.0686843 -0.00887485) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4595 coordinate:(0.0938889 -0.0688243 -0.00832646) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4598 coordinate:(0.0939136 -0.0687756 -0.00864029) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4599 coordinate:(0.0938948 -0.0687785 -0.00681713) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4600 coordinate:(0.095218 -0.0687754 -0.00682051) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4601 coordinate:(0.0952001 -0.0686908 -0.0077741) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4602 coordinate:(0.0938911 -0.0688279 -0.00776568) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4605 coordinate:(0.0952184 -0.0687645 -0.00561713) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4715 coordinate:(-0.0333674 0.051063 -0.00909855) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4716 coordinate:(-0.0320407 0.05107 -0.00909894) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4717 coordinate:(-0.0320387 0.05109 -0.008875) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4718 coordinate:(-0.0333654 0.0510887 -0.00887506) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4719 coordinate:(-0.0333643 0.0510885 -0.00864012) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4720 coordinate:(-0.0320387 0.0510885 -0.00864012) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4929 coordinate:(0.0726838 -0.0285596 0.010898) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:4930 coordinate:(0.074009 -0.0285608 0.0108967) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5132 coordinate:(0.0408883 -0.0687753 -0.00932502) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5135 coordinate:(0.0408823 -0.068684 -0.00954979) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5136 coordinate:(0.0408586 -0.0688201 -0.00887514) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5139 coordinate:(0.0408593 -0.068823 -0.00909987) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5140 coordinate:(0.0408693 -0.068802 -0.00832686) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5143 coordinate:(0.0408644 -0.0688132 -0.00864035) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5144 coordinate:(0.0408885 -0.0686745 -0.00681931) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5145 coordinate:(0.0421774 -0.0686778 -0.00681757) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5147 coordinate:(0.0408691 -0.0687592 -0.00776344) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5149 coordinate:(0.0422144 -0.0686687 -0.00434037) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5150 coordinate:(0.0421949 -0.068714 -0.00561563) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5170 coordinate:(-0.0214006 0.0509328 -0.00887156) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5171 coordinate:(-0.0227282 0.0510192 -0.00887438) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5172 coordinate:(-0.0227555 0.051082 -0.00864014) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5173 coordinate:(-0.0214263 0.0510687 -0.00863965) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5174 coordinate:(-0.0214329 0.0510823 -0.00832647) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5175 coordinate:(-0.0227595 0.0510835 -0.0083264) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5281 coordinate:(0.0621108 -0.0283706 0.0110717) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5282 coordinate:(0.0634155 -0.0284637 0.01098) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5403 coordinate:(0.0844673 -0.0284649 -0.00303368) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5406 coordinate:(0.0844707 -0.0284493 -0.00176141) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5408 coordinate:(0.0844763 -0.0284497 0.000812513) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5409 coordinate:(0.084475 -0.0284496 -0.000474574) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5412 coordinate:(0.0844761 -0.0284496 0.0033875) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5413 coordinate:(0.0844761 -0.0284497 0.0021) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5416 coordinate:(0.0844761 -0.0284496 0.0059625) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5417 coordinate:(0.0844761 -0.0284496 0.004675) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5420 coordinate:(0.0844761 -0.0284496 0.0085375) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5421 coordinate:(0.0844761 -0.0284496 0.00725) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5423 coordinate:(0.0832696 -0.0285741 0.0108949) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5424 coordinate:(0.084443 -0.0287018 0.0108843) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:5425 coordinate:(0.0844713 -0.0284834 0.00979765) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:7747 coordinate:(0.0501306 -0.0686705 0.00725363) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:7748 coordinate:(0.0501518 -0.0687195 0.00853737) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:7751 coordinate:(0.0501704 -0.0686775 0.0098213) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:7768 coordinate:(0.0925806 -0.0686843 -0.0102249) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:7769 coordinate:(0.0925877 -0.0687768 -0.0100001) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:7770 coordinate:(0.0925609 -0.0688297 -0.00977494) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:7771 coordinate:(0.0925585 -0.0688349 -0.00955) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:7772 coordinate:(0.0925593 -0.068835 -0.00932494) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:7773 coordinate:(0.0925631 -0.0688366 -0.00909981) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:7774 coordinate:(0.0925679 -0.0688408 -0.0088748) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2062
+    For point:7775 coordinate:(0.0925676 -0.0688422 -0.00864019) did not find any surface within:0.0013256 metre.
+--> FOAM Warning : 
+    From static Foam::vectorField Foam::snappySnapDriver::calcNearestSurface(bool, const Foam::meshRefinement&, const Foam::labelList&, const Foam::labelList&, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::pointField&, Foam::vectorField&)
+    in file snappyHexMeshDriver/snappySnapDriver.C at line 2070
+    Reached warning limit 100. Suppressing further warnings.
+Wanted displacement : average:0.000403838 min:0 max:0.00164666
+Calculated surface displacement in = 0.07 s
+
+
+Detecting near surfaces ...
+Overriding nearest with intersection of close gaps at 8498 out of 47288 points.
+Overriding displacement on features :
+   implicit features    : false
+   explicit features    : true
+   multi-patch features : false
+
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.109084 0.0686621 0.00789732)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.109092 0.0634007 0.00912468)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.109092 0.0685818 0.00912468)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.046837 -0.0686877 0.00273779)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0892372 -0.0687847 -0.0112468)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0892891 -0.0687354 -0.0107881)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0893005 -0.0687299 -0.0103377)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0680454 -0.0284056 0.0103622)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (-0.0273971 0.051086 -0.00898762)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0786485 -0.0284251 0.0103482)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0521006 -0.0687626 0.0104654)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0945264 -0.0686905 -0.00848277)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0945519 -0.0687681 -0.00729394)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (-0.0327031 0.0510779 -0.00898689)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0733462 -0.0284247 0.0103487)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0414835 -0.0687245 -0.00898734)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0414877 -0.0687178 -0.00848382)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0415173 -0.0686862 -0.00729026)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (-0.0220937 0.0510791 -0.00848322)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0627462 -0.0283441 0.0104187)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0838715 -0.0283672 -0.00239809)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0838751 -0.0283587 0.000168972)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0838753 -0.0283587 0.00274374)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0838753 -0.0283587 0.00531875)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0838753 -0.0283587 0.00789375)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0838628 -0.0285162 0.0103419)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0508344 -0.0687038 0.0104575)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0931952 -0.06869 -0.00988609)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0931836 -0.0687335 -0.00943744)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0932232 -0.0687496 -0.00898655)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.093236 -0.0688179 -0.00848408)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.093241 -0.0687442 -0.00730043)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (-0.0340413 0.0510594 -0.00898708)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (-0.0340274 0.0510857 -0.0084833)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0720209 -0.0284231 0.0103505)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0401536 -0.0687244 -0.0112449)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0401617 -0.0687228 -0.0107876)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0401631 -0.0687223 -0.0103375)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0401748 -0.0687244 -0.00988691)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.040228 -0.068775 -0.00943744)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0401844 -0.0687752 -0.00898753)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0402402 -0.0687177 -0.00848525)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (-0.023387 0.0509586 -0.00898303)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (-0.0234211 0.0510841 -0.00848334)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0826168 -0.0284331 0.0103475)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0985332 -0.0686481 -0.00240695)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (-0.0287387 0.0509371 -0.00942933)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (-0.0287257 0.0510877 -0.00898759)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0773229 -0.0284251 0.0103482)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0455085 -0.0687238 0.000168872)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0667185 -0.0284031 0.0103622)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0680454 0.0284034 0.010364)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0468532 0.0686485 0.00273524)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0892909 0.0687345 -0.0112471)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0893005 0.0687299 -0.0107877)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0786485 0.0284251 0.0103482)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0733462 0.0284247 0.0103487)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0945149 0.0687302 -0.00848401)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0945519 0.0687681 -0.00729394)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0838715 0.0283672 -0.00239809)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0838751 0.0283587 0.000168972)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0838753 0.0283587 0.00274374)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0838753 0.0283587 0.00531875)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0838753 0.0283587 0.00789375)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0838628 0.0285162 0.0103419)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.105186 0.0686882 0.00530689)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0414845 0.0687189 -0.0112447)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0414887 0.0687223 -0.0107875)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0414887 0.0687223 -0.0103375)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0415004 0.0687245 -0.00988691)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0415425 0.0687593 -0.00943712)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0415351 0.0687373 -0.00898848)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0415746 0.0687187 -0.0084836)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0415825 0.0686842 -0.00729659)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0720209 0.0284231 0.0103505)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0931829 0.0687299 -0.0098873)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0931942 0.0687354 -0.00943692)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0932474 0.0687855 -0.00898741)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.093228 0.0688306 -0.00848364)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0932421 0.0687437 -0.00730012)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0826168 0.0284331 0.0103475)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.103835 0.0686515 0.00274503)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0402487 0.0687205 -0.0112458)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0402494 0.0687223 -0.0107875)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0402494 0.0687223 -0.0103375)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0402508 0.0687228 -0.00988738)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0402417 0.068684 -0.00943902)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0773229 0.0284251 0.0103482)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0985332 0.0686481 -0.00240695)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0667183 0.0283852 0.0103796)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0454663 0.0686732 -0.00239703)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0455293 0.0686514 0.000158172)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0468089 -0.0686873 0.00146658)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0481789 -0.0686487 0.00530902)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0906147 -0.0687354 -0.00943808)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0906253 -0.0687335 -0.00921256)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0906261 -0.0687299 -0.0089877)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.090617 -0.0686902 -0.00875988)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0680438 -0.0283587 -0.00362034)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 420
+    Did not find surface near face centre (0.0693693 -0.0283587 -0.00362034)
+--> FOAM Warning : 
+    From void Foam::snappySnapDriver::calcNearestFace(Foam::label, const Foam::indirectPrimitivePatch&, const Foam::pointField&, const Foam::scalarField&, Foam::vectorField&, Foam::vectorField&, Foam::labelList&) const
+    in file snappyHexMeshDriver/snappySnapDriverFeature.C at line 427
+    Reached warning limit 100. Suppressing further warnings.
+Detected 248 baffle edges out of 94606 edges.
+Baffle points     : 305 of which attracted to :
+    feature point : 0
+    feature edge  : 305
+    rest          : 0
+
+Initially selected 7226 mesh points out of 47288 for reverse attraction.
+Selected 14841 mesh points out of 47288 for reverse attraction.
+Stringing feature edges : changed 1028 points
+Stringing feature edges : changed 84 points
+Stringing feature edges : changed 21 points
+Stringing feature edges : changed 4 points
+Stringing feature edges : changed 3 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 3 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 0 points
+Attraction:
+    linear   : max:(2.07216e-05 0.00258393 -1.65407e-05) avg:(3.51187e-08 -7.97337e-07 3.74253e-05)
+    feature  : max:(-0.00112744 -0.00215265 -5.05754e-05) avg:(-8.15564e-07 -5.34344e-07 6.64585e-06)
+Feature analysis : total master points :47288 of which attracted to :
+    feature point   : 222
+    feature edge    : 6110
+    nearest surface : 0
+    rest            : 40956
+
+--> FOAM Warning : Displacement (2.9459e-06 9.86958e-06 -4.34363e-06) at mesh point 60485 coord (0.0574557 0.0625638 -0.00988132) points through the surrounding patch faces
+Smoothing displacement ...
+Iteration 0
+Iteration 10
+Iteration 20
+Iteration 30
+Iteration 40
+Iteration 50
+Iteration 60
+Iteration 70
+Iteration 80
+Iteration 90
+Displacement smoothed in = 2.51 s
+
+
+Moving mesh ...
+
+Iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1408
+    faces with face pyramid volume < 1e-13                 : 0
+    faces with face-decomposition tet quality < 1e-30      : 2
+    faces with concavity > 80  degrees                     : 6
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 150
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 0
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+Moved mesh in = 0.92 s
+
+
+
+Morph iteration 1
+-----------------
+Calculating patchDisplacement as distance to nearest surface point ...
+    non-zone points : attract to nearest of all non-zone surfaces
+    zone points     : attract to zone surface only
+
+Wanted displacement : average:0.000379008 min:0 max:0.00158608
+Calculated surface displacement in = 0.07 s
+
+
+Detecting near surfaces ...
+Overriding nearest with intersection of close gaps at 8508 out of 47288 points.
+Overriding displacement on features :
+   implicit features    : false
+   explicit features    : true
+   multi-patch features : false
+
+Detected 248 baffle edges out of 94606 edges.
+Baffle points     : 306 of which attracted to :
+    feature point : 0
+    feature edge  : 306
+    rest          : 0
+
+Initially selected 7244 mesh points out of 47288 for reverse attraction.
+Selected 15015 mesh points out of 47288 for reverse attraction.
+Stringing feature edges : changed 1012 points
+Stringing feature edges : changed 94 points
+Stringing feature edges : changed 14 points
+Stringing feature edges : changed 4 points
+Stringing feature edges : changed 4 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 3 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 0 points
+Attraction:
+    linear   : max:(-1.26728e-05 0.00255002 -2.03252e-05) avg:(-2.74882e-08 -5.42802e-07 3.44198e-05)
+    feature  : max:(-0.00107121 -0.00213112 4.69648e-06) avg:(-5.5612e-07 -4.5211e-07 5.17174e-06)
+Feature analysis : total master points :47288 of which attracted to :
+    feature point   : 222
+    feature edge    : 6196
+    nearest surface : 0
+    rest            : 40870
+
+--> FOAM Warning : Displacement (6.91004e-06 1.56148e-05 -1.2509e-05) at mesh point 60485 coord (0.0574586 0.0625737 -0.00988566) points through the surrounding patch faces
+Smoothing displacement ...
+Iteration 0
+Iteration 10
+Iteration 20
+Iteration 30
+Iteration 40
+Iteration 50
+Iteration 60
+Iteration 70
+Iteration 80
+Iteration 90
+Displacement smoothed in = 2.53 s
+
+
+Moving mesh ...
+
+Iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1408
+    faces with face pyramid volume < 1e-13                 : 0
+    faces with face-decomposition tet quality < 1e-30      : 3
+    faces with concavity > 80  degrees                     : 7
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 145
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 0
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+Moved mesh in = 0.94 s
+
+
+
+Morph iteration 2
+-----------------
+Calculating patchDisplacement as distance to nearest surface point ...
+    non-zone points : attract to nearest of all non-zone surfaces
+    zone points     : attract to zone surface only
+
+Wanted displacement : average:0.000330474 min:0 max:0.00153194
+Calculated surface displacement in = 0.07 s
+
+
+Detecting near surfaces ...
+Overriding nearest with intersection of close gaps at 8423 out of 47288 points.
+Overriding displacement on features :
+   implicit features    : false
+   explicit features    : true
+   multi-patch features : false
+
+Detected 243 baffle edges out of 94606 edges.
+Baffle points     : 297 of which attracted to :
+    feature point : 0
+    feature edge  : 297
+    rest          : 0
+
+Initially selected 7187 mesh points out of 47288 for reverse attraction.
+Selected 14955 mesh points out of 47288 for reverse attraction.
+Stringing feature edges : changed 1017 points
+Stringing feature edges : changed 84 points
+Stringing feature edges : changed 26 points
+Stringing feature edges : changed 8 points
+Stringing feature edges : changed 7 points
+Stringing feature edges : changed 4 points
+Stringing feature edges : changed 3 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 0 points
+Attraction:
+    linear   : max:(-0.000107101 0.00245358 -3.62938e-05) avg:(8.82028e-08 -8.81162e-07 2.91789e-05)
+    feature  : max:(-0.000949646 -0.00204587 8.7309e-05) avg:(-7.32909e-07 2.34295e-07 5.50724e-06)
+Feature analysis : total master points :47288 of which attracted to :
+    feature point   : 221
+    feature edge    : 6248
+    nearest surface : 0
+    rest            : 40819
+
+--> FOAM Warning : Displacement (1.922e-05 3.94834e-05 1.29123e-05) at mesh point 272208 coord (0.0569036 0.0633199 -0.0099693) points through the surrounding patch faces
+Smoothing displacement ...
+Iteration 0
+Iteration 10
+Iteration 20
+Iteration 30
+Iteration 40
+Iteration 50
+Iteration 60
+Iteration 70
+Iteration 80
+Iteration 90
+Displacement smoothed in = 2.5 s
+
+
+Moving mesh ...
+
+Iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1410
+    faces with face pyramid volume < 1e-13                 : 0
+    faces with face-decomposition tet quality < 1e-30      : 8
+    faces with concavity > 80  degrees                     : 7
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 137
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 4
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+Moved mesh in = 0.92 s
+
+
+
+Morph iteration 3
+-----------------
+Calculating patchDisplacement as distance to nearest surface point ...
+    non-zone points : attract to nearest of all non-zone surfaces
+    zone points     : attract to zone surface only
+
+Wanted displacement : average:0.000266442 min:0 max:0.0015283
+Calculated surface displacement in = 0.06 s
+
+
+Detecting near surfaces ...
+Overriding nearest with intersection of close gaps at 8442 out of 47288 points.
+Overriding displacement on features :
+   implicit features    : false
+   explicit features    : true
+   multi-patch features : false
+
+Detected 240 baffle edges out of 94606 edges.
+Baffle points     : 290 of which attracted to :
+    feature point : 0
+    feature edge  : 290
+    rest          : 0
+
+Initially selected 7096 mesh points out of 47288 for reverse attraction.
+Selected 14818 mesh points out of 47288 for reverse attraction.
+Stringing feature edges : changed 1008 points
+Stringing feature edges : changed 76 points
+Stringing feature edges : changed 21 points
+Stringing feature edges : changed 10 points
+Stringing feature edges : changed 8 points
+Stringing feature edges : changed 6 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 3 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 0 points
+Attraction:
+    linear   : max:(-0.000386793 -0.00229375 -0.000574844) avg:(7.49037e-08 -6.70976e-07 2.1902e-05)
+    feature  : max:(0.000588398 -0.00201885 3.57347e-05) avg:(-5.54739e-07 -7.50851e-07 5.35667e-06)
+Feature analysis : total master points :47288 of which attracted to :
+    feature point   : 217
+    feature edge    : 6288
+    nearest surface : 0
+    rest            : 40783
+
+--> FOAM Warning : Displacement (2.15239e-05 3.87418e-05 1.01147e-05) at mesh point 272208 coord (0.0569228 0.0633594 -0.00995638) points through the surrounding patch faces
+Smoothing displacement ...
+Iteration 0
+Iteration 10
+Iteration 20
+Iteration 30
+Iteration 40
+Iteration 50
+Iteration 60
+Iteration 70
+Iteration 80
+Iteration 90
+Displacement smoothed in = 2.49 s
+
+
+Moving mesh ...
+
+Iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1418
+    faces with face pyramid volume < 1e-13                 : 0
+    faces with face-decomposition tet quality < 1e-30      : 24
+    faces with concavity > 80  degrees                     : 8
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 140
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 5
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+Moved mesh in = 0.94 s
+
+
+
+Morph iteration 4
+-----------------
+Calculating patchDisplacement as distance to nearest surface point ...
+    non-zone points : attract to nearest of all non-zone surfaces
+    zone points     : attract to zone surface only
+
+Wanted displacement : average:0.000193256 min:0 max:0.00150181
+Calculated surface displacement in = 0.06 s
+
+
+Detecting near surfaces ...
+Overriding nearest with intersection of close gaps at 8548 out of 47288 points.
+Overriding displacement on features :
+   implicit features    : false
+   explicit features    : true
+   multi-patch features : false
+
+Detected 266 baffle edges out of 94606 edges.
+Baffle points     : 329 of which attracted to :
+    feature point : 0
+    feature edge  : 329
+    rest          : 0
+
+Initially selected 7007 mesh points out of 47288 for reverse attraction.
+Selected 14729 mesh points out of 47288 for reverse attraction.
+Stringing feature edges : changed 979 points
+Stringing feature edges : changed 69 points
+Stringing feature edges : changed 20 points
+Stringing feature edges : changed 4 points
+Stringing feature edges : changed 0 points
+Attraction:
+    linear   : max:(-8.92383e-05 -0.00188757 -0.00028807) avg:(2.99717e-07 -5.44809e-08 1.3365e-05)
+    feature  : max:(0.00136229 0.00195773 -0.000446438) avg:(-3.64344e-07 -3.20737e-07 4.48649e-06)
+Feature analysis : total master points :47288 of which attracted to :
+    feature point   : 221
+    feature edge    : 6286
+    nearest surface : 0
+    rest            : 40781
+
+--> FOAM Warning : Displacement (1.41038e-05 6.48408e-05 3.06856e-06) at mesh point 272208 coord (0.0569443 0.0633981 -0.00994627) points through the surrounding patch faces
+Smoothing displacement ...
+Iteration 0
+Iteration 10
+Iteration 20
+Iteration 30
+Iteration 40
+Iteration 50
+Iteration 60
+Iteration 70
+Iteration 80
+Iteration 90
+Displacement smoothed in = 2.47 s
+
+
+Moving mesh ...
+
+Iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1452
+    faces with face pyramid volume < 1e-13                 : 10
+    faces with face-decomposition tet quality < 1e-30      : 56
+    faces with concavity > 80  degrees                     : 10
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 138
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 11
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 1
+Moving mesh using displacement scaling : min:0.75 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1438
+    faces with face pyramid volume < 1e-13                 : 10
+    faces with face-decomposition tet quality < 1e-30      : 40
+    faces with concavity > 80  degrees                     : 9
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 133
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 9
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 2
+Moving mesh using displacement scaling : min:0.5625 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1430
+    faces with face pyramid volume < 1e-13                 : 3
+    faces with face-decomposition tet quality < 1e-30      : 38
+    faces with concavity > 80  degrees                     : 9
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 131
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 2
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 3
+Moving mesh using displacement scaling : min:0.421875 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1427
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 33
+    faces with concavity > 80  degrees                     : 9
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 128
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 5
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+Moved mesh in = 3.12 s
+
+
+
+Morph iteration 5
+-----------------
+Calculating patchDisplacement as distance to nearest surface point ...
+    non-zone points : attract to nearest of all non-zone surfaces
+    zone points     : attract to zone surface only
+
+Wanted displacement : average:0.000126459 min:0 max:0.00147883
+Calculated surface displacement in = 0.06 s
+
+
+Detecting near surfaces ...
+Overriding nearest with intersection of close gaps at 9648 out of 47288 points.
+Overriding displacement on features :
+   implicit features    : false
+   explicit features    : true
+   multi-patch features : false
+
+Detected 297 baffle edges out of 94606 edges.
+Baffle points     : 362 of which attracted to :
+    feature point : 0
+    feature edge  : 362
+    rest          : 0
+
+Initially selected 6961 mesh points out of 47288 for reverse attraction.
+Selected 14589 mesh points out of 47288 for reverse attraction.
+Stringing feature edges : changed 932 points
+Stringing feature edges : changed 61 points
+Stringing feature edges : changed 22 points
+Stringing feature edges : changed 9 points
+Stringing feature edges : changed 6 points
+Stringing feature edges : changed 2 points
+Stringing feature edges : changed 3 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 0 points
+Attraction:
+    linear   : max:(-0.0012166 -0.00129669 0.000517238) avg:(6.1611e-07 -2.43903e-07 5.00781e-06)
+    feature  : max:(0.00102171 0.0014683 -0.000223219) avg:(-3.49503e-07 -6.39884e-08 3.76591e-06)
+Feature analysis : total master points :47288 of which attracted to :
+    feature point   : 217
+    feature edge    : 6292
+    nearest surface : 0
+    rest            : 40779
+
+--> FOAM Warning : Displacement (3.00949e-05 2.33097e-05 1.82601e-05) at mesh point 272208 coord (0.0569545 0.0634446 -0.00994407) points through the surrounding patch faces
+Smoothing displacement ...
+Iteration 0
+Iteration 10
+Iteration 20
+Iteration 30
+Iteration 40
+Iteration 50
+Iteration 60
+Iteration 70
+Iteration 80
+Iteration 90
+Displacement smoothed in = 2.49 s
+
+
+Moving mesh ...
+
+Iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1485
+    faces with face pyramid volume < 1e-13                 : 30
+    faces with face-decomposition tet quality < 1e-30      : 97
+    faces with concavity > 80  degrees                     : 21
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 131
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 26
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 1
+Moving mesh using displacement scaling : min:0.75 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1479
+    faces with face pyramid volume < 1e-13                 : 21
+    faces with face-decomposition tet quality < 1e-30      : 57
+    faces with concavity > 80  degrees                     : 14
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 123
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 25
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 2
+Moving mesh using displacement scaling : min:0.5625 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1463
+    faces with face pyramid volume < 1e-13                 : 16
+    faces with face-decomposition tet quality < 1e-30      : 48
+    faces with concavity > 80  degrees                     : 11
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 117
+    faces with volume ratio of neighbour cells < 0.01      : 1
+    faces with face twist < 0.05                           : 19
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 3
+Moving mesh using displacement scaling : min:0.421875 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1445
+    faces with face pyramid volume < 1e-13                 : 14
+    faces with face-decomposition tet quality < 1e-30      : 48
+    faces with concavity > 80  degrees                     : 12
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 15
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 4
+Moving mesh using displacement scaling : min:0.316406 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1438
+    faces with face pyramid volume < 1e-13                 : 11
+    faces with face-decomposition tet quality < 1e-30      : 45
+    faces with concavity > 80  degrees                     : 10
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 113
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 13
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 5
+Displacement scaling for error reduction set to 0.
+Moving mesh using displacement scaling : min:0.237305 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1438
+    faces with face pyramid volume < 1e-13                 : 7
+    faces with face-decomposition tet quality < 1e-30      : 39
+    faces with concavity > 80  degrees                     : 10
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 115
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 13
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 6
+Moving mesh using displacement scaling : min:0 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1427
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 37
+    faces with concavity > 80  degrees                     : 11
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 118
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 6
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+Moved mesh in = 5.55 s
+
+
+
+Morph iteration 6
+-----------------
+Calculating patchDisplacement as distance to nearest surface point ...
+    non-zone points : attract to nearest of all non-zone surfaces
+    zone points     : attract to zone surface only
+
+Wanted displacement : average:7.52254e-05 min:0 max:0.00148779
+Calculated surface displacement in = 0.05 s
+
+
+Detecting near surfaces ...
+Overriding nearest with intersection of close gaps at 6847 out of 47288 points.
+Overriding displacement on features :
+   implicit features    : false
+   explicit features    : true
+   multi-patch features : false
+
+Detected 323 baffle edges out of 94606 edges.
+Baffle points     : 387 of which attracted to :
+    feature point : 0
+    feature edge  : 386
+    rest          : 1
+
+Initially selected 6907 mesh points out of 47288 for reverse attraction.
+Selected 14487 mesh points out of 47288 for reverse attraction.
+Stringing feature edges : changed 871 points
+Stringing feature edges : changed 51 points
+Stringing feature edges : changed 26 points
+Stringing feature edges : changed 11 points
+Stringing feature edges : changed 8 points
+Stringing feature edges : changed 4 points
+Stringing feature edges : changed 3 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 0 points
+Attraction:
+    linear   : max:(-0.000527004 -0.00223333 0.000590439) avg:(1.11091e-07 -2.81817e-07 9.40129e-07)
+    feature  : max:(-0.00107356 0.000248637 -0.00123984) avg:(2.1767e-07 -1.38742e-07 3.36074e-06)
+Feature analysis : total master points :47288 of which attracted to :
+    feature point   : 202
+    feature edge    : 6307
+    nearest surface : 0
+    rest            : 40779
+
+--> FOAM Warning : Displacement (2.98991e-05 1.08244e-05 1.4188e-05) at mesh point 272208 coord (0.0569598 0.0634488 -0.00994084) points through the surrounding patch faces
+Smoothing displacement ...
+Iteration 0
+Iteration 10
+Iteration 20
+Iteration 30
+Iteration 40
+Iteration 50
+Iteration 60
+Iteration 70
+Iteration 80
+Iteration 90
+Displacement smoothed in = 2.47 s
+
+
+Moving mesh ...
+
+Iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1522
+    faces with face pyramid volume < 1e-13                 : 54
+    faces with face-decomposition tet quality < 1e-30      : 263
+    faces with concavity > 80  degrees                     : 30
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 129
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 42
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 1
+Moving mesh using displacement scaling : min:0.75 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1487
+    faces with face pyramid volume < 1e-13                 : 30
+    faces with face-decomposition tet quality < 1e-30      : 204
+    faces with concavity > 80  degrees                     : 28
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 122
+    faces with volume ratio of neighbour cells < 0.01      : 1
+    faces with face twist < 0.05                           : 43
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 2
+Moving mesh using displacement scaling : min:0.5625 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1478
+    faces with face pyramid volume < 1e-13                 : 19
+    faces with face-decomposition tet quality < 1e-30      : 153
+    faces with concavity > 80  degrees                     : 23
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 119
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 41
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 3
+Moving mesh using displacement scaling : min:0.421875 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1464
+    faces with face pyramid volume < 1e-13                 : 17
+    faces with face-decomposition tet quality < 1e-30      : 109
+    faces with concavity > 80  degrees                     : 21
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 117
+    faces with volume ratio of neighbour cells < 0.01      : 1
+    faces with face twist < 0.05                           : 37
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 4
+Moving mesh using displacement scaling : min:0.316406 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1450
+    faces with face pyramid volume < 1e-13                 : 13
+    faces with face-decomposition tet quality < 1e-30      : 97
+    faces with concavity > 80  degrees                     : 20
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 116
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 29
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 5
+Displacement scaling for error reduction set to 0.
+Moving mesh using displacement scaling : min:0.237305 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1442
+    faces with face pyramid volume < 1e-13                 : 9
+    faces with face-decomposition tet quality < 1e-30      : 80
+    faces with concavity > 80  degrees                     : 18
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 30
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 6
+Moving mesh using displacement scaling : min:0 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1428
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 42
+    faces with concavity > 80  degrees                     : 11
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 115
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 6
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+Moved mesh in = 5.99 s
+
+
+
+Morph iteration 7
+-----------------
+Calculating patchDisplacement as distance to nearest surface point ...
+    non-zone points : attract to nearest of all non-zone surfaces
+    zone points     : attract to zone surface only
+
+Wanted displacement : average:4.13886e-05 min:0 max:0.00145943
+Calculated surface displacement in = 0.05 s
+
+
+Detecting near surfaces ...
+Overriding nearest with intersection of close gaps at 6974 out of 47288 points.
+Overriding displacement on features :
+   implicit features    : false
+   explicit features    : true
+   multi-patch features : false
+
+Detected 352 baffle edges out of 94606 edges.
+Baffle points     : 427 of which attracted to :
+    feature point : 0
+    feature edge  : 424
+    rest          : 3
+
+Initially selected 6938 mesh points out of 47288 for reverse attraction.
+Selected 14515 mesh points out of 47288 for reverse attraction.
+Stringing feature edges : changed 782 points
+Stringing feature edges : changed 60 points
+Stringing feature edges : changed 21 points
+Stringing feature edges : changed 11 points
+Stringing feature edges : changed 7 points
+Stringing feature edges : changed 5 points
+Stringing feature edges : changed 4 points
+Stringing feature edges : changed 2 points
+Stringing feature edges : changed 3 points
+Stringing feature edges : changed 0 points
+Attraction:
+    linear   : max:(0.00188323 -0.00149713 0.000565179) avg:(4.69246e-08 -3.29322e-07 -5.88834e-07)
+    feature  : max:(0.000365076 0.00184126 -7.52062e-05) avg:(1.86878e-07 1.76979e-07 2.4656e-06)
+Feature analysis : total master points :47288 of which attracted to :
+    feature point   : 198
+    feature edge    : 6368
+    nearest surface : 0
+    rest            : 40722
+
+--> FOAM Warning : Displacement (3.53388e-05 4.47893e-06 1.41914e-05) at mesh point 272208 coord (0.0569598 0.0634488 -0.00994084) points through the surrounding patch faces
+Smoothing displacement ...
+Iteration 0
+Iteration 10
+Iteration 20
+Iteration 30
+Iteration 40
+Iteration 50
+Iteration 60
+Iteration 70
+Iteration 80
+Iteration 90
+Displacement smoothed in = 2.54 s
+
+
+Moving mesh ...
+
+Iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1557
+    faces with face pyramid volume < 1e-13                 : 77
+    faces with face-decomposition tet quality < 1e-30      : 462
+    faces with concavity > 80  degrees                     : 34
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 125
+    faces with volume ratio of neighbour cells < 0.01      : 1
+    faces with face twist < 0.05                           : 120
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 1
+Moving mesh using displacement scaling : min:0.75 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1524
+    faces with face pyramid volume < 1e-13                 : 50
+    faces with face-decomposition tet quality < 1e-30      : 357
+    faces with concavity > 80  degrees                     : 34
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 120
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 73
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 2
+Moving mesh using displacement scaling : min:0.5625 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1492
+    faces with face pyramid volume < 1e-13                 : 32
+    faces with face-decomposition tet quality < 1e-30      : 278
+    faces with concavity > 80  degrees                     : 34
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 1
+    faces with face twist < 0.05                           : 61
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 3
+Moving mesh using displacement scaling : min:0.421875 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1477
+    faces with face pyramid volume < 1e-13                 : 22
+    faces with face-decomposition tet quality < 1e-30      : 227
+    faces with concavity > 80  degrees                     : 31
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 73
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 4
+Moving mesh using displacement scaling : min:0.316406 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1469
+    faces with face pyramid volume < 1e-13                 : 16
+    faces with face-decomposition tet quality < 1e-30      : 182
+    faces with concavity > 80  degrees                     : 29
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 116
+    faces with volume ratio of neighbour cells < 0.01      : 1
+    faces with face twist < 0.05                           : 74
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 5
+Displacement scaling for error reduction set to 0.
+Moving mesh using displacement scaling : min:0.237305 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1456
+    faces with face pyramid volume < 1e-13                 : 14
+    faces with face-decomposition tet quality < 1e-30      : 160
+    faces with concavity > 80  degrees                     : 32
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 113
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 65
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 6
+Moving mesh using displacement scaling : min:0 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1433
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 49
+    faces with concavity > 80  degrees                     : 11
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 115
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 16
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 7
+Moving mesh using displacement scaling : min:0 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1428
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 42
+    faces with concavity > 80  degrees                     : 10
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 6
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+Moved mesh in = 7.27 s
+
+
+
+Morph iteration 8
+-----------------
+Calculating patchDisplacement as distance to nearest surface point ...
+    non-zone points : attract to nearest of all non-zone surfaces
+    zone points     : attract to zone surface only
+
+Wanted displacement : average:2.35726e-05 min:0 max:0.00146259
+Calculated surface displacement in = 0.04 s
+
+
+Detecting near surfaces ...
+Overriding nearest with intersection of close gaps at 7079 out of 47288 points.
+Overriding displacement on features :
+   implicit features    : false
+   explicit features    : true
+   multi-patch features : false
+
+Detected 387 baffle edges out of 94606 edges.
+Baffle points     : 474 of which attracted to :
+    feature point : 0
+    feature edge  : 471
+    rest          : 3
+
+Initially selected 6969 mesh points out of 47288 for reverse attraction.
+Selected 14544 mesh points out of 47288 for reverse attraction.
+Stringing feature edges : changed 680 points
+Stringing feature edges : changed 57 points
+Stringing feature edges : changed 22 points
+Stringing feature edges : changed 9 points
+Stringing feature edges : changed 9 points
+Stringing feature edges : changed 3 points
+Stringing feature edges : changed 5 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 3 points
+Stringing feature edges : changed 0 points
+Attraction:
+    linear   : max:(0.000328856 0.00165283 0.00160623) avg:(4.0609e-08 -2.97607e-07 -7.22767e-07)
+    feature  : max:(0.000243058 0.00149957 0.00104288) avg:(-3.11194e-07 6.29587e-08 1.51632e-06)
+Feature analysis : total master points :47288 of which attracted to :
+    feature point   : 195
+    feature edge    : 6415
+    nearest surface : 0
+    rest            : 40678
+
+--> FOAM Warning : Displacement (4.10424e-05 -4.33496e-06 1.20396e-05) at mesh point 272208 coord (0.0569598 0.0634488 -0.00994084) points through the surrounding patch faces
+Smoothing displacement ...
+Iteration 0
+Iteration 10
+Iteration 20
+Iteration 30
+Iteration 40
+Iteration 50
+Iteration 60
+Iteration 70
+Iteration 80
+Iteration 90
+Displacement smoothed in = 2.5 s
+
+
+Moving mesh ...
+
+Iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1612
+    faces with face pyramid volume < 1e-13                 : 121
+    faces with face-decomposition tet quality < 1e-30      : 679
+    faces with concavity > 80  degrees                     : 34
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 122
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 153
+    faces on cells with determinant < 0.001                : 5019
+
+Iteration 1
+Moving mesh using displacement scaling : min:0.75 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1553
+    faces with face pyramid volume < 1e-13                 : 69
+    faces with face-decomposition tet quality < 1e-30      : 541
+    faces with concavity > 80  degrees                     : 35
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 117
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 142
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 2
+Moving mesh using displacement scaling : min:0.5625 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1529
+    faces with face pyramid volume < 1e-13                 : 38
+    faces with face-decomposition tet quality < 1e-30      : 439
+    faces with concavity > 80  degrees                     : 32
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 115
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 130
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 3
+Moving mesh using displacement scaling : min:0.421875 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1491
+    faces with face pyramid volume < 1e-13                 : 29
+    faces with face-decomposition tet quality < 1e-30      : 336
+    faces with concavity > 80  degrees                     : 39
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 115
+    faces with volume ratio of neighbour cells < 0.01      : 2
+    faces with face twist < 0.05                           : 127
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 4
+Moving mesh using displacement scaling : min:0.316406 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1479
+    faces with face pyramid volume < 1e-13                 : 25
+    faces with face-decomposition tet quality < 1e-30      : 258
+    faces with concavity > 80  degrees                     : 36
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 130
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 5
+Displacement scaling for error reduction set to 0.
+Moving mesh using displacement scaling : min:0.237305 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1464
+    faces with face pyramid volume < 1e-13                 : 15
+    faces with face-decomposition tet quality < 1e-30      : 212
+    faces with concavity > 80  degrees                     : 33
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 1
+    faces with face twist < 0.05                           : 113
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 6
+Moving mesh using displacement scaling : min:0 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1435
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 53
+    faces with concavity > 80  degrees                     : 15
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 24
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 7
+Moving mesh using displacement scaling : min:0 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1429
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 43
+    faces with concavity > 80  degrees                     : 10
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 7
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+Moved mesh in = 7.56 s
+
+
+
+Morph iteration 9
+-----------------
+Calculating patchDisplacement as distance to nearest surface point ...
+    non-zone points : attract to nearest of all non-zone surfaces
+    zone points     : attract to zone surface only
+
+Wanted displacement : average:1.54838e-05 min:0 max:0.00149186
+Calculated surface displacement in = 0.04 s
+
+
+Detecting near surfaces ...
+Overriding nearest with intersection of close gaps at 7174 out of 47288 points.
+Overriding displacement on features :
+   implicit features    : false
+   explicit features    : true
+   multi-patch features : false
+
+Detected 407 baffle edges out of 94606 edges.
+Baffle points     : 493 of which attracted to :
+    feature point : 0
+    feature edge  : 489
+    rest          : 4
+
+Initially selected 6982 mesh points out of 47288 for reverse attraction.
+Selected 14533 mesh points out of 47288 for reverse attraction.
+Stringing feature edges : changed 603 points
+Stringing feature edges : changed 50 points
+Stringing feature edges : changed 22 points
+Stringing feature edges : changed 9 points
+Stringing feature edges : changed 11 points
+Stringing feature edges : changed 4 points
+Stringing feature edges : changed 5 points
+Stringing feature edges : changed 1 points
+Stringing feature edges : changed 3 points
+Stringing feature edges : changed 0 points
+Attraction:
+    linear   : max:(-0.000212752 0.00103213 -0.00200539) avg:(2.598e-07 -3.44167e-07 -7.45854e-07)
+    feature  : max:(0.000255363 -0.00188702 -0.000329257) avg:(-2.66303e-07 1.72146e-07 1.12416e-06)
+Feature analysis : total master points :47288 of which attracted to :
+    feature point   : 194
+    feature edge    : 6419
+    nearest surface : 0
+    rest            : 40675
+
+--> FOAM Warning : Displacement (-0.000348013 -1.18946e-07 -0.000366085) at mesh point 84245 coord (0.0458312 0.0703129 -0.0336609) points through the surrounding patch faces
+Smoothing displacement ...
+Iteration 0
+Iteration 10
+Iteration 20
+Iteration 30
+Iteration 40
+Iteration 50
+Iteration 60
+Iteration 70
+Iteration 80
+Iteration 90
+Displacement smoothed in = 2.46 s
+
+
+Moving mesh ...
+
+Iteration 0
+Moving mesh using displacement scaling : min:1 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1671
+    faces with face pyramid volume < 1e-13                 : 169
+    faces with face-decomposition tet quality < 1e-30      : 823
+    faces with concavity > 80  degrees                     : 33
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 127
+    faces with volume ratio of neighbour cells < 0.01      : 4
+    faces with face twist < 0.05                           : 173
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 1
+Moving mesh using displacement scaling : min:0.75 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1574
+    faces with face pyramid volume < 1e-13                 : 87
+    faces with face-decomposition tet quality < 1e-30      : 663
+    faces with concavity > 80  degrees                     : 32
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 118
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 133
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 2
+Moving mesh using displacement scaling : min:0.5625 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1527
+    faces with face pyramid volume < 1e-13                 : 48
+    faces with face-decomposition tet quality < 1e-30      : 539
+    faces with concavity > 80  degrees                     : 34
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 111
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 126
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 3
+Moving mesh using displacement scaling : min:0.421875 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1495
+    faces with face pyramid volume < 1e-13                 : 26
+    faces with face-decomposition tet quality < 1e-30      : 433
+    faces with concavity > 80  degrees                     : 33
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 112
+    faces with volume ratio of neighbour cells < 0.01      : 1
+    faces with face twist < 0.05                           : 122
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 4
+Moving mesh using displacement scaling : min:0.316406 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1483
+    faces with face pyramid volume < 1e-13                 : 18
+    faces with face-decomposition tet quality < 1e-30      : 347
+    faces with concavity > 80  degrees                     : 33
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 1
+    faces with face twist < 0.05                           : 120
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 5
+Displacement scaling for error reduction set to 0.
+Moving mesh using displacement scaling : min:0.237305 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1483
+    faces with face pyramid volume < 1e-13                 : 15
+    faces with face-decomposition tet quality < 1e-30      : 284
+    faces with concavity > 80  degrees                     : 31
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 113
+    faces with volume ratio of neighbour cells < 0.01      : 1
+    faces with face twist < 0.05                           : 115
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 6
+Moving mesh using displacement scaling : min:0 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1435
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 56
+    faces with concavity > 80  degrees                     : 13
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 115
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 21
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 7
+Moving mesh using displacement scaling : min:0 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1429
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 42
+    faces with concavity > 80  degrees                     : 12
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 15
+    faces on cells with determinant < 0.001                : 5018
+
+Iteration 8
+Moving mesh using displacement scaling : min:0 max:1
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1429
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 42
+    faces with concavity > 80  degrees                     : 10
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 10
+    faces on cells with determinant < 0.001                : 5018
+Successfully moved mesh
+Moved mesh in = 8.67 s
+
+
+Repatching faces according to nearest surface ...
+Repatched 0 faces in = 0.15 s
+
+
+Edge intersection testing:
+    Number of edges             : 1021118
+    Number of edges to retest   : 190623
+    Number of intersected edges : 47211
+Merging 5903 sets of faces.
+
+Edge intersection testing:
+    Number of edges             : 1013565
+    Number of edges to retest   : 24385
+    Number of intersected edges : 39709
+
+Undo iteration 0
+----------------
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1430
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 38
+    faces with concavity > 80  degrees                     : 10
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 11
+    faces on cells with determinant < 0.001                : 5018
+Masters that need to be restored:16
+Edge intersection testing:
+    Number of edges             : 1013584
+    Number of edges to retest   : 94
+    Number of intersected edges : 39728
+
+
+Undo iteration 1
+----------------
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1429
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 35
+    faces with concavity > 80  degrees                     : 10
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 9
+    faces on cells with determinant < 0.001                : 5018
+Masters that need to be restored:0
+
+Merging all points on surface that
+- are used by only two boundary faces and
+- make an angle with a cosine of more than 0.707107.
+
+Removing 3473 straight edge points ...
+
+Edge intersection testing:
+    Number of edges             : 1013584
+    Number of edges to retest   : 19461
+    Number of intersected edges : 39720
+
+Undo iteration 0
+----------------
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1429
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 39
+    faces with concavity > 80  degrees                     : 11
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 10
+    faces on cells with determinant < 0.001                : 5018
+Detected 4 error faces on boundaries that have been merged. These will be restored to their original faces.
+
+Edge intersection testing:
+    Number of edges             : 1013584
+    Number of edges to retest   : 20
+    Number of intersected edges : 39722
+
+Undo iteration 1
+----------------
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1429
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 37
+    faces with concavity > 80  degrees                     : 10
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 9
+    faces on cells with determinant < 0.001                : 5018
+Detected 0 error faces on boundaries that have been merged. These will be restored to their original faces.
+
+Detected 6619 error faces in mesh. Restoring neighbours of faces in error.
+
+Edge intersection testing:
+    Number of edges             : 1013584
+    Number of edges to retest   : 38916
+    Number of intersected edges : 39726
+Snapped mesh : cells:318908  faces:1013584  points:377629
+Cells per refinement level:
+    0	236148
+    1	82760
+Writing mesh to time constant
+Wrote mesh in = 0.03 s.
+Mesh snapped in = 78.2 s.
+Checking final mesh ...
+Checking faces in error :
+    non-orthogonality > 70  degrees                        : 1429
+    faces with face pyramid volume < 1e-13                 : 2
+    faces with face-decomposition tet quality < 1e-30      : 35
+    faces with concavity > 80  degrees                     : 10
+    faces with skewness > 4   (internal) or 20  (boundary) : 0
+    faces with interpolation weights (0..1)  < 0.05        : 114
+    faces with volume ratio of neighbour cells < 0.01      : 0
+    faces with face twist < 0.05                           : 9
+    faces on cells with determinant < 0.001                : 5018
+Finished meshing with 6617 illegal faces (concave, zero area or negative cell pyramid volume)
+Finished meshing in = 107.24 s.
+Memory per-node = (548260)
+End
+

@@ -1,0 +1,2 @@
+g_diag: n=120 done=False best_speed=0.2223 yaw=2.2 wall=142s
+g_diag: n=150 done=True best_speed=0.2223 yaw=2.2 wall=178s

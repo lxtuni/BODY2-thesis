@@ -1,0 +1,49 @@
+\chapter{结论与展望}
+\label{ch:conclusion}
+
+\section{结论}
+
+本文针对两栖四足机器人BODY2的腿部，比较了阻力型划水（drag-based paddling）与升力型拍动（lift-based flapping），所用方法包括基于降阶模型的步态优化（reduced-order gait optimization）和真实腿部的单腿CFD。\Cref{tab:key-findings}给出了对三个研究问题（research question）的回答。
+
+\begin{table}[H]
+  \centering
+  \caption[主要结论]{对研究问题的回答。桨（paddle）：经过优化的折扇桨V3trap；尾鳍（fluke）：除另有说明外，指采用随航速调度俯仰L3的A2；功率均为水动力功率。}
+  \label{tab:key-findings}
+  \small
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{27mm}>{\raggedright\arraybackslash}p{40mm}>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    问题 & 回答 & 关键数据 \\
+    \midrule
+    RQ1：优化器选择的机理（\cref{ch:mujoco}） &
+      只要模型中包含升力，即选择升力 &
+      只要升力未被压制，含升力模型的全部101个可行最优解都是升力推进的（lift-propelled）。在相同速度下，阻力型划动所需功率为2--10倍：
+      跨模型为2--3倍，升力模型内为4--10倍（30次搜索中的3个可行划动） \\
+    \addlinespace
+    RQ2：阻力与升力随速度的对比（\cref{sec:res-drag,sec:res-lift,sec:res-compare,sec:res-l3}） &
+      低速时桨更优，巡航速度时尾鳍更优 &
+      静止时每条腿\SIrange{73}{83}{}对\SI{45.5}{\milli\newton}，单位面积推力相同。推力交叉点（crossover）位于
+      $0.24\pm\SI{0.02}{\metre\per\second}$，效率交叉点位于$0.22\pm\SI{0.02}{\metre\per\second}$。桨的推力在
+      \SI{0.30}{\metre\per\second}附近消失。调度俯仰使\SI{0.30}{\metre\per\second}时的$\etaF$从0.24提高到0.40 \\
+    \addlinespace
+    RQ3：整机（\cref{sec:res-selfprop,sec:res-hw}） &
+      尾鳍略快，经济性高得多；桨加速更快 &
+      \SI{0.30}{}对\SIrange{0.26}{0.27}{\metre\per\second}，功率\SI{42}{}对\SI{73}{\milli\watt}（$-43$\,\%）；当前步态
+      约\SI{0.09}{\metre\per\second}；$t_{90}$为\SI{0.68}{}对\SIrange{1.46}{1.57}{\second}。\SI{2}{\hertz}下硬件比预测慢1.3--1.6倍：估计值为上限 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+CFD再现拍动翼实验推力系数的误差在8\,\%以内，推力的离散不确定性约为$\pm12$\,\%。桨的数值以范围形式给出，因为折叠扇面的两态模型无法解析折叠时附加质量（added mass）的变化，该变化的界限以解析方式给出。降阶模型与CFD在机理和划水的速度极限上一致，但对于低于何种速度时桨效率更高并不一致；对此以经过确认的CFD为准。装配尾鳍的机器人在首次测试中仅达到CFD推力的大约四分之一到一半，其原因无法通过该测试加以区分（\cref{sec:res-hw}），因此预测的巡航速度是现有硬件的上限。
+
+\paragraph{建议。}对于在水面游动的BODY2，俯仰幅值随航速减小的尾鳍是更适合巡航的推进器（propulsor）。折叠式桨更适合起步和低速机动，但前提是折叠后的收拢宽度（folded width）约为\SI{12}{\milli\metre}，且折叠能够在特定相位切换。
+
+\section{展望}
+
+\begin{itemize}
+  \item \emph{被动俯仰。}对带有真实销轴（pin）和板簧（leaf spring）的尾鳍进行仿真，将俯仰动力学与CFD力耦合，并设计一种渐进刚度弹簧或预紧方案，使其在整个速度范围内近似实现随航速调度的俯仰（speed-scheduled pitch）。
+  \item \emph{更公平的尾鳍比较。}以与桨冲程同等的细致程度优化尾鳍的沉浮（heave）幅值、频率和俯仰相位，包括在静止时采用约\SI{45}{\degree}的俯仰角，并对与桨面积相同的\SI{18.5}{\square\centi\metre}月牙形尾鳍进行仿真（\cref{sec:disc-design}）。预计这两项都将使交叉点移向更低速度。
+  \item \emph{折叠式桨。}采用变形网格或多体网格对折叠过程本身进行仿真，以取代两态合成及其附加质量界限。
+  \item \emph{整机与自由液面。}对带船体（hull）的四条腿进行包含自由液面（free surface）的仿真，以量化腿间相互作用和液面效应对两种推进器的影响。
+  \item \emph{标定。}以单腿CFD和PTK\,7465W为基准，标定降阶模型（reduced-order model）的系数，特别是带展弦比（aspect ratio）修正的升力斜率，以及舵机（servo）模型，并重复步态优化；并为\cref{sec:mj-liftshare}中的阻力型划动提供更公平的搜索。
+  \item \emph{实验。}通过滑行减速试验测量反装船体的阻力，测量机器人的静推力，并以飞行起步多次重复测量稳态游速；同时拍摄尾鳍俯仰，以查明推力不足的原因。
+\end{itemize}

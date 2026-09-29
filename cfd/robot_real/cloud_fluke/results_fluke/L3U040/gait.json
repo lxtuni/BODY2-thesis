@@ -1,0 +1,49 @@
+{
+ "kind": "fluke",
+ "ramp": 0.5,
+ "U": 0.4,
+ "cycles": 3.0,
+ "T": 0.5,
+ "AREA": 0.00115,
+ "origin": [
+  0.06345,
+  0.004
+ ],
+ "H0": [
+  0.02108510000000001,
+  0.0,
+  -0.0164457
+ ],
+ "FIN0": -1.4016854,
+ "REF": 0.0,
+ "motion": "/home/<user>/cloud_fluke/fluke/motion_L3U040.csv",
+ "motion_meta": {
+  "mode": "half_gamma",
+  "law": "fin = (gamma_max/2)*Wz/max|Wz| (6-harmonic smoothed), gamma_max=atan(max|Wz|/U); hinge = motion_L0.csv",
+  "U": 0.4,
+  "freq": 2.0,
+  "T": 0.5,
+  "n": 400,
+  "gamma_max_deg": 35.21216368185292,
+  "theta0_deg": 17.60608184092646,
+  "sign": 1.0,
+  "fin_range_deg": [
+   -17.3350119703114,
+   16.574479188080353
+  ],
+  "fin_rate_max_deg_s": 297.7660011472531,
+  "hinge_speed_max": 0.28229692036378096,
+  "alpha_act_p75": 16.48579629558383,
+  "alpha_midstroke_mean": 14.131895914262865,
+  "hinge_travel_z_mm": 39.176700000000004,
+  "qs_fwd_mean_mN": 33.104823469101206,
+  "qs_fwd_L0fin_mN": -13.244403472462093
+ },
+ "stl": "/home/<user>/cloud_fluke/fluke/A2_blade_cfd.stl",
+ "turb": "laminar",
+ "bg": 0.0025,
+ "comp": 0.0012,
+ "vox": 0.0005999999944120646,
+ "dt0": 0.00072,
+ "vmax": 0.3346897058152824
+}

@@ -1,0 +1,351 @@
+\chapter{Results}
+\label{ch:results}
+
+This chapter reports the single-leg CFD results and what follows from them for the whole robot. It first
+develops the drag-type stroke (\cref{sec:res-drag}) and characterizes the fluke (\cref{sec:res-lift}), then
+compares both across speed (\cref{sec:res-compare}), improves the fluke by scheduling its pitch with speed
+(\cref{sec:res-l3}), predicts the cruising speed of the robot (\cref{sec:res-selfprop}) and compares it with a first hardware
+test (\cref{sec:res-hw}). All forces and powers are
+per leg and for the propulsor alone unless stated otherwise.
+
+\section{Design of the Drag-Type Stroke}
+\label{sec:res-drag}
+
+The drag-type stroke was optimized at $\U=0$ one factor at a time. The quasi-steady model of \cref{sec:fund-paddle} served as a
+surrogate that proposed each change, and CFD evaluated it; the fold timing was then optimized over both switching phases on the
+two-state composite. \Cref{tab:drag-design} lists the steps.
+
+\begin{table}[t]
+  \centering
+  \caption[Design steps of the drag-type stroke]{Design steps of the drag-type stroke at $\U=0$. Each step changes
+    one aspect of the previous one. $\Tm$ is the cycle-mean thrust of the two-state composite. All steps before the last
+    switch the fan at the reversal points of the hip motion, where the added-mass correction \eqref{eq:addedmass} vanishes
+    at $\U=0$; for the last step the range of the correction is given.}
+  \label{tab:drag-design}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}Xcccc@{}}
+    \toprule
+    Stroke & Change & $T$ (s) & DUTY & $\Tm$ (mN) & $\Pm$ (mW) \\
+    \midrule
+    Robot gait & baseline, 30\,mm folded, \SI{60}{\degree} sinusoidal sweep & 1.25 & 0.50 & 23.4 & 6.7 \\
+    V1 & shorter period, larger thrust & 0.89 & 0.49 & 51.2 & -- \\
+    V2 & shorter power stroke & -- & 0.35 & 34.2 & -- \\
+    V3 & sweep centred on the vertical (\SIrange{120}{70}{\degree}), slow curl & 0.81 & 0.45 & 49.3 & 16.2 \\
+    V3c12 & fan folded to 12\,mm instead of 30\,mm & 0.81 & 0.45 & 56.7 & 13.7 \\
+    V3c06 & folded and feathered, 5.6\,mm frontal width & 0.81 & 0.45 & 58.6 & 13.1 \\
+    V3trap & V3c12 with trapezoidal velocity law (\SI{45}{\milli\second} ramps) & 0.72 & 0.382 & 75.0 & 20.8 \\
+    V3trap, timed & fan closed at the start of the deceleration, $\tau_c=0.33$ & 0.72 & 0.382 & \textbf{73--83} & 21.6 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\paragraph{Direction of the stroke.} Centring the sweep on the vertical makes the paddle move nearly straight
+backwards with its face normal to the motion. From V1 to V3 the inclination of the power-stroke force from the
+swimming direction fell from \SI{19.5}{\degree} to \SI{7.9}{\degree}, and the ratio of mean vertical to mean
+horizontal force from 0.52 to 0.28. V2 shows that shortening the power stroke alone loses thrust when the
+recovery cannot become correspondingly cheaper.
+
+\paragraph{Folded width.} Folding the fan to \SI{12}{\milli\metre} instead of \SI{30}{\milli\metre} reduced the
+recovery drag from \SI{-10.7}{} to \SI{-3.2}{\milli\newton} and raised the mean thrust by 15\,\%. The effective
+area ratio $a$, defined as the ratio of the mean force of the closed-only to the open-only run, fell from 0.48 to
+0.11. With $a=0.11$, \eqref{eq:duty-opt} gives $x^*=2.2$ and $\mathrm{DUTY}^*=0.69$: the recovery should be much
+faster than the power stroke, which the servo speed does not allow. The DUTY of the final stroke, 0.382, was therefore not taken from \eqref{eq:duty-opt} but found in the CFD optimization within the joint speeds that the servos allow (\cref{tab:actuators}). Feathering the folded fan to a frontal width of \SI{5.6}{\milli\metre} added only
+3\,\%: the recovery drag is proportional to the width, but at \SI{12}{\milli\metre} it is only about 6\,\% of the
+mean thrust. A feathering mechanism is therefore not worthwhile.
+
+\paragraph{Velocity law.} Replacing the cosine hip velocity by a trapezoidal law with \SI{45}{\milli\second} ramps
+at the same peak rate and sweep increased the power-stroke impulse by 18\,\%, as predicted by the quasi-steady
+$\int v^2\,\mathrm dt$, and the mean thrust by 32\,\%, because the period also shortened from \SI{0.81}{} to
+\SI{0.72}{\second}. The price is a higher peak hip moment (\SI{35.6}{} instead of \SI{19.3}{\milli\newton\metre},
+$\times1.84$), a higher peak force and 52\,\% more power; the thrust per power fell from \SI{4.1}{} to
+\SI{3.6}{\newton\per\watt}. The effective normal-force coefficient of the power stroke in the CFD is 2--3 times the
+quasi-steady value and is highest at the start of the stroke, as expected for a starting plate \cite{Kim2011}; it
+is the same for both velocity laws.
+
+\paragraph{Fold timing.} The two-state composite (\cref{sec:cfd-composite}) allows the fold timing to be scanned
+after the simulation. Without correction, the best pair is $\tau_c=0.33$, $\tau_o=-0.06$ with \SI{87.2}{\milli\newton}. The gain
+from opening before the reversal, however, is the artefact described in \cref{sec:cfd-composite}, and the fan is therefore
+opened at the reversal, $\tau_o=0$. Closing the fan early, at the start of the power-stroke deceleration ($\tau_c=0.33$,
+0.86\,DUTY), raises the uncorrected composite from \SI{75.0}{} to \SI{82.7}{\milli\newton}: the decelerating open fan is no longer
+pulled backwards by the water it has set in motion. Whether that water keeps its momentum depends on how much of it is shed as
+a stopping vortex, so the added-mass correction \eqref{eq:addedmass} gives a range of \SIrange{73}{83}{\milli\newton}. At rest,
+early closing is therefore worth between $-2$ and $+8$\,mN. At forward speed it is never worse and up to \SI{10}{\milli\newton} better, because after $\tau\approx0.33$ the paddle moves backwards more slowly than the oncoming flow and an open fan would only
+produce drag; at \SI{0.223}{\metre\per\second}, closing at $\tau_c=0.33$ gives \SIrange{24}{26}{\milli\newton}, against \SIrange{14}{26}{\milli\newton} for closing at the reversal. The final stroke, called V3trap in the rest of this thesis (\cref{fig:composite,fig:kinematics}a),
+produces \SIrange{73}{83}{\milli\newton} per leg at rest, 3.1--3.5 times the robot's current gait, at \SI{21.6}{\milli\watt} and
+\SIrange{3.4}{3.8}{\newton\per\watt}. These rules agree with those found for crustacean and webbed-foot propulsors: open fully at
+the start of the power stroke, close early, keep transitions short \cite{Santos2026,Lin2024}.
+
+\section{The Lift-Type Fluke with a Fixed Pitch Schedule}
+\label{sec:res-lift}
+
+\Cref{tab:lift} lists the fluke results with the L0 motion at five speeds. At rest the inflow is purely vertical,
+the fluke is stalled ($\alpha_{75}=\SI{73}{\degree}$) and acts as a small paddle; it produces
+\SI{45.5}{\milli\newton} at \SI{18.1}{\milli\watt}, about twice the thrust of the robot gait with the fan paddle.
+With increasing speed the inflow angle and the angle of attack fall, and the thrust decreases almost linearly, to
+\SI{12.7}{\milli\newton} at \SI{0.30}{\metre\per\second}. The input power stays between \SI{15.6}{} and
+\SI{18.1}{\milli\watt}. The efficiency rises to a maximum of 0.29 at \SI{0.223}{\metre\per\second}, the speed for
+which L0 was designed ($\mathit{St}\approx0.35$ based on the pin excursion, $\alpha_{75}=\SI{19.9}{\degree}$). At
+\SI{0.30}{\metre\per\second} the mid-stroke angle of attack drops to about \SI{10}{\degree}, the efficiency falls
+to 0.245, and a mean vertical force of \SI{-29}{\milli\newton} appears, more than twice the thrust.
+
+\begin{table}[t]
+  \centering
+  \caption[Fluke with the L0 motion]{Fluke with the L0 motion (fixed pitch schedule) at different speeds.
+    $\mathit{St}$ is based on the peak-to-peak pin excursion of \SI{39.2}{\milli\metre}.}
+  \label{tab:lift}
+  \small
+  \begin{tabular}{@{}lccccc@{}}
+    \toprule
+    $\U$ (\si{\metre\per\second}) & 0 & 0.08 & 0.15 & 0.223 & 0.30 \\
+    \midrule
+    $\Tm$ (mN) & 45.5 & 36.5 & 29.1 & 21.4 & 12.7 \\
+    $\Pm$ (mW) & 18.1 & 17.1 & 16.6 & 16.3 & 15.6 \\
+    $\etaF$ & -- & 0.171 & 0.263 & 0.293 & 0.245 \\
+    $\Tm/\Pm$ (\si{\newton\per\watt}) & 2.51 & 2.13 & 1.75 & 1.31 & 0.81 \\
+    $\mathit{St}$ & -- & 0.98 & 0.52 & 0.35 & 0.26 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The wake at \SI{0.223}{\metre\per\second} (\cref{fig:wake}) shows the expected pattern of a thrust-producing
+foil: each half stroke sheds a vortex of alternating sign from the trailing edge, and the vortices form a reverse
+von K\'arm\'an street that convects downstream.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_wake}
+  \caption[Wake of the fluke]{Spanwise vorticity in the mid-span plane of the fluke (L0,
+    $\U=\SI{0.223}{\metre\per\second}$) at four phases of the third cycle, hull frame; the flow is from right to left
+    relative to the fluke. Black line: fluke chord.}
+  \label{fig:wake}
+\end{figure}
+
+Additional pitch schedules for target angles of attack of \SI{10}{\degree} and \SI{28}{\degree} at \SI{0.223}{\metre\per\second}
+produce more thrust than L0 but at lower efficiency (0.20 and 0.24, \cref{tab:app-fluke}); among the cases at this speed the
+efficiency is highest for $\alpha_{75}\approx\SI{20}{\degree}$, in line with the efficient range of flapping foils \cite{Read2003}.
+
+\section{Drag versus Lift across Speed}
+\label{sec:res-compare}
+
+\Cref{fig:thrust-speed} compares thrust, power and efficiency of the propulsors from rest to
+\SI{0.40}{\metre\per\second}; \cref{tab:compare} gives the values.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_thrust_speed}
+  \caption[Thrust, power and efficiency versus speed]{Single-leg (a) thrust, (b) input power and (c) Froude
+    efficiency of the propulsors versus speed. Shaded: range of the added-mass correction of the paddle composites
+    \eqref{eq:addedmass}; dotted: V3trap composite without correction.}
+  \label{fig:thrust-speed}
+\end{figure}
+
+\begin{table}[t]
+  \centering
+  \caption[Propulsor comparison across speed]{Single-leg thrust $\Tm$ (mN) / input power $\Pm$ (mW) / Froude
+    efficiency $\etaF$ across speed. Paddle values include the added-mass correction \eqref{eq:addedmass} as a range; the
+    uncorrected composite of V3trap gives 82.7, 75.6, 58.2, 35.7 and \SI{11.7}{\milli\newton}.}
+  \label{tab:compare}
+  \footnotesize
+  \begin{tabular}{@{}ccccc@{}}
+    \toprule
+    $\U$ (\si{\metre\per\second}) & Paddle, robot gait & Paddle, V3trap & Fluke, fixed (L0/L2) & Fluke, scheduled (L3) \\
+    \midrule
+    0     & 23.4 / 6.7 / --         & \textbf{73--83} / 21.6 / --                & 45.5 / 18.1 / --      & -- \\
+    0.08  & 4--5 / 5.8 / 0.05--0.07 & \textbf{66--71} / 21.9 / 0.24--0.26        & 36.5 / 17.1 / 0.17    & -- \\
+    0.15  & $<0$ / 6.5 / --         & \textbf{48--50} / 20.7 / \textbf{0.35--0.37} & 29.1 / 16.6 / 0.26  & -- \\
+    0.223 & --                      & 24--26 / 19.2 / 0.28--0.30               & 21.4 / 16.3 / 0.29    & -- \\
+    0.30  & --                      & $-4$--2 / 17.8 / $\approx0$                & 12.7 / 15.6 / 0.24    & \textbf{13.9} / 10.5 / \textbf{0.40} \\
+    0.40  & --                      & --                                       & --                    & 10.5 / 11.4 / 0.37 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Low speed.} Up to about \SI{0.15}{\metre\per\second} the optimized paddle is clearly superior. It produces
+1.6--2.0 times the thrust of the fluke at 19--28\,\% more power, and at \SI{0.15}{\metre\per\second} it reaches an efficiency of
+0.35--0.37, higher than the fluke's maximum of 0.29. Per area there is no difference at rest: the paddle produces
+\SIrange{3.9}{4.5}{} and the fluke \SI{4.1}{\milli\newton\per\square\centi\metre}. At \SI{0.223}{\metre\per\second} the fluke
+already produces more per area (\SI{1.9}{} versus \SIrange{1.3}{1.4}{\milli\newton\per\square\centi\metre}). The robot gait, in
+contrast, loses its thrust almost immediately: at \SI{0.08}{\metre\per\second} only \SIrange{4}{5}{\milli\newton} remain, and at
+\SI{0.15}{\metre\per\second} the net force is a drag.
+
+\paragraph{Speed limit of the paddle.} The paddle's thrust falls steeply with speed and vanishes at about
+\SI{0.30}{\metre\per\second}. The split into power stroke and recovery (\cref{fig:drag-split}, values in \cref{tab:app-split}) shows why. The power-stroke
+thrust of V3trap decreases by 42\,\%, from \SI{88.0}{} to \SI{50.9}{\milli\newton}, because the relative velocity during the power
+stroke falls. The recovery drag, however, grows more than sevenfold, from \SI{-5.3}{} to \SI{-39.1}{\milli\newton}, because the
+folded paddle and the rod now move forward against the oncoming flow. At speed, opening the fan also costs the momentum
+$\Delta m_a\U$ per cycle, \SIrange{12}{16}{\milli\newton} at \SIrange{0.223}{0.30}{\metre\per\second}. At
+\SI{0.30}{\metre\per\second} the recovery and the opening together consume the whole power-stroke thrust. For the robot gait, with its
+wider folded fan and slower stroke, the recovery drag exceeds the power-stroke thrust already at about
+\SI{0.1}{\metre\per\second}. The speed limit of a drag-type paddle on this leg is therefore set by what the paddle has to do outside
+the power stroke, not by the speed of the paddle in the power stroke.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_drag_split}
+  \caption[Power stroke and recovery of the paddle]{Contributions of power stroke and recovery to the mean thrust of
+    the fan paddle. (a) Absolute values for V3trap and the robot gait; shaded: net thrust including the added-mass correction
+    \eqref{eq:addedmass}. (b) Magnitudes relative to the power-stroke thrust at $\U=0$.}
+  \label{fig:drag-split}
+\end{figure}
+
+\paragraph{Crossover.} The fluke loses thrust more slowly, because it neither recovers against the flow nor changes its shape:
+its thrust at \SI{0.30}{\metre\per\second} is 28\,\% of its value at rest, whereas the paddle's is close to zero. Interpolating the
+curves, the thrust of the fluke exceeds that of V3trap above \SIrange{0.23}{0.24}{\metre\per\second}, and its efficiency above
+\SIrange{0.22}{0.23}{\metre\per\second}. This holds for both pitch schedules, because the speed-scheduled pitch was simulated only at \SIlist{0.30;0.40}{\metre\per\second} and shares the L0 data below. Including the discretization uncertainty of
+\cref{sec:ver-drag}, the crossover lies at $0.24\pm\SI{0.02}{\metre\per\second}$ for thrust and at $0.22\pm\SI{0.02}{\metre\per\second}$
+for efficiency. Without the added-mass correction, the crossovers would lie at \SI{0.295}{} and \SI{0.285}{\metre\per\second}; the
+correction moves them by about \SI{0.06}{\metre\per\second} but does not change their existence.
+
+\section{Speed-Scheduled Fluke Pitch}
+\label{sec:res-l3}
+
+With the fixed L0 motion, the fluke's angle of attack falls with speed, which explains its efficiency drop above
+\SI{0.223}{\metre\per\second}. The speed-scheduled pitch \eqref{eq:l3} restores the angle of attack
+(\cref{fig:l3}). At \SI{0.30}{\metre\per\second} it reduces the pitch amplitude from about \SI{40}{\degree} to
+\SI{21.6}{\degree}, and the angle of attack rises accordingly: $\alpha_{75}$ increases from \SI{13.7}{\degree} to \SI{21.0}{\degree}
+(\cref{tab:l3,tab:app-fluke}).
+
+\begin{table}[t]
+  \centering
+  \caption[Speed-scheduled pitch]{Speed-scheduled pitch (L3) compared with the fixed L0 motion (L2). $\bar F_z$: mean vertical
+    force; $|M_h|$: peak hinge moment about the pin.}
+  \label{tab:l3}
+  \small
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    Case & $\U$ (\si{\metre\per\second}) & $\Tm$ (mN) & $\Pm$ (mW) & $\etaF$ & $\bar F_z$ (mN) & $|M_h|$ (\si{\milli\newton\metre}) \\
+    \midrule
+    L2, fixed & 0.30 & 12.7 & 15.6 & 0.245 & $-29.4$ & 12.6 \\
+    L3, scheduled & 0.30 & \textbf{13.9} & \textbf{10.5} & \textbf{0.398} & $-0.9$ & 7.4 \\
+    L3, scheduled & 0.40 & 10.5 & \textbf{11.4} & \textbf{0.368} & $-0.9$ & 7.3 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+At \SI{0.30}{\metre\per\second} the scheduled pitch raises the thrust by 9\,\%, lowers the power by 33\,\% and raises the
+efficiency from 0.245 to 0.40, while the paddle produces almost no thrust at this speed. It also removes the mean vertical force
+($-29$ to $\SI{-1}{\milli\newton}$), reduces the peak hinge moment by 40\,\% and flattens the force history: the
+peak-to-peak streamwise force falls from about \SI{600}{} to \SI{190}{\milli\newton}. At
+\SI{0.40}{\metre\per\second} the efficiency is 0.37. Over the three designed speeds the fluke efficiency is 0.29 (L0, 0.223), 0.40 (L3,
+0.30) and 0.37 (L3, 0.40), with a maximum near \SI{0.30}{\metre\per\second}. At this speed the Strouhal number based on the pin
+excursion is 0.26, inside the range of 0.2--0.4 of efficient cruising in animals and close to the mean value measured for odontocetes \cite{Taylor2003,Rohr2004}; based on the trailing-edge excursion it is somewhat higher. The schedule needs no flow
+information, only $\dot h_\text{max}$ and $\U$. On the hardware it corresponds to a pitch amplitude that decreases with speed; how
+closely a passive spring can provide it is discussed in \cref{sec:disc-limits-prop}.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_l3}
+  \caption[Speed-scheduled pitch]{Fixed L0 motion versus speed-scheduled pitch. (a) Prescribed fluke pitch (hinge heave
+    dotted, right axis). (b) Resulting angle of attack. (c) Streamwise force, smoothed.}
+  \label{fig:l3}
+\end{figure}
+
+\section{Self-Propulsion Estimate}
+\label{sec:res-selfprop}
+
+\paragraph{Resistance.} Three resistance curves bound the resistance of the robot without its propulsors
+(\cref{fig:selfprop}a):
+\begin{itemize}
+  \item $D_\text{low}=\SI{10.8}{\milli\newton}\,(\U/\SI{0.2}{\metre\per\second})^{1.72}$: the bare hull, from separate
+        two-phase CFD of the hull at \SIlist{0.1;0.2}{\metre\per\second};
+  \item $D_\text{mid}=D_\text{low}+\SI{15.2}{\milli\newton}\,(\U/\SI{0.2}{\metre\per\second})^2$: hull plus the submerged
+        linkages, about \SI{26}{\milli\newton} at \SI{0.2}{\metre\per\second}; the linkage term, equivalent to
+        $C_DA\approx\SI{7.6}{\square\centi\metre}$, is an engineering estimate, not a measurement; this is the best estimate;
+  \item $D_\text{up}=\SI{77.6}{\milli\newton}\,(\U/\SI{0.2}{\metre\per\second})^2$: the whole robot at rest with its fan
+        paddles open, from CFD; it counts the paddles' own drag, which is already contained in $\Tm$, and is therefore an
+        upper bound.
+\end{itemize}
+The thrust curves are interpolated with monotone cubic splines and extrapolated linearly beyond the last CFD point.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_selfprop}
+  \caption[Self-propulsion estimate]{Self-propulsion estimate. (a) Four-leg thrust versus the resistance range; circles mark
+    the cruising speeds for $D_\text{mid}$; shaded: range of the added-mass correction of the paddle. Dotted: linear extrapolation. Below \SI{0.30}{\metre\per\second}, where the speed-scheduled pitch was not simulated, its curve uses the fixed-pitch data. (b) Quasi-steady acceleration from rest for $D_\text{mid}$; bars on the right give
+    the range of cruising speeds from $D_\text{up}$ to $D_\text{low}$.}
+  \label{fig:selfprop}
+\end{figure}
+
+\begin{table}[t]
+  \centering
+  \caption[Predicted cruising speed]{Predicted cruising speed and four-leg input power for $D_\text{mid}$, with the range
+    from $D_\text{up}$ to $D_\text{low}$. Paddle values are given as the range of the added-mass correction. $^*$ extrapolated beyond
+    the CFD data. $t_{90}$: time to reach 90\,\% of the cruising speed from rest.}
+  \label{tab:selfprop}
+  \small
+  \begin{tabular}{@{}lccccc@{}}
+    \toprule
+    Propulsor & $\U_c$ (\si{\metre\per\second}) & Range (\si{\metre\per\second}) & $4\Pm$ (mW) & $4\Pm/\U_c$ (\si{\joule\per\metre}) & $t_{90}$ (s) \\
+    \midrule
+    Drag, robot gait & 0.089--0.095 & 0.082--0.098 & 23.3 & 0.25--0.26 & 0.94--0.99 \\
+    Drag, V3trap & 0.260--0.269 & 0.223--0.289 & 73--74 & 0.27--0.28 & 0.67--0.69 \\
+    Lift, fixed pitch & 0.294 & 0.214--0.350$^*$ & 62.7 & 0.21 & 1.46 \\
+    Lift, scheduled pitch & \textbf{0.299} & 0.214--0.422$^*$ & \textbf{42.0} & \textbf{0.14} & 1.57 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Cruising speed.} For the best-estimate resistance, the fluke propels the robot at \SI{0.30}{\metre\per\second}, or
+1.3 hull lengths per second, and the optimized paddle at \SIrange{0.26}{0.27}{\metre\per\second} (\cref{tab:selfprop}). Both
+operating points lie just above the crossover, where the fluke is stronger, but close to it, so the difference in speed is small.
+The power differs clearly: the speed-scheduled fluke needs \SI{42}{\milli\watt}, 33\,\% less than the fixed-pitch fluke
+(\SI{63}{\milli\watt}) and 43\,\% less than the paddle (\SI{73}{\milli\watt}), which is also slower. The robot's current gait reaches
+only about \SI{0.09}{\metre\per\second}. The ranges are wide because the resistance is uncertain, and which propulsor is faster
+depends on where the resistance curve crosses the thrust curves. With the high resistance $D_\text{up}$, the operating point
+moves below the crossover and the paddle is slightly faster (\SIrange{0.22}{0.23}{} versus \SI{0.21}{\metre\per\second}); with the
+low resistance $D_\text{low}$, it moves further above the crossover and the fluke is clearly faster
+(\SIrange{0.35}{0.42}{\metre\per\second}, extrapolated, versus \SIrange{0.28}{0.29}{\metre\per\second}).
+
+\paragraph{Acceleration.} The acceleration from rest is integrated with the measured mass of \SI{0.419}{\kilo\gram} plus 10\,\% added
+mass; the mass affects only the time scale, not the cruising speed. The paddle accelerates the robot faster: it reaches 90\,\% of its cruising speed after
+\SI{0.68}{\second}, the fluke after \SIrange{1.46}{1.57}{\second} (\cref{fig:selfprop}b). This reflects the paddle's higher thrust at low
+speed and matches the observation that rowing appendages favour acceleration and flapping ones cruising
+\cite{Walker2000}.
+
+\section{First Hardware Test}
+\label{sec:res-hw}
+
+The robot with flukes (\cref{sec:plat-hw}) was timed in a \SI{1}{\metre} pool: it started from rest with its stern against one
+wall and the time was stopped when its bow hit the opposite wall, a distance of \SI{0.738}{\metre} (pool length minus the overall
+length of the hull, \SI{262}{\milli\metre}). The stroke frequency was set to \SI{2}{} and \SI{4}{\hertz} in the firmware; there was
+one hand-timed run for each setting. The same run was simulated with the quasi-steady model of \cref{fig:selfprop}b, the L0 thrust at
+\SI{2}{\hertz} and the measured mass (\cref{tab:hw}).
+
+\begin{table}[htb]
+  \centering
+  \caption[First hardware test]{First hardware test: time and mean speed over \SI{0.738}{\metre} from rest. Frequencies are the
+    values set in the firmware. Model: L0 thrust at \SI{2}{\hertz} with the three resistance curves of \cref{sec:res-selfprop}.}
+  \label{tab:hw}
+  \small
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    & Frequency set (Hz) & Time (s) & Mean speed (\si{\metre\per\second}) \\
+    \midrule
+    Hardware & 2 & 5.2 & 0.142 \\
+    Hardware & 4 & 2.8 & 0.264 \\
+    Model, $D_\text{low}$ / $D_\text{mid}$ / $D_\text{up}$ & 2 & 2.9 / 3.2 / 3.9 & 0.25 / 0.23 / 0.19 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Thrust.} At \SI{2}{\hertz}, where the stroke is close to L0, the hardware needs 1.3 to 1.6 times as long as predicted with $D_\text{mid}$ to $D_\text{up}$ (1.8 times with $D_\text{low}$, which does not apply to the hardware).
+The resistance alone cannot explain this: with the CFD thrust, a resistance of \SI{205}{\milli\newton} at
+\SI{0.2}{\metre\per\second} would be required, 2.6 times $D_\text{up}$. This corresponds to $C_DA\approx\SI{103}{\square\centi\metre}$,
+or $C_D\approx4$ on the submerged frontal area of the hull of \SI{24}{\square\centi\metre}, far above any bluff body. $D_\text{up}$
+itself corresponds to $C_D\approx1.6$ and is a generous bound even for the hull moving blunt end first, while $D_\text{low}$, the bare
+hull moving pointed end first, does not apply to the hardware. Between $D_\text{mid}$ and $D_\text{up}$, the run is reproduced with
+27--47\,\% of the CFD thrust, roughly a quarter to a half, and a steady speed of about \SIrange{0.16}{0.20}{\metre\per\second} at
+\SI{2}{\hertz}. Part of the deficit is expected from the stroke itself: the piecewise-linear trajectory has a peak heave speed about
+15\,\% below that of L0 (\cref{sec:plat-hw}), which costs of the order of 10--20\,\% of the thrust. The remaining factor of about two
+has several possible causes that the test cannot separate: the passive pitch, whose spring stiffness has not been verified against the
+angle of attack of L0; ventilation where the fluke breaks the surface; the reversed hull; and interaction between the legs. The
+self-propulsion speeds of \cref{tab:selfprop} are therefore upper bounds for the present hardware.
+
+\paragraph{Frequency.} The ratio of the two runs does not depend on the thrust level. If the resistance grows with $\U^2$ and the
+thrust scales with the square of the stroke velocity at a fixed Strouhal number, the time needed to cover a given distance from
+rest is inversely proportional to the product of frequency and amplitude. The measured ratio of \SI{5.2}{} to \SI{2.8}{\second},
+1.86, is close to the value of 2 expected if the servos reach the full amplitude at \SI{4}{\hertz}, although the peak servo speed of about \SI{800}{\degree\per\second}, estimated from the firmware trajectory, is close to their no-load speed. A more precise statement is not possible: a timing error of
+\SI{0.2}{\second} per run moves the ratio between 1.67 and 2.08, and the passive pitch changes with frequency, because the
+hydrodynamic moment grows with the square of the stroke velocity while the spring moment does not. Taken at face value, the same
+scaling puts the steady speed at \SI{4}{\hertz} at roughly \SIrange{0.3}{0.4}{\metre\per\second}, above the CFD-based estimate at
+\SI{2}{\hertz}, for about six times the hydrodynamic power.

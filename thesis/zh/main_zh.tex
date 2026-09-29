@@ -1,0 +1,136 @@
+% =====================================================================
+%  Semester thesis — X. Lu, TUM CIT, Chair of Robotics, Artificial
+%  Intelligence and Real-time Systems (Prof. Knoll)
+%  Layout follows the TUM CIT thesis look (Charter body, Helvetica
+%  headings, TUM blue title page). Build:  latexmk -pdf main.tex
+% =====================================================================
+\documentclass[11pt,a4paper,oneside,chapterprefix=true,headings=big,parskip=false,numbers=noenddot,bibliography=totoc,listof=totoc]{scrreprt}
+
+% ---------- fonts and language ----------
+\usepackage[charter]{mathdesign}
+\usepackage[UTF8,scheme=chinese,heading=false,fontset=none,zihao=false]{ctex}
+\setmainfont{XCharter}[Extension=.otf,UprightFont=*-Roman,BoldFont=*-Bold,ItalicFont=*-Italic,BoldItalicFont=*-BoldItalic]
+\setsansfont{TeX Gyre Heros}[Scale=0.92]
+\setCJKmainfont{Noto Serif CJK SC}[BoldFont=Noto Serif CJK SC Bold]
+\setCJKsansfont{Noto Sans CJK SC}[BoldFont=Noto Sans CJK SC Bold]
+\setCJKmonofont{Noto Sans CJK SC}
+\linespread{1.25}
+
+% ---------- page geometry and headers ----------
+\usepackage[a4paper,left=30mm,right=30mm,top=32mm,bottom=32mm,headsep=10mm]{geometry}
+\usepackage[automark,headsepline=false]{scrlayer-scrpage}
+\clearpairofpagestyles
+\ihead{\sffamily\itshape\small\headmark}
+\ohead{\sffamily\bfseries\small\pagemark}
+\renewcommand*{\chaptermarkformat}{}
+\automark[section]{chapter}
+\setkomafont{pageheadfoot}{\normalfont}
+\setkomafont{disposition}{\sffamily\bfseries}
+\setkomafont{chapterprefix}{\huge}
+\renewcommand*{\chapterformat}{第\,\thechapter\,章}
+\RedeclareSectionCommand[beforeskip=40mm,afterskip=18mm,innerskip=10mm]{chapter}
+\RedeclareSectionCommand[beforeskip=-4ex plus -1ex minus -.2ex,afterskip=2.2ex]{section}
+
+% ---------- math, units, tables, figures ----------
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{siunitx}
+\sisetup{per-mode=power,range-phrase=\,--\,,range-units=single,detect-all,list-separator={、},list-final-separator={和},list-pair-separator={和}}
+\usepackage{booktabs,tabularx,multirow,array}
+\usepackage{graphicx}
+\graphicspath{{../figures/}}
+\usepackage[font=small,labelfont={bf,sf},format=hang]{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{xcolor}
+\definecolor{TUMblue}{HTML}{0065BD}
+\definecolor{todo}{HTML}{C0392B}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds,decorations.pathmorphing,patterns}
+\usepackage{enumitem}
+\setlist{itemsep=2pt,topsep=4pt}
+\usepackage{csquotes}
+
+% ---------- bibliography ----------
+\usepackage[backend=biber,style=alphabetic,maxbibnames=99,maxcitenames=2,giveninits=true,doi=true,url=false,isbn=false,eprint=true]{biblatex}
+\addbibresource{../refs.bib}
+\AtEveryBibitem{\clearfield{note}}
+
+% ---------- cross references ----------
+\usepackage[hidelinks,pdfusetitle]{hyperref}
+\usepackage[capitalise,noabbrev,nameinlink]{cleveref}
+\crefformat{chapter}{第~#2#1#3~章}\Crefformat{chapter}{第~#2#1#3~章}
+\crefrangeformat{chapter}{第~#3#1#4~章至第~#5#2#6~章}
+\crefmultiformat{chapter}{第~#2#1#3~章}{和第~#2#1#3~章}{、第~#2#1#3~章}{和第~#2#1#3~章}
+\crefformat{section}{#2#1#3~节}\Crefformat{section}{#2#1#3~节}
+\crefmultiformat{section}{#2#1#3~节}{和~#2#1#3~节}{、#2#1#3~节}{和~#2#1#3~节}
+\crefrangeformat{section}{#3#1#4~节至~#5#2#6~节}\Crefrangeformat{section}{#3#1#4~节至~#5#2#6~节}
+\crefrangeformat{figure}{图~#3#1#4~至~#5#2#6}\crefrangeformat{table}{表~#3#1#4~至~#5#2#6}
+\crefmultiformat{subsection}{#2#1#3~节}{和~#2#1#3~节}{、#2#1#3~节}{和~#2#1#3~节}
+\crefformat{appendix}{附录~#2#1#3}\crefmultiformat{appendix}{附录~#2#1#3}{和附录~#2#1#3}{、附录~#2#1#3}{和附录~#2#1#3}
+\crefformat{subsection}{#2#1#3~节}\Crefformat{subsection}{#2#1#3~节}
+\crefformat{figure}{图~#2#1#3}\Crefformat{figure}{图~#2#1#3}
+\crefmultiformat{figure}{图~#2#1#3}{和~#2#1#3}{、#2#1#3}{和~#2#1#3}
+\crefformat{table}{表~#2#1#3}\Crefformat{table}{表~#2#1#3}
+\crefmultiformat{table}{表~#2#1#3}{和~#2#1#3}{、#2#1#3}{和~#2#1#3}
+\crefformat{equation}{式~(#2#1#3)}\Crefformat{equation}{式~(#2#1#3)}
+\crefrangeformat{equation}{式~(#3#1#4)~至~(#5#2#6)}
+\crefformat{appendix}{附录~#2#1#3}\Crefformat{appendix}{附录~#2#1#3}
+
+% ---------- helpers ----------
+\setlength{\emergencystretch}{3em}
+\newcommand{\TODO}[1]{\textcolor{todo}{\textbf{[TODO:} #1\textbf{]}}}
+\newcommand{\U}{U}                          % swimming / tow speed
+\newcommand{\Tm}{\bar{T}}                   % cycle-mean thrust
+\newcommand{\Pm}{\bar{P}}                   % cycle-mean input power
+\newcommand{\etaF}{\eta}                    % Froude efficiency
+\newcommand{\mNs}{\si{\milli\newton}}
+\newcommand{\ms}{\si{\metre\per\second}}
+\newcommand{\sfit}[1]{\textsf{#1}}
+
+% ---------- title data ----------
+\newcommand{\thesistype}{Semester Thesis in Mechatronics, Robotics, and Biomechanical Engineering（中文译本）}
+\newcommand{\thesistitle}{Hydrodynamic Modeling and Trajectory Optimization of Paddling Propulsion for a Quadruped Robot}
+\newcommand{\thesistitlezh}{四足机器人划水推进的水动力建模与轨迹优化}
+\newcommand{\thesisauthor}{Xiaotian Lu}
+\newcommand{\thesissupervisor}{Prof.\ Dr.-Ing.\ habil.\ Alois C.\ Knoll}
+\newcommand{\thesisadvisor}{Qian Huang, M.Sc.}
+\newcommand{\thesisdate}{2026 年 10 月}      % TODO: 提交日期
+\hypersetup{pdftitle={\thesistitle},pdfauthor={\thesisauthor}}
+
+\begin{document}
+\renewcommand{\contentsname}{目录}
+\renewcommand{\listfigurename}{插图目录}
+\renewcommand{\listtablename}{表格目录}
+\renewcommand{\figurename}{图}
+\renewcommand{\tablename}{表}
+\renewcommand{\appendixname}{附录}
+\pagenumbering{roman}
+\input{front/cover}
+\input{front/disclaimer}
+\input{front/abstract}
+\pagestyle{scrheadings}
+\tableofcontents
+\listoffigures
+\listoftables
+\input{front/acronyms}
+
+\cleardoublepage
+\pagenumbering{arabic}
+\input{chapters/01_introduction}
+\input{chapters/02_related_work}
+\input{chapters/03_foundations}
+\input{chapters/04_platform}
+\input{chapters/05_mujoco}
+\input{chapters/06_cfd_method}
+\input{chapters/07_verification}
+\input{chapters/08_results}
+\input{chapters/09_discussion}
+\input{chapters/10_conclusion}
+
+\appendix
+\renewcommand*{\chapterformat}{附录\,\thechapter}
+\input{chapters/appendix}
+
+\printbibliography[heading=bibintoc,title={参考文献}]
+\end{document}

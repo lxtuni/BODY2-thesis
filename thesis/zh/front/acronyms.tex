@@ -1,0 +1,50 @@
+\chapter*{缩略语与符号}
+\addcontentsline{toc}{chapter}{缩略语与符号}
+\markboth{缩略语与符号}{缩略语与符号}
+
+\begin{description}[labelwidth=16mm,leftmargin=20mm,itemsep=1pt,font=\normalfont\bfseries]
+\item[AR] 展弦比（aspect ratio），$\mathit{AR}=b^2/S$
+\item[BL] 体长（body length），速度以BL/s计
+\item[CFD] 计算流体力学（computational fluid dynamics）
+\item[CMA-ES] 协方差矩阵自适应进化策略（covariance matrix adaptation evolution strategy）
+\item[COT] 运输代价（cost of transport）
+\item[EMF] 电动势（electromotive force），即舵机电机的反电动势
+\item[GCI] 网格收敛指数（grid convergence index）
+\item[LSTM] 长短期记忆（long short-term memory），一种循环神经网络
+\item[MJCF] MuJoCo的XML模型格式（MuJoCo XML model format）
+\item[PIMPLE] PISO与SIMPLE合并的压力--速度耦合算法（merged PISO--SIMPLE pressure--velocity coupling algorithm）
+\item[RMS] 均方根（root mean square）
+\item[SPH] 光滑粒子流体动力学（smoothed-particle hydrodynamics）
+\item[URDF] 统一机器人描述格式（unified robot description format）
+\end{description}
+
+\bigskip
+\begin{description}[labelwidth=16mm,leftmargin=20mm,itemsep=1pt,font=\normalfont]
+\item[$\U$] 前进速度（游动速度或拖曳速度），\si{\metre\per\second}
+\item[$f,\;T$] 冲程频率与周期，$T=1/f$
+\item[$\tau$] 周期相位$t/T\bmod 1$
+\item[$\Tm$] 单腿的周期平均推力，\si{\milli\newton}
+\item[$\Pm$] 单腿的周期平均水动力输入功率，\si{\milli\watt}
+\item[$\etaF$] 弗劳德效率$\Tm\U/\Pm$
+\item[$C_T$] 推力系数$\Tm/(\tfrac12\rho\U^2S)$
+\item[$\mathit{St}$] 斯特劳哈尔数$fA/\U$，其中$A$为峰峰值摆幅
+\item[$\alpha$] 攻角，即翼型弦线与相对来流之间的夹角
+\item[$\gamma$] 沉浮翼型的来流角，$\gamma=\arctan(\dot h/\U)$
+\item[$\theta$] 尾鳍俯仰角
+\item[$\mathrm{DUTY}$] 占空比，即划水冲程占整个周期的比例
+\item[$\tau_o,\tau_c$] 折扇桨开扇和合扇时的相位
+\item[$K$] $D=K\U|\U|$中的船体阻力系数，\si{\newton\second\squared\per\metre\squared}
+\item[$\rho,\nu$] 水的密度与运动黏度
+\end{description}
+
+\bigskip
+\noindent\textbf{算例名称}
+\begin{description}[labelwidth=16mm,leftmargin=20mm,itemsep=1pt,font=\normalfont\bfseries]
+\item[机器人步态] 折扇桨，采用机器人当前的冲程（周期\SI{1.25}{\second}，折叠至\SI{30}{\milli\metre}）
+\item[V1--V3] 静止时阻力型冲程的各设计步骤；V3trap：优化后的冲程（梯形速度规律，折叠至\SI{12}{\milli\metre}，提前合扇）
+\item[L0] 尾鳍，采用来自Flare Live的参考运动，航速\SI{0.223}{\metre\per\second}；L0c：同一算例在粗网格上的结果
+\item[L2] L0运动在其他航速下的算例（\SIlist{0;0.08;0.15;0.30}{\metre\per\second}）
+\item[L1] 尾鳍，采用攻角规律（L1a10、L1a28：目标攻角为\SI{10}{}和\SI{28}{\degree}）
+\item[L3] 尾鳍，采用随航速调度的俯仰$\theta_0=\gamma_\text{max}/2$（L3U030、L3U040：航速\SI{0.30}{}和\SI{0.40}{\metre\per\second}）
+\item[确认] 按Schouveiler等人设置的沉浮加俯仰NACA\,0012翼型算例（\cref{sec:ver-v1}）
+\end{description}

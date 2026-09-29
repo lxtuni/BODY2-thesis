@@ -1,0 +1,23 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      alpha.water;
+}
+
+dimensions      [0 0 0 0 0 0 0];
+internalField   uniform 0;
+boundaryField
+{
+    overset_FL { type overset; value uniform 1; }
+    overset_FR { type overset; value uniform 1; }
+    overset_RL { type overset; value uniform 1; }
+    overset_RR { type overset; value uniform 1; }
+    "(paddle_.*|hull)" { type zeroGradient; }
+    inlet        { type fixedValue; value uniform 0; }      // setFields 的 boxToFace 会把水线以下改成 1
+    outlet       { type variableHeightFlowRate; lowerBound 0; upperBound 1; value uniform 0; }
+    atmosphere   { type inletOutlet; inletValue uniform 0; value uniform 0; }
+    "(sides|bottom)" { type zeroGradient; }
+}

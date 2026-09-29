@@ -1,0 +1,22 @@
+{
+ "mode": "half_gamma",
+ "law": "fin = (gamma_max/2)*Wz/max|Wz| (6-harmonic smoothed), gamma_max=atan(max|Wz|/U); hinge = motion_L0.csv",
+ "U": 0.3,
+ "freq": 2.0,
+ "T": 0.5,
+ "n": 400,
+ "gamma_max_deg": 43.25854386161465,
+ "theta0_deg": 21.629271930807324,
+ "sign": 1.0,
+ "fin_range_deg": [
+  -21.296259509488635,
+  20.361936330271657
+ ],
+ "fin_rate_max_deg_s": 365.8089215280022,
+ "hinge_speed_max": 0.28229692036378096,
+ "alpha_act_p75": 20.916962536417454,
+ "alpha_midstroke_mean": 18.203377042918433,
+ "hinge_travel_z_mm": 39.176700000000004,
+ "qs_fwd_mean_mN": 37.62756759045144,
+ "qs_fwd_L0fin_mN": 13.097128891506697
+}

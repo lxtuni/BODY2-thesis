@@ -1,0 +1,207 @@
+#VRML_SIM R2025a utf8
+# Body2Swimmer - primitive stand-in for BODY2 (4-corner paddle swimmer). Instantiable.
+PROTO Body2Swimmer [
+  field SFVec3f    translation     0 0 0
+  field SFRotation rotation        0 0 1 0
+  field SFString   name            "body2"
+  field SFString   controller      "paddle_race"
+  field MFString   controllerArgs  []
+]
+{
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    controller IS controller
+    controllerArgs IS controllerArgs
+    children [
+      Shape { appearance PBRAppearance { baseColor 0.20 0.45 0.85 roughness 1 metalness 0 }
+               geometry Box { size 0.140 0.095 0.045 } }
+      GPS { name "gps" }
+      InertialUnit { name "imu" }
+      HingeJoint {
+        jointParameters HingeJointParameters { axis 0 1 0  anchor 0.0550 0.0450 0 }
+        device [
+          RotationalMotor { name "FL_hip" maxTorque 0.20 maxVelocity 4 }
+          PositionSensor { name "FL_hip_sensor" }
+        ]
+        endPoint Solid {
+          translation 0.0550 0.0450 -0.0225
+          name "FL_thigh"
+          children [
+            Shape { appearance PBRAppearance { baseColor 0.85 0.55 0.15 roughness 1 metalness 0 }
+                     geometry Box { size 0.01 0.01 0.045 } }
+            HingeJoint {
+              jointParameters HingeJointParameters { axis 0 1 0  anchor 0 0 -0.0225 }
+              device [
+                RotationalMotor { name "FL_wrist" maxTorque 0.20 maxVelocity 4 }
+                PositionSensor { name "FL_wrist_sensor" }
+              ]
+              endPoint Solid {
+                translation 0 0 -0.0525
+                name "FL_paddle"
+                children [
+                  Shape { appearance PBRAppearance { baseColor 0.95 0.75 0.20 roughness 1 metalness 0 }
+                           geometry Box { size 0.006 0.045 0.06 } }
+                ]
+                boundingObject Box { size 0.006 0.045 0.06 }
+                physics Physics { density -1 mass 0.025 }
+                immersionProperties [
+                  ImmersionProperties { fluidName "water" referenceArea "xyz-projected area"
+                    dragForceCoefficients 0.80 0.05 0.05  dragTorqueCoefficients 0 0 0
+                    viscousResistanceForceCoefficient 0.30  viscousResistanceTorqueCoefficient 0.15 }
+                ]
+              }
+            }
+          ]
+          boundingObject Box { size 0.01 0.01 0.045 }
+          physics Physics { density -1 mass 0.010 }
+          immersionProperties [
+            ImmersionProperties { fluidName "water" referenceArea "xyz-projected area"
+              dragForceCoefficients 0.40 0.40 0.20  dragTorqueCoefficients 0 0 0
+              viscousResistanceForceCoefficient 0.15  viscousResistanceTorqueCoefficient 0.08 }
+          ]
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters { axis 0 1 0  anchor 0.0550 -0.0450 0 }
+        device [
+          RotationalMotor { name "FR_hip" maxTorque 0.20 maxVelocity 4 }
+          PositionSensor { name "FR_hip_sensor" }
+        ]
+        endPoint Solid {
+          translation 0.0550 -0.0450 -0.0225
+          name "FR_thigh"
+          children [
+            Shape { appearance PBRAppearance { baseColor 0.85 0.55 0.15 roughness 1 metalness 0 }
+                     geometry Box { size 0.01 0.01 0.045 } }
+            HingeJoint {
+              jointParameters HingeJointParameters { axis 0 1 0  anchor 0 0 -0.0225 }
+              device [
+                RotationalMotor { name "FR_wrist" maxTorque 0.20 maxVelocity 4 }
+                PositionSensor { name "FR_wrist_sensor" }
+              ]
+              endPoint Solid {
+                translation 0 0 -0.0525
+                name "FR_paddle"
+                children [
+                  Shape { appearance PBRAppearance { baseColor 0.95 0.75 0.20 roughness 1 metalness 0 }
+                           geometry Box { size 0.006 0.045 0.06 } }
+                ]
+                boundingObject Box { size 0.006 0.045 0.06 }
+                physics Physics { density -1 mass 0.025 }
+                immersionProperties [
+                  ImmersionProperties { fluidName "water" referenceArea "xyz-projected area"
+                    dragForceCoefficients 0.80 0.05 0.05  dragTorqueCoefficients 0 0 0
+                    viscousResistanceForceCoefficient 0.30  viscousResistanceTorqueCoefficient 0.15 }
+                ]
+              }
+            }
+          ]
+          boundingObject Box { size 0.01 0.01 0.045 }
+          physics Physics { density -1 mass 0.010 }
+          immersionProperties [
+            ImmersionProperties { fluidName "water" referenceArea "xyz-projected area"
+              dragForceCoefficients 0.40 0.40 0.20  dragTorqueCoefficients 0 0 0
+              viscousResistanceForceCoefficient 0.15  viscousResistanceTorqueCoefficient 0.08 }
+          ]
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters { axis 0 1 0  anchor -0.0550 0.0450 0 }
+        device [
+          RotationalMotor { name "BL_hip" maxTorque 0.20 maxVelocity 4 }
+          PositionSensor { name "BL_hip_sensor" }
+        ]
+        endPoint Solid {
+          translation -0.0550 0.0450 -0.0225
+          name "BL_thigh"
+          children [
+            Shape { appearance PBRAppearance { baseColor 0.85 0.55 0.15 roughness 1 metalness 0 }
+                     geometry Box { size 0.01 0.01 0.045 } }
+            HingeJoint {
+              jointParameters HingeJointParameters { axis 0 1 0  anchor 0 0 -0.0225 }
+              device [
+                RotationalMotor { name "BL_wrist" maxTorque 0.20 maxVelocity 4 }
+                PositionSensor { name "BL_wrist_sensor" }
+              ]
+              endPoint Solid {
+                translation 0 0 -0.0525
+                name "BL_paddle"
+                children [
+                  Shape { appearance PBRAppearance { baseColor 0.95 0.75 0.20 roughness 1 metalness 0 }
+                           geometry Box { size 0.006 0.045 0.06 } }
+                ]
+                boundingObject Box { size 0.006 0.045 0.06 }
+                physics Physics { density -1 mass 0.025 }
+                immersionProperties [
+                  ImmersionProperties { fluidName "water" referenceArea "xyz-projected area"
+                    dragForceCoefficients 0.80 0.05 0.05  dragTorqueCoefficients 0 0 0
+                    viscousResistanceForceCoefficient 0.30  viscousResistanceTorqueCoefficient 0.15 }
+                ]
+              }
+            }
+          ]
+          boundingObject Box { size 0.01 0.01 0.045 }
+          physics Physics { density -1 mass 0.010 }
+          immersionProperties [
+            ImmersionProperties { fluidName "water" referenceArea "xyz-projected area"
+              dragForceCoefficients 0.40 0.40 0.20  dragTorqueCoefficients 0 0 0
+              viscousResistanceForceCoefficient 0.15  viscousResistanceTorqueCoefficient 0.08 }
+          ]
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters { axis 0 1 0  anchor -0.0550 -0.0450 0 }
+        device [
+          RotationalMotor { name "BR_hip" maxTorque 0.20 maxVelocity 4 }
+          PositionSensor { name "BR_hip_sensor" }
+        ]
+        endPoint Solid {
+          translation -0.0550 -0.0450 -0.0225
+          name "BR_thigh"
+          children [
+            Shape { appearance PBRAppearance { baseColor 0.85 0.55 0.15 roughness 1 metalness 0 }
+                     geometry Box { size 0.01 0.01 0.045 } }
+            HingeJoint {
+              jointParameters HingeJointParameters { axis 0 1 0  anchor 0 0 -0.0225 }
+              device [
+                RotationalMotor { name "BR_wrist" maxTorque 0.20 maxVelocity 4 }
+                PositionSensor { name "BR_wrist_sensor" }
+              ]
+              endPoint Solid {
+                translation 0 0 -0.0525
+                name "BR_paddle"
+                children [
+                  Shape { appearance PBRAppearance { baseColor 0.95 0.75 0.20 roughness 1 metalness 0 }
+                           geometry Box { size 0.006 0.045 0.06 } }
+                ]
+                boundingObject Box { size 0.006 0.045 0.06 }
+                physics Physics { density -1 mass 0.025 }
+                immersionProperties [
+                  ImmersionProperties { fluidName "water" referenceArea "xyz-projected area"
+                    dragForceCoefficients 0.80 0.05 0.05  dragTorqueCoefficients 0 0 0
+                    viscousResistanceForceCoefficient 0.30  viscousResistanceTorqueCoefficient 0.15 }
+                ]
+              }
+            }
+          ]
+          boundingObject Box { size 0.01 0.01 0.045 }
+          physics Physics { density -1 mass 0.010 }
+          immersionProperties [
+            ImmersionProperties { fluidName "water" referenceArea "xyz-projected area"
+              dragForceCoefficients 0.40 0.40 0.20  dragTorqueCoefficients 0 0 0
+              viscousResistanceForceCoefficient 0.15  viscousResistanceTorqueCoefficient 0.08 }
+          ]
+        }
+      }
+    ]
+    boundingObject Box { size 0.140 0.095 0.045 }
+    physics Physics { density -1 mass 0.150 }
+    immersionProperties [
+      ImmersionProperties { fluidName "water" referenceArea "xyz-projected area"
+        dragForceCoefficients 0.80 0.80 0.90  dragTorqueCoefficients 0 0 0
+        viscousResistanceForceCoefficient 0.40  viscousResistanceTorqueCoefficient 0.40 }
+    ]
+  }
+}

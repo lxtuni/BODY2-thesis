@@ -1,0 +1,204 @@
+\chapter{Flow Simulation Methods}
+\label{ch:cfd}
+
+Two flow solvers are used. Single-leg simulations with OpenFOAM resolve the flow around one propulsor and
+provide the thrust and power data of \cref{ch:results}. Whole-robot simulations with the real-time
+lattice-Boltzmann solver Flare Live provide the reference fluke motion and qualitative trends of the free-swimming robot
+(\cref{app:flare-trends}). This chapter describes both.
+
+\section{Single-Leg CFD with Overset Grids}
+\label{sec:cfd-of}
+
+\subsection{Governing Equations and Solver}
+
+The flow of water ($\rho=\SI{1000}{\kilo\gram\per\cubic\metre}$, $\nu=\SI{1.0e-6}{\square\metre\per\second}$) is modelled as incompressible, laminar and single-phase. The Reynolds numbers of
+$10^3$--$10^4$ (\cref{sec:fund-forces}) lie in the laminar-to-transitional range where the forces are dominated by
+the separated vortices at the edges, and no turbulence model is used. The incompressible Navier--Stokes equations
+are solved with \texttt{overPimpleDyMFoam} of OpenFOAM v2606 \cite{Weller1998}, a finite-volume solver with the
+PIMPLE pressure--velocity coupling and overset (Chimera) grids \cite{Windt2020}. The time step is adapted to a
+maximum Courant number of 0.8.
+
+Overset grids are chosen because the propulsors rotate by up to \SI{120}{\degree} relative to the hull per cycle.
+A body-fitted component mesh moves rigidly with the propulsor inside a stationary background mesh. In every
+time step, background cells covered by the propulsor are removed (hole cutting), and the solutions are coupled by
+interpolation at the fringe cells. The inverse-distance stencil is used; for some cases it crashed in the stencil
+update, and those cases were continued from their last saved time with the tracking inverse-distance variant. As
+a guard against failed hole cutting, the number of hole cells is checked in the first time step and the case is
+restarted with another stencil if it exceeds 3\,\% of all cells or is below 50.
+
+\subsection{Domain, Boundary Conditions and Motion}
+
+The simulations are carried out in a frame that moves with the hull. The forward speed $\U$ enters as a uniform
+inflow at the upstream boundary; the downstream boundary has a fixed pressure and an inlet--outlet condition for the velocity. The top
+of the domain is a slip wall \SI{12}{\centi\metre} above the fluke, a rigid lid that represents deep water without
+a free surface; the lateral and bottom boundaries are also slip walls far from the propulsor. The propulsor's
+rigid-body motion is prescribed as a table of positions and orientations from the leg kinematics of
+\cref{sec:plat-motions}. To avoid pressure spikes and collapsing time steps from an impulsive start, the fluke
+motion starts from rest with a smooth step over the first half cycle. Three cycles are simulated; means are taken
+over the last two for the fluke and over the third for the fan paddle.
+
+Only the propulsor is simulated: the fluke without its foot rod, and the fan paddle with its thin
+\SI{3}{\milli\metre} rod but without the crank and parallelogram. The linkage contributes only drag, which is assumed to be the same for both propulsors and is accounted for in the resistance of the self-propulsion balance
+(\cref{sec:res-selfprop}). The rod contributes about 1\,\% of the paddle thrust. The hull resistance used in \cref{sec:res-selfprop} comes from separate two-phase simulations of the bare hull with a free surface, which are not described further here.
+
+\subsection{Meshes}
+
+Both meshes are built with \texttt{snappyHexMesh} from the propulsor surface. For the fluke, a clean CFD geometry
+is used: the pin hole and the end-stop arm of the printed part are removed and the \SI{0.1}{\milli\metre}
+trailing edge is truncated at 95\,\% chord, because these details produced degenerate cells that reduced the time
+step below \SI{e-4}{\second}. The resulting blade deviates from the Flare geometry by a median of
+\SI{0.12}{\milli\metre}. The mesh parameters are listed in \cref{tab:meshes}.
+
+\begin{table}[t]
+  \centering
+  \caption[Mesh parameters]{Mesh parameters of the single-leg simulations. Sizes are the cell edge lengths in the
+    refined region around the propulsor.}
+  \label{tab:meshes}
+  \small
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    & Fluke (L cases) & Fan paddle (D cases) & Validation foil \\
+    \midrule
+    Component mesh (surface) & \SI{1.2}{\milli\metre} (\SI{0.6}{\milli\metre}) & \SI{2.5}{\milli\metre} (\SI{1.25}{\milli\metre}) & \SI{2.5}{\milli\metre} \\
+    Background mesh & \SI{2.5}{\milli\metre} & \SI{4}{\milli\metre} & \SI{5}{\milli\metre} \\
+    Surface cells per length & $\approx50$ per chord & $\approx34$ per radius & $\approx40$ per chord \\
+    Cells, component + backgr. & $1.8\times10^5+5.4\times10^5$ & -- & -- \\
+    Cycles simulated / averaged & 3 / 2 & 3 / 1 & 3 / 2 \\
+    Start-up & 0.5-cycle smooth step & none & none \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The fan-paddle mesh is coarser than the fluke mesh. It was set up earlier, when the paddle strokes were designed,
+and was kept to preserve comparability across the paddle design iterations. Its consequence for the comparison
+is discussed in \cref{sec:ver-drag}.
+
+\subsection{Two-State Composite for the Folding Fan}
+\label{sec:cfd-composite}
+
+Simulating the folding of the fan would require a deforming geometry. Instead, each paddle stroke is simulated
+twice with the same motion: once with the fan open and once with the fan closed. The cycle force history is then
+composed from the two runs,
+\begin{equation}
+  \bm F(\tau) = \begin{cases}
+    \bm F_\text{open}(\tau), & \tau_o \le \tau < \tau_c,\\
+    \bm F_\text{closed}(\tau), & \text{otherwise},
+  \end{cases}
+  \label{eq:composite}
+\end{equation}
+where $\tau$ is the cycle phase and $\tau_o,\tau_c$ are the opening and closing phases (\cref{fig:composite}).
+The opening and closing are thus instantaneous, and each run keeps its own wake. The composite is a first-order
+model of the folding. Its advantage is that the fold timing can be evaluated after the simulation for any pair
+$(\tau_o,\tau_c)$ at no extra cost. It has two systematic errors, both of which make it optimistic.
+
+\paragraph{Neglected change of added mass.} When the fan opens, the water around it must be set in motion; when it
+closes, that water is released. In \eqref{eq:composite} the open run starts with a flow that has already been
+established while the fan was open, and the closed run ends without having to release anything. With the
+water-frame velocity $V$ of the fan (positive forward) and the difference $\Delta m_a$ between the added masses of the
+open and the closed fan, the missing impulse on the paddle per cycle lies between two limits:
+\begin{equation}
+  \Delta J = \begin{cases}
+    \Delta m_a\,(V_c - V_o) & \text{potential flow: the released momentum returns to the paddle,}\\
+    -\Delta m_a\,V_o & \text{full shedding: the released momentum stays in the wake,}
+  \end{cases}
+  \label{eq:addedmass}
+\end{equation}
+where $V_o$ and $V_c$ are the velocities at opening and closing. In a separated flow, part of the released momentum is
+shed as a stopping vortex, so the true value lies between the two limits; the opening cost $-\Delta m_a V_o$ has no such
+escape and is present in both. The corrected mean thrust is reported as the range
+$\Tm+\Delta J/T$ over both limits. The added mass of the open fan was identified from the acceleration phase of the
+open-paddle simulation at $\U=0$ by fitting $F_x=-m_a\dot v_x-\tfrac12\rho C_N S\,v_x|v_x|$ to the force history, which gives
+$m_a=\SIrange{38}{49}{\gram}$ depending on the fitting window and the reference point, close to the
+\SI{38}{\gram} of a disc of the same area. With about \SI{5}{\gram} for the fan folded to \SI{12}{\milli\metre},
+$\Delta m_a=\SI{38}{\gram}$ is used for V3trap and \SI{20}{\gram} for the robot gait, whose fan folds only to
+\SI{30}{\milli\metre}; the uncertainty of $\Delta m_a$ is about $\pm15$\,\%. When the fan switches while it is at rest in the hull frame, the correction does no work in that frame, and the power $\Pm$ is not corrected. V3trap closes at $\tau_c=0.33$ while the fan still moves; the corresponding work, of order $\tfrac12\Delta m_a V_c^2$ per cycle, is not included in $\Pm$.
+
+Two consequences follow. First, switching at the reversal points of the hip motion, where $V$ equals the forward speed
+$\U$, is free of correction at $\U=0$ but costs $\Delta m_a\U$ per cycle at speed. Second, opening the fan before the reversal,
+during the deceleration of the recovery, credits the paddle with the momentum that the open fan releases while it
+decelerates, without charging it for having set that water in motion. The composite therefore rewards early opening
+artificially, and all paddle results in this thesis use $\tau_o=0$.
+
+\paragraph{Wake of the open run.} During the power stroke the open-paddle run moves through the wake of its own open
+recovery, which has pushed water forward; the real paddle recovers folded and leaves a much weaker wake. This raises the
+relative velocity of the power stroke in the composite. The effect is not quantified and is listed as a limitation.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.62\textwidth]{fig_composite}
+  \caption[Two-state composite]{Two-state composite of the fan paddle for V3trap at $\U=0$. The open-paddle
+    simulation is used between $\tau_o=0$ and $\tau_c=0.33$ (shaded), the closed-paddle simulation for the rest
+    of the cycle. The composite has a cycle-mean thrust of \SI{82.7}{\milli\newton} before the added-mass correction
+    of \eqref{eq:addedmass}.}
+  \label{fig:composite}
+\end{figure}
+
+\subsection{Post-Processing}
+
+Pressure and viscous forces are integrated over the propulsor surface in every time step, and moments are
+taken about the hip axis $O_2$. The thrust, the input power and the efficiency follow from
+\eqref{eq:thrust}--\eqref{eq:eta}, with the velocity of the fluke's pin or the paddle's reference point and the
+angular velocity taken from the motion table. The pitch moment about the fluke pin gives the hinge moment
+required from a pitch actuator or spring. The angle of attack is evaluated from \eqref{eq:alpha} with the pin velocity and the pitch angle and is reported either as the 75th percentile of $|\alpha|$ over the cycle, $\alpha_{75}$, or as the
+median over the middle part of each half stroke, away from the stroke reversals. For the L1 case with
+$\alpha=\SI{10}{\degree}$, whose hinge path had velocity kinks at the seven control points of the trajectory,
+the resulting added-mass spikes in the force history were filtered before averaging; this case is marked as
+less certain in the results.
+
+\subsection{Case Matrix}
+
+\Cref{tab:cases} lists all single-leg simulations. Each drag-type (D) entry consists of an open and a closed run.
+
+\begin{table}[t]
+  \centering
+  \caption[Single-leg simulation cases]{Single-leg simulation cases.}
+  \label{tab:cases}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}Xl@{}}
+    \toprule
+    Case & Description & $\U$ (\si{\metre\per\second}) \\
+    \midrule
+    L0 & fluke, reference motion from Flare Live & 0.223 \\
+    L2 & fluke, L0 motion unchanged (fixed pitch schedule) & 0, 0.08, 0.15, 0.30 \\
+    L1 & fluke, angle-of-attack law $\alpha=\SI{10}{\degree}$, \SI{28}{\degree} / \SI{20}{\degree} & 0.223 / 0.40 \\
+    L3 & fluke, speed-scheduled pitch $\theta_0=\gamma_\text{max}/2$ & 0.30, 0.40 \\
+    L0c & L0 on a coarser mesh (all cell sizes $\times1.33$) & 0.223 \\
+    Robot gait & fan paddle, current stroke (30\,mm folded width) & 0, 0.08, 0.15 \\
+    V3trap & fan paddle, optimized stroke (12\,mm folded width), $\tau_o=0$, $\tau_c=0.33$ & 0, 0.08, 0.15, 0.223, 0.30 \\
+    V & paddle design iterations V1, V2, V3, V3c12, V3c06 (\cref{sec:res-drag}) & 0 \\
+    Val & validation: NACA\,0012 heaving and pitching foil (\cref{sec:ver-v1}) & 0.40 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+The fluke cases took 3--4\,h each and every paddle state about 2.5\,h on eight cores; the validation case, with a
+foil of \SI{0.6}{\metre} span, took about 43\,h.
+
+\section{Whole-Robot Simulation in Flare Live}
+\label{sec:cfd-flare}
+
+Flare Live \cite{FlareLive} is a commercial solver that couples a lattice-Boltzmann flow solver on adaptive block
+grids with a multibody model of the robot and runs close to real time on a GPU. The robot is imported as rigid
+bodies connected by joints; each joint is driven by a position controller that follows the commanded trajectory.
+The legs and flukes are immersed in the fluid. The hull is not resolved in the fluid; its resistance is applied as
+an external force $D=K\,\U|\U|$. Three values of $K$ are used: \SI{3.95}{\newton\second\squared\per\metre\squared}
+from the original Flare model, \SI{0.65}{} corresponding to the hull-and-linkage estimate $D_\text{mid}$ of
+\cref{sec:res-selfprop} and \SI{0.27}{} corresponding to the bare hull. The model mass is \SI{863}{\gram}, about twice the measured mass of the hardware (\SI{418.8}{\gram}); the difference was not corrected because Flare Live is used only for trends. The
+lattice spacing is \SI{3}{\milli\metre}, with a \SI{2}{\milli\metre} lattice as a sensitivity test.
+
+The legs move in a trot at \SI{2}{\hertz} (\SIrange{2}{3}{\hertz} in a frequency sweep). The fluke pitch is actively
+controlled by an angle-of-attack law: from the measured heave velocity of the pin and the current swimming speed,
+the pitch is set so that \eqref{eq:alpha} gives a target $\alpha$ of \SI{10}{\degree}, \SI{18}{\degree} or
+\SI{28}{\degree}, within the fluke's end stops of \SI{-75}{\degree} and \SI{+60}{\degree}.
+
+Two kinds of runs are made:
+\begin{itemize}
+  \item \emph{Self-propelled runs.} The robot swims freely from rest; speed, power and attitude are averaged over
+        the steady part. Power is the mechanical power of the joint drives, and the cost of transport is $P_\text{j}/(mg\U)$ with the joint-drive power $P_\text{j}$.
+  \item \emph{Tow runs.} The robot is held fixed in a uniform stream of speed $\U$ with one leg flapping (the L0
+        motion) and the others idle. The fluid force on the fluke is obtained from the joint reaction at the pin,
+        transformed into the fluke frame, and averaged over $t=\SIrange{3}{9}{\second}$. A run with the fluke idle
+        gives the reference drag.
+\end{itemize}
+The tow runs use exactly the motion of the CFD case L0 and its speed series, so that the fluke force of the two
+solvers can be compared directly (\cref{sec:ver-flare}).

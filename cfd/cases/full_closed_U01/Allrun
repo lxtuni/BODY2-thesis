@@ -1,0 +1,50 @@
+#!/bin/sh
+cd "${0%/*}" || exit 1
+. "$WM_PROJECT_DIR/bin/tools/RunFunctions"
+
+# 1 四块桨的部件网格
+( cd paddleMesh_FL || exit 1
+  runApplication blockMesh
+  runApplication surfaceFeatureExtract
+  runApplication snappyHexMesh -overwrite
+  runApplication topoSet
+  runApplication checkMesh )
+( cd paddleMesh_FR || exit 1
+  runApplication blockMesh
+  runApplication surfaceFeatureExtract
+  runApplication snappyHexMesh -overwrite
+  runApplication topoSet
+  runApplication checkMesh )
+( cd paddleMesh_RL || exit 1
+  runApplication blockMesh
+  runApplication surfaceFeatureExtract
+  runApplication snappyHexMesh -overwrite
+  runApplication topoSet
+  runApplication checkMesh )
+( cd paddleMesh_RR || exit 1
+  runApplication blockMesh
+  runApplication surfaceFeatureExtract
+  runApplication snappyHexMesh -overwrite
+  runApplication topoSet
+  runApplication checkMesh )
+
+# 2 背景网格（船体贴体 + 区域加密）
+runApplication surfaceFeatureExtract
+runApplication blockMesh
+runApplication snappyHexMesh -overwrite
+runApplication topoSet
+
+# 3 合并（cellZones c0..cN 随子网格带入）→ zoneID / alpha.water
+runApplication -s FL mergeMeshes . paddleMesh_FL -overwrite
+runApplication -s FR mergeMeshes . paddleMesh_FR -overwrite
+runApplication -s RL mergeMeshes . paddleMesh_RL -overwrite
+runApplication -s RR mergeMeshes . paddleMesh_RR -overwrite
+restore0Dir
+runApplication setFields
+runApplication -s merged checkMesh
+
+# 4 求解
+runApplication decomposePar
+runParallel $(getApplication)
+runParallel -s reconstruct redistributePar -reconstruct
+touch case.foam

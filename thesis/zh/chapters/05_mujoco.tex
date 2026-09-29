@@ -1,0 +1,180 @@
+\chapter{基于降阶模型的步态优化}
+\label{ch:mujoco}
+
+本章回答RQ1。在MuJoCo~\cite{Todorov2012}中建立一个各连杆受准定常（quasi-steady）力作用的整机模型，并在执行器约束和姿态约束下用CMA-ES~\cite{Hansen2001,Hansen2016}优化其步态。该模型的计算代价足够低，可进行数千次评估，但其系数未经标定。其目的在于揭示优化器会选择哪种推进原理，以及这一答案如何取决于模型所包含的物理，而不是预测BODY2的速度。
+
+\section{模型}
+\label{sec:mj-model}
+
+\subsection{机器人}
+
+BODY2无法直接使用：由CAD导出的模型是一棵开链运动学树（kinematic tree），其中的平行四边形连杆并未闭合，而且其浮力分布尚未测量。因此，优化采用一个尺寸相近的简化四足模型\texttt{toy\_quad}（\cref{fig:mj-model}、\cref{tab:mj-robot}）。每条腿有三个绕横轴的铰链关节：髋、膝和脚蹼腕关节，共计十二个执行器。脚蹼为\qtyproduct{52 x 36}{\milli\metre}的薄板，其面积\SI{18.7}{\square\centi\metre}与BODY2张开状态下折扇桨的面积相近；全文将其称为\emph{脚蹼}（flipper），以区别于真实机器人的折扇桨和尾鳍：根据所包含的物理，它既可划水也可拍动，而BODY2的两种推进器各自只针对一种原理而设计。干质量为\SI{0.78}{\kilo\gram}；完全浸没时，机器人的排水体积为\SI{1126}{\cubic\centi\metre}，因此它像BODY2一样漂浮在水面上。体长\SI{0.239}{\metre}用于将速度表示为每秒体长数（body lengths per second）。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.42\textwidth]{fig_mj_model.png}
+  \caption[MuJoCo模型]{漂浮在水面上的MuJoCo模型\texttt{toy\_quad}（仿真渲染图）。每条腿有一个髋关节、一个膝关节和一个脚蹼关节。}
+  \label{fig:mj-model}
+\end{figure}
+
+\begin{table}[t]
+  \centering
+  \caption[MuJoCo机器人模型]{降阶（reduced-order）机器人模型\texttt{toy\_quad}。}
+  \label{tab:mj-robot}
+  \small
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    部件 & 几何形状 & 尺寸 & 质量 \\
+    \midrule
+    躯干 & 长方体 & \qtyproduct{0.20 x 0.10 x 0.05}{\metre} & \SI{0.600}{\kilo\gram} \\
+    大腿（$\times4$） & 胶囊体 & $r=\SI{7}{\milli\metre}$, $l=\SI{55}{\milli\metre}$ & \SI{0.020}{\kilo\gram} \\
+    小腿（$\times4$） & 胶囊体 & $r=\SI{6}{\milli\metre}$, $l=\SI{50}{\milli\metre}$ & \SI{0.015}{\kilo\gram} \\
+    脚蹼（$\times4$） & 板 & \qtyproduct{8 x 52 x 36}{\milli\metre} & \SI{0.010}{\kilo\gram} \\
+    \midrule
+    \multicolumn{4}{@{}l}{关节范围：髋和膝$\pm\SI{1.3}{\radian}$，脚蹼$\pm\SI{1.6}{\radian}$；
+      腿位于$\pm\SI{0.085}{\metre}$（前后向）、$\pm\SI{0.045}{\metre}$（横向）处} \\
+    \multicolumn{4}{@{}l}{干质量\SI{0.78}{\kilo\gram}；附加质量\SI{0.28}{\kilo\gram}；体长
+      \SI{0.239}{\metre}；时间步长\SI{2}{\milli\second}，隐式积分器} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{水动力}
+
+每个几何体$k$受到一个准定常力，该力按其浸没比例$f_k$缩放，并作用于其中心：
+\begin{equation}
+  \bm F_k = \rho g V_k f_k\,\bm e_z
+  \;-\; \tfrac12\rho f_k \sum_{i=1}^{3} C_{D,i} A_i\, v_i|v_i|\,\bm e_i
+  \;-\; c_v f_k\,\bm v \;+\; \bm L_k .
+  \label{eq:mj-force}
+\end{equation}
+式中，$\bm v$为物体中心相对于静水的速度，$v_i$为其沿体轴$\bm e_i$的分量，$A_i$为投影面积；$c_v$为一个很小的线性阻尼系数（脚蹼、连杆和躯干分别为0.05、0.02和\SI{0.10}{\newton\second\per\metre}），仅在速度很低时起作用。阻力是各向异性（anisotropic）的：脚蹼在板面法向和沿板面方向上的$C_D=(2.2,\,0.10,\,0.10)$，连杆为$(0.5,0.5,0.25)$，躯干为$(0.9,1.6,1.8)$。在纯阻力（drag-only）模型中，这种各向异性是推力的唯一来源。浸没比例根据每个物体实际的竖直范围计算，因此露出水面的脚蹼会失去其受力。附加质量（added mass）$m_a=C_a\rho V$（脚蹼$C_a=1.0$，连杆为0.3，躯干为0.2）被计入物体惯量，同时施加一个恒定的向上力$m_a g$以抵消其重量。与显式的$\dot{\bm v}$项不同，这种各向同性近似是无条件稳定的。这些系数为文献值，与河狸机器人模型\cite{Chen2021,Chen2022}中的取值处于同一水平；它们未经标定。
+
+\paragraph{升力。}式~\eqref{eq:mj-force}中除$\bm L_k$以外的所有项都与相对流动的某一分量方向相反。脚蹼上可选择性地施加一个失速后平板升力（post-stall flat-plate lift）：
+\begin{equation}
+  C_L(\alpha) = c_l \sin 2\alpha, \qquad |\bm L| = \tfrac12\rho\,C_L\,A_\text{face}|\bm v|^2 f,
+  \label{eq:mj-lift}
+\end{equation}
+其方向垂直于$\bm v$，位于$\bm v$与板法线所张成的平面内，其中$\alpha$为$\bm v$与板面之间的夹角。$c_l=1.1$是教科书中的平板取值，未作展弦比（aspect ratio）修正。在小$\alpha$时，升力随$\alpha$增长，而阻力随$\alpha^2$增长，因此快速、浅角度、顺桨的划动在纯阻力模型中几乎不产生推力，而在含升力时则产生很大的推力。关闭升力后，升力型步态不可能胜出，因为使其胜出的机制并不存在。
+
+\paragraph{推力分解。}为识别步态的推进机制，在评分窗口内分别累积升力项和阻力项（包括线性项）沿游动方向的带符号冲量。升力冲量为正、阻力冲量为负的步态称为\emph{升力推进的}（lift-propelled）：升力提供向前的冲量，而阻力只起阻碍作用。该分解通过滑行试验（coasting test）进行了检验，在该试验中初始动量等于各冲量之和。为量化升力在推进中所占的份额，定义\emph{升力推力占比}（lift thrust share）
+\begin{equation}
+  s_L = \frac{I_L}{|I_\text{trunk}|}
+  \label{eq:liftshare}
+\end{equation}
+即升力项的前向冲量$I_L$与躯干阻力冲量之比；腿部自身的阻力冲量单独累计。划水型划动的$s_L\approx0$；升力推进的划动$s_L>1$，因为升力还需克服腿部自身的阻力。该占比也可作为附加限值$s_L\le s_\text{max}$，从而在含升力的模型中强制出现阻力型划动（\cref{sec:mj-liftshare}）。
+
+\subsection{舵机模型}
+\label{sec:mj-servo}
+
+执行器为位置控制舵机，刚度为\SI{60}{\newton\metre\per\radian}，采用临界阻尼。实际的航模舵机无法以任意快的速度运动。因此，为每个执行器赋予直流电机的力矩--转速特性：
+\begin{equation}
+  \tau = \tau_s\,u - \frac{\tau_s}{\omega_\text{max}}\,\omega, \qquad |u|\le1,
+  \label{eq:servo}
+\end{equation}
+其中堵转力矩（stall torque）$\tau_s=\SI{3}{\newton\metre}$，空载转速（no-load speed）$\omega_\text{max}=\SI{400}{\degree\per\second}$。这些取值是在确定BODY2所用舵机之前选定的；PTK\,7465W的堵转力矩更低、空载转速更高（\cref{sec:plat-robot}），其影响在\cref{sec:disc-limits}中讨论。反电动势（back-EMF）项是一个黏性阻尼$b=\tau_s/\omega_\text{max}\approx\SI{0.43}{\newton\metre\second\per\radian}$，它被加入关节阻尼，并由MuJoCo隐式积分；结果与时间步长无关。两种更简单的方案均告失败：仅限制指令的变化率时，腿会被向后拖动，然后以\SI{1500}{\degree\per\second}的速度猛然弹向前方；而在每一步重写力矩限值则相当于一个显式阻尼，会以高达\SI{3000}{\degree\per\second}的速度振荡，并使结果随时间步长相差六倍。
+
+本章报告两种功率度量。优化采用电机轴上的平均机械功率$\sum_j\langle|\tau_{m,j}\,\omega_j|\rangle$，其中电机力矩$\tau_m=\tau-b\,\omega$，且不回收制动能量。电功率在此基础上加上同一电机模型的铜损（copper loss），即$\sum_j\langle\max(\tau_{m,j}\omega_j,0)+\tau_{m,j}^2\,\omega_\text{max}/\tau_s\rangle$，它由式~\eqref{eq:servo}得出，无需引入新参数；电功率在优化完成后计算，用作校核。本章中的运输代价（cost of transport）为功率除以速度，单位为\si{\joule\per\metre}。
+
+\section{步态参数化}
+\label{sec:mj-gait}
+
+每个执行器$i$跟踪如下目标角度：
+\begin{equation}
+  q_i(t) = q_{0,i} + r(t)\sum_{h=1}^{H} A_{i,h}\,\sin\!\big(h\,\vartheta(t)+\varphi_{i,h}\big), \qquad H=2,
+  \label{eq:gait}
+\end{equation}
+其中$q_{0,i}$为偏置，$A_{i,h}$为幅值，$\varphi_{i,h}$为相位，$r(t)$为在前\SI{1.5}{\second}内从0升至1的斜坡函数。占空比扭曲（duty warp）$\vartheta(t)$使划水冲程可以快于或慢于回程，同时保持周期不变：设周期进度为$c=(ft)\bmod1$，则
+\begin{equation}
+  \vartheta = \begin{cases}
+    \pi\,c/\mathrm{DUTY}, & c<\mathrm{DUTY},\\
+    \pi + \pi\,(c-\mathrm{DUTY})/(1-\mathrm{DUTY}), & c\ge\mathrm{DUTY}.
+  \end{cases}
+  \label{eq:duty-warp}
+\end{equation}
+二次谐波在$\pi$相移下保持不变，可用于表达脚蹼的顺桨（feathering）。它并不是产生净推力的必要条件：单一谐波就已能推动模型前进。同类关节共享幅值和偏置。搜索范围为$f\in[0.2,2.5]$\,Hz、$\mathrm{DUTY}\in[0.25,0.75]$、$A\in[0,0.9]$\,rad和$q_0\in[-0.5,0.5]$\,rad，并归一化到$[0,1]$。
+
+腿间协调方式要么是自由的，即每个执行器具有独立的相位（35个参数），要么固定为某一\emph{步态族}（gait family），即每类关节一个相位（17个参数）。各步态族由每条腿相对于左前腿FL的延迟定义，该延迟在占空比扭曲之前施加于时间上：
+\begin{center}
+  \small
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    步态族 & 通用名称 & FR、BL、BR的延迟（占周期的比例） \\
+    \midrule
+    \texttt{diag} & 对角小跑（trot） & 0.5, 0.5, 0 \\
+    \texttt{lr} & 同侧步（pace） & 0.5, 0, 0.5 \\
+    \texttt{fb} & 跳跃步（bound） & 0, 0.5, 0.5 \\
+    \texttt{wave} & 行走步（walk） & 0.5, 0.75, 0.25 \\
+    \texttt{inphase} & 四足齐跳（pronk） & 0, 0, 0 \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+为对自由步态进行分类，将一次谐波幅值最大的那类关节的延迟与各步态族进行比较，并报告平均圆周距离（circular distance）最小的步态族及该距离（0表示相同，0.5表示相反）。
+
+\section{目标函数、约束与优化器}
+\label{sec:mj-objective}
+
+每次评估先让机器人静置稳定\SI{1.0}{\second}，再在\SI{1.5}{\second}内逐步引入步态，然后对随后的\SI{8}{\second}进行评分，该时长向上取整为完整的划动周期。速度定义为沿初始航向的位移除以窗口长度，因此转向会被自动惩罚。本章采用两种目标：最高速度，或在最低速度$v_\text{min}$约束下的最低平均机械功率。全部设置列于\cref{tab:app-mujoco}。
+
+稳定性通过限值而非权重来施加。设航向误差、横滚和俯仰的均方根（RMS）值及其限值为$\ell_k$，则惩罚项为
+\begin{equation}
+  p = \sum_k \frac{\max(0,\mathrm{RMS}_k-\ell_k)}{\ell_k}
+    \;\big[+\,\text{出水项与}\,v_\text{min}\,\text{项}\big], \qquad
+  \text{适应度} = \begin{cases} \text{目标值}, & p=0,\\ -1000-p, & p>0. \end{cases}
+  \label{eq:feasibility}
+\end{equation}
+因此，任何不可行步态的得分都低于所有可行步态；速度无法弥补对限值的违反。早先对速度和姿态采用加性加权的做法，在腿可以自由运动后便失效了：速度占据主导，最优步态的横滚达\SI{42}{\degree}，偏航达\SI{44}{\degree}。共使用两组限值：适中限值，即航向/横滚/俯仰为$10/10/\SI{15}{\degree}$，用于本章；以及严格限值，即$10/5/\SI{5}{\degree}$，用于\cref{app:coord}中的腿间协调研究。在特别说明之处，任一肢体浸没不足一半的时间占比（出水，surfacing）被限制在5\,\%以内，因为该模型不包含自由液面物理。
+
+优化器为CMA-ES，种群规模为16，在归一化空间中的初始步长为0.25；除非另有说明，每次运行2500次评估，每种条件使用多个随机种子（seed）。每个结果都是模型所允许范围的一个界：对最高速度而言是下界，对最低功率而言是上界。数值以各种子上的均值$\pm$标准差给出。
+
+\section{结果}
+\label{sec:mj-results}
+
+\subsection{基线与舵机限制}
+
+一个手工设计的\SI{1.2}{\hertz}对角小跑步态以\SI{0.070}{\metre\per\second}（每秒0.29个体长）的速度游动，俯仰RMS为\SI{26.7}{\degree}，舵机在85\,\%的时间内处于饱和。在没有舵机模型时，优化器找到的步态关节速度为\SIrange{2700}{4200}{\degree\per\second}，约为舵机限值的七到十倍。在加入舵机模型后重放，其中最好的步态并不向前运动（\SI{-0.001}{\metre\per\second}）。在含舵机模型的条件下重新优化后，三次自由相位（free phase）搜索达到\SIrange{0.11}{0.25}{\metre\per\second}，且均接近某一边界。因此，舵机限制必须纳入模型；以下所有结果均包含该限制。
+
+\subsection{等速条件下阻力与升力的比较}
+
+比较两种物理模型下的最快步态是不公平的，因为功率随速度急剧上升，而各最快步态的速度并不相同。因此，比较在等速条件下进行：在适中限值且出水比例不超过5\,\%的条件下，针对五个步态族和两个种子，求达到$v_\text{min}\in\{0.10,0.20,0.30\}$\,m/s所需的最低机械功率（\cref{tab:mj-pareto}、\cref{fig:mj-pareto}）。
+
+\begin{table}[t]
+  \centering
+  \caption[等速下的最低功率：阻力与升力对比]{达到所需速度的最低平均机械功率，适中限值，取五个步态族和两个种子中的最优值（括号内为最优解所属的步态族，以及十次搜索中可行的次数）。左：不含升力模型中的阻力型划动；中：在含升力模型中以$s_L\le0.1$强制的阻力型划动（\cref{sec:mj-liftshare}）；右：含升力模型中不加约束的划动。}
+  \label{tab:mj-pareto}
+  \small
+  \begin{tabular}{@{}cccc@{}}
+    \toprule
+    所需速度 & 纯阻力模型 & 升力模型，$s_L\le0.1$ & 升力模型，无约束 \\
+    \midrule
+    \SI{0.10}{\metre\per\second} & \SI{0.23}{\watt}（行走步） & \SI{0.42}{\watt}（跳跃步；2/10） & \SI{0.10}{\watt}（跳跃步；10/10） \\
+    \SI{0.20}{\metre\per\second} & \SI{1.04}{\watt}（跳跃步） & \SI{5.50}{\watt}（四足齐跳；1/10） & \SI{0.55}{\watt}（四足齐跳；8/10） \\
+    \SI{0.30}{\metre\per\second} & \SI{3.10}{\watt}（对角小跑） & 无（0/10） & \SI{0.97}{\watt}（跳跃步；4/10） \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+有三项结果是稳健的。第一，只要模型中包含升力且未被压制，每个可行最优解都是升力推进的：在本实验全部22个含升力的可行最优解中，升力冲量均为正（前沿上为\SIrange{0.46}{2.2}{\newton\second}），阻力冲量均为负。只要能够拍动，优化器就从不划水。第二，在全部三个速度下，等速条件下升力推进步态所需的功率约为最佳纯阻力步态的二分之一到三分之一。第三，每个最优解都依赖于其所在的物理模型：去除升力后，升力最优解仅保留其速度的35--58\,\%；而加入升力后，27个阻力最优解中有26个不再满足姿态限值，因为升力还会对躯干产生力矩（\cref{sec:mj-liftshare}）。该比值的大小并不可靠：搜索尚未收敛（第二个种子将\SI{0.20}{\metre\per\second}下的纯阻力功率从2.99降至\SI{1.04}{\watt}），因此两条前沿均为上界。若改用计入舵机铜损的电功率，排序同样不变：纯阻力前沿所需功率分别为0.22、1.14和\SI{2.80}{\watt}，升力前沿分别为0.10、0.47和\SI{0.86}{\watt}。
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.62\textwidth]{fig_mj_pareto}
+  \caption[等速下的最低功率]{达到所需速度的最低机械功率，适中限值：纯阻力模型、含升力模型，以及在含升力模型中以$s_L\le0.1$强制的阻力型划动。浅色标记为各步态族和各种子的单个最优解。}
+  \label{fig:mj-pareto}
+\end{figure}
+
+\subsection{升力模型内的阻力型划动}
+\label{sec:mj-liftshare}
+
+\Cref{tab:mj-pareto}中纯阻力模型与升力模型之间的比较，既是两种推进原理的比较，也在同等程度上是两个模型的比较。对RQ1更直接的检验是在同一模型内比较两种原理。为此，在升力模型的最低功率搜索中加入附加限值$s_L\le0.1$（见式\eqref{eq:liftshare}），只允许从阻力获得推力的划动，速度、限值、步态族和种子均与不加约束的搜索相同（共30次搜索）。
+
+结果见\cref{tab:mj-pareto}的中间一列和\cref{fig:mj-pareto}。30次搜索中只有3次找到了可行的阻力型划动；其余大多满足占比限值，但达不到所需速度。基于这一有限的样本，阻力型划动在\SI{0.10}{\metre\per\second}时所需功率为升力推进划动的4.2倍（\SI{0.42}{}对\SI{0.10}{\watt}），在\SI{0.20}{\metre\per\second}时为10倍（\SI{5.50}{}对\SI{0.55}{\watt}）；没有任何阻力型划动能达到\SI{0.30}{\metre\per\second}，最接近的只达到\SI{0.26}{\metre\per\second}。可行域很窄，因此该倍数中可能有一部分源于搜索困难而非物理本身；在两个种子、2500次评估的条件下，方向是可靠的，但数值并不可靠。
+
+两种比较给出了答案的上下界。在纯阻力模型中，划水型划动无须压制其脚蹼本应产生的升力，这对它有利；在升力模型中则必须压制，而且带约束的搜索很困难，这对它不利。综合来看，在该模型中阻力型划动在相同速度下所需功率约为升力型划动的二至十倍，并且达不到升力推进步态仍能巡航的速度。
+
+另一项补充检验将纯阻力模型的27个可行最优解在开启升力的条件下重新仿真（回放）。其中21个的升力推力占比超过0.1（中位数1.26），即一旦存在升力，同样的腿部动作主要依靠升力推进；26个不再保持直行和平稳。因此，一个划动是阻力型还是升力型，在同等程度上取决于物理模型和动作本身：只要脚蹼斜着划过水，无论模型是否包含升力，它都会产生升力。在纯阻力模型中找到的划水型划动不能原样搬到真实脚蹼上。
+
+\section{小结}
+\label{sec:mj-summary}
+
+在该模型范围内，RQ1的答案在方向上是明确的。当物理模型包含升力且升力未被压制时，优化器在全部101个可行最优解（本章22个，其余来自\cref{app:coord}中的腿间协调研究）中都选择了升力推进的划动。在等速条件下，其所需功率为纯阻力模型中最佳划动的二分之一到三分之一；而在升力模型内强制采用阻力型划动时，少数可行的划动（30次搜索中的3次）所需功率为升力推进划动的四至十倍，且达不到\SI{0.30}{\metre\per\second}；因此在该模型中，阻力型划动的代价至少约为升力型的两倍，最高可达十倍。划动属于阻力型还是升力型取决于物理模型：纯阻力模型中的大多数划水型划动在加入升力后变为升力推进。哪种腿间协调方式最优是另一个问题，它主要取决于姿态限值，见\cref{app:coord}。有三点注意事项将上述结论限定在该模型之内：系数和升力斜率未经标定；尽管脚蹼的$\mathit{AR}\approx1.4$，平板升力却未作展弦比修正；且搜索未完全收敛，尤其是针对阻力型划动的带约束搜索。因此，\Cref{ch:cfd,ch:results}将通过对真实腿部的流场解析仿真（resolved flow simulations），检验这一核心论断，即升力型拍动优于阻力型划水。

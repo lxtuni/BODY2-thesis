@@ -1,0 +1,786 @@
+% =====================================================================
+%  Chapter: Reduced-order hydrodynamic model and gait optimisation (MuJoCo)
+%  Source code: swimopt/ ; data behind every figure: swimopt/results_thesis/
+% =====================================================================
+\providecommand{\chCFD}{the CFD chapter}
+% Screenshot helper: shows the image if figures/<file> exists, otherwise a framed placeholder.
+\providecommand{\shot}[3]{\IfFileExists{figures/#1}{\includegraphics[width=#2]{#1}}%
+  {\fbox{\parbox{\dimexpr#2-2\fboxsep-2\fboxrule\relax}{\centering\small\vspace*{9mm}\textbf{MuJoCo screenshot \texttt{\detokenize{#1}}}\\[3pt]#3\par\vspace*{9mm}}}}}
+
+\chapter{Reduced-Order Hydrodynamic Model and Trajectory Optimisation}
+\label{ch:mujoco}
+
+The CFD studies in \chCFD{} resolve the flow around a single leg or the bare hull
+with high fidelity, but one unsteady case takes hours to days. Finding a good
+paddling trajectory needs the opposite trade-off: thousands of whole-robot
+evaluations, each of which only has to rank candidate gaits correctly. This chapter
+develops a reduced-order model for that purpose. A quasi-steady, per-link
+hydrodynamic force model is attached to a rigid-body simulation in MuJoCo
+\cite{Todorov2012}, the joint trajectories are written as a low-dimensional
+parameter vector, and an evolution strategy (CMA-ES) searches that vector. The
+same pipeline is applied to two robots: an open toy quadruped with drag-type
+flippers, and the BODY2 robot with passively pitching lift-type flukes.
+
+The chapter has four aims:
+\begin{enumerate}
+  \item define the hydrodynamic and gait models precisely enough to reproduce them (\cref{sec:mj-hydro,sec:mj-gait});
+  \item verify the implementation and the evaluation protocol, including three
+        errors that were found and corrected during this work (\cref{sec:mj-verify});
+  \item show what the optimiser finds for a drag-type robot, and why its answer
+        led to the lift-type fluke design (\cref{sec:mj-toy});
+  \item quantify the fluke design space of BODY2 with the uncalibrated model and
+        state what must be calibrated before these numbers can be trusted
+        (\cref{sec:mj-fluke,sec:mj-discussion}).
+\end{enumerate}
+All speeds in this chapter are model predictions with coefficients taken from the
+literature or from the hull CFD. None of them is a measured swimming speed.
+
+% ---------------------------------------------------------------------
+\section{Simulation platform and pipeline}
+\label{sec:mj-pipeline}
+
+\paragraph{Platform choice.}
+The first implementation used Webots. BODY2's legs are closed parallelogram and
+four-bar linkages. URDF cannot describe closed chains, so the loops had to be
+closed by hand after import. In Webots this produced two problems that could not be
+removed by parameter tuning. First, a closed four-bar has two assembly modes, and
+with all joints initialised at zero the solver placed different legs on different
+branches (``one leg always behaves differently''). Second, several robot instances
+in one world influenced each other's assembly, so parallel comparison of gaits was
+unreliable. MuJoCo \cite{Todorov2012} was adopted instead. It simulates in
+generalised coordinates, closes loops with explicit equality constraints, and resets
+a state deterministically by overwriting \texttt{qpos}/\texttt{qvel}; identical
+parameters give bit-identical results (\cref{sec:mj-verify}). MuJoCo has no free
+surface and no built-in fluid model suitable for partially immersed bodies. Both
+were therefore implemented as an external force module
+(\cref{sec:mj-hydro}), which also keeps every modelling assumption explicit.
+
+\paragraph{Pipeline.}
+The software (\texttt{swimopt}) is split into four layers so that a new robot
+changes only the first (\cref{fig:mj-pipeline}). The optimiser sees only a function
+$J(\bm x)$ of a normalised parameter vector $\bm x\in[0,1]^n$.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize, node distance=4mm and 5mm,
+  box/.style={draw, rounded corners=2pt, align=center, minimum height=9mm, text width=27mm, fill=#1!10},
+  box/.default=gray, arr/.style={-{Latex[length=2mm]}, thick}]
+  \node[box=blue] (model) {\textbf{\textcircled{1} Model}\\ \texttt{robots/*.xml}\\ MJCF, from URDF};
+  \node[box=teal, right=of model] (hydro) {\textbf{\textcircled{2} Physics}\\ Morison elements\\ \texttt{hydro.py}};
+  \node[box=teal, below=of hydro] (foil) {\textbf{\textcircled{2}b Physics}\\ quasi-steady foil\\ \texttt{hydro\_foil.py}};
+  \node[box=orange, right=of hydro] (gait) {\textbf{\textcircled{3} Control}\\ Fourier gait + duty\\ \texttt{gait.py}};
+  \node[box=gray, below=of gait] (sim) {\textbf{rollout}\\ reset, settle, run\\ \texttt{simulate.py}};
+  \node[box=red, right=of gait] (opt) {\textbf{\textcircled{4} Optimiser}\\ CMA-ES\\ \texttt{optimize.py}};
+  \node[box=gray, below=of opt] (fit) {\textbf{score} $J(\bm x)$\\ speed $-$ penalties\\ feasibility checks};
+  \node[box=blue, below=of model] (imp) {\texttt{import\_model.py}\\ meshes, actuators};
+  \node[box=gray, below=of fit, yshift=-1mm] (ik) {\texttt{leg\_v3.py}: four-bar IK\\ \texttt{export\_fluke\_gait.py}};
+  \draw[arr] (imp) -- (model);
+  \draw[arr] (model) -- (hydro);
+  \draw[arr] (hydro) -- (gait);
+  \draw[arr] (foil.east) -- (sim.west);
+  \draw[arr] (hydro) -- (foil);
+  \draw[arr] (gait) -- (sim);
+  \draw[arr] (sim) -- (fit);
+  \draw[arr] (fit) -- (opt);
+  \draw[arr] (opt.north) -- ++(0,5mm) -| node[pos=0.25, above]{candidate $\bm x$} (gait.north);
+  \draw[arr, dashed] (ik) -- (fit);
+\end{tikzpicture}
+\caption{Structure of the \texttt{swimopt} pipeline. Only layer \textcircled{1} depends on
+the robot; hydrodynamic coefficients are assigned to links by name rules in a
+configuration file. The four-bar inverse kinematics of BODY2 enter only as
+feasibility checks and in the firmware export.}
+\label{fig:mj-pipeline}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Hydrodynamic model}
+\label{sec:mj-hydro}
+
+Two element types are used. Hull, links and drag-type paddles are \emph{Morison
+elements}: forces depend on the local velocity of each collision geometry. The BODY2
+flukes are \emph{foil elements}: forces depend on angle of attack and follow a
+quasi-steady wing model. Both are applied as external wrenches
+(\texttt{xfrc\_applied}) before every integration step.
+
+\subsection{Morison elements}
+\label{sec:mj-morison}
+
+For every immersed geometry $i$ with volume $V_i$, orientation $\bm R_i$ and
+frontal areas $A_{i,k}$ normal to its local axes $k\in\{x,y,z\}$, the applied force is
+\begin{equation}
+  \bm F_i \;=\; \underbrace{\rho g V_i f_i\,\bm e_z}_{\text{buoyancy}}
+  \;-\;\underbrace{\tfrac12\rho\,\bm R_i\big(\bm C_{d,i}\odot\bm A_i\odot\bm v^{\ell}_i\odot|\bm v^{\ell}_i|\big)f_i}_{\text{anisotropic quadratic drag}}
+  \;-\;\underbrace{c_{v,i}\,\bm v_i f_i}_{\text{linear damping}}
+  \;+\;\underbrace{m_{a,i}\,g\,\bm e_z}_{\text{added-mass compensation}},
+  \label{eq:mj-morison}
+\end{equation}
+where $\bm v_i$ is the world velocity of the geometry centre, $\bm v^{\ell}_i=\bm R_i^{\top}\bm v_i$
+its components in the body-fixed frame, $\odot$ the element-wise product, and
+$f_i\in[0,1]$ the immersed fraction. The force acts at the geometry centre, so the
+wrench on the parent body also contains the moment
+$(\bm p_i-\bm c_b)\times\bm F_i$ about the body's centre of mass $\bm c_b$. This is the
+quasi-steady drag and inertia decomposition of Morison et al.\ \cite{Morison1950},
+applied per link as is common for underwater vehicles \cite{Fossen1994} and used for
+paddling robots by Chen et al.\ \cite{Chen2021,Chen2023}.
+
+\paragraph{Anisotropy.}
+Each element carries three drag coefficients. For a thin paddle the coefficient
+normal to its face is large and the two edge-wise coefficients are small
+(\cref{tab:mj-params}). This asymmetry is what allows a reciprocating paddle to produce
+net thrust at all; with an isotropic coefficient the force would always be exactly
+opposite to the paddle velocity.
+
+\paragraph{Partial immersion.}
+The immersed fraction uses the true vertical half-extent $h_i$ of the geometry at
+its current orientation, for example
+$h_i=\sum_k|R_{i,zk}|\,s_{i,k}$ for a box with half-sizes $s_{i,k}$ and
+$h_i=|R_{i,zz}|\,\ell_i+r_i$ for a capsule. With the water surface at $z_w$,
+\begin{equation}
+  f_i=\operatorname{clip}\!\left(\frac{z_w-(p_{i,z}-h_i)}{2h_i},\,0,\,1\right).
+  \label{eq:mj-immersion}
+\end{equation}
+The linear profile is exact for the volume of an upright box and an approximation
+otherwise. Mesh geometries are replaced by their vertex bounding box scaled by a fill
+factor (default $0.55$).
+
+\paragraph{Added mass.}
+An explicit term $-m_a\dot{\bm v}$ uses the acceleration of the current step and
+is numerically stiff for light links. Instead, the added mass
+$m_{a,i}=C_{a,i}\rho V_i$ is added to the inertial mass of the parent body once at
+initialisation, with the rotational inertia scaled by the same factor, and its weight
+is cancelled by the constant upward force in \cref{eq:mj-morison}. The body then has
+the correct weight and an increased inertia. This is unconditionally stable, but it
+makes the added mass isotropic and independent of immersion, whereas the physical
+added mass of a plate is large only normal to its face \cite{Newman1977}. The
+consequence is discussed in \cref{sec:mj-discussion}.
+
+\subsection{Quasi-steady foil elements for the passive fluke}
+\label{sec:mj-foil}
+
+The BODY2 fluke is a thin plate on a pin at the end of the shank. It rotates freely
+about the pin against a leaf spring. Its thrust comes from the force normal to the
+relative flow, so a model based on angle of attack is needed. Each foil is a box
+with chord $c$ along its local $x$ axis, span $b$ along $y$ and normal $\hat{\bm z}$;
+$S=cb$ and $\mathit{AR}=b/c$ (\cref{fig:mj-foil-sketch}).
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[scale=1.25, font=\small, >={Latex[length=2mm]}]
+  % shank
+  \draw[line width=1.6pt, gray!70] (-2.6,1.0) -- (0,0) node[pos=0.1, above, black]{shank};
+  \fill (0,0) circle (1.6pt) node[above left]{pin};
+  % spring symbol
+  \draw[decorate, decoration={coil, aspect=0.6, segment length=2.2mm, amplitude=1.4mm}] (0,0) ++(160:0.45) arc (160:215:0.45);
+  \node at (-0.72,-0.35) {$k$};
+  % foil plate rotated by theta
+  \begin{scope}[rotate=-18]
+    \draw[fill=black!75] (0.08,-0.05) rectangle (2.4,0.05);
+    \draw[dashed, gray] (0,0) -- (2.9,0) node[right, black]{$\hat{\bm x}$ chord};
+    \fill[blue] (0.08+0.25*2.32,0) circle (1.4pt) node[above=2pt, blue]{$\tfrac14 c$};
+    \fill[red] (0.08+0.75*2.32,0) circle (1.4pt) coordinate (p34) node[above=2pt, red]{$\tfrac34 c$};
+    \draw[->, thick] (0.08+0.25*2.32,0) -- ++(0.35,1.15) node[above]{$\bm L$};
+    \draw[->, thick] (0.08+0.25*2.32,0) -- ++(0.55,-0.17) node[right]{$\bm D$};
+  \end{scope}
+  % relative flow at 3/4 chord
+  \draw[->, thick, teal] ($(p34)+(-1.0,-0.62)$) -- (p34) node[pos=0.1, below, teal]{relative flow $\bm w=-\bm v_{3/4}$};
+  \draw[gray] (p34) ++(198:0.55) arc (198:212:0.55);
+  \node[font=\footnotesize] at ($(p34)+(-0.85,-0.14)$) {$\alpha$};
+  \node[align=left, font=\footnotesize, anchor=west] at (3.3,0.9) {$\theta$: passive pitch about the pin\\ stop at $\pm40^\circ$};
+\end{tikzpicture}
+\caption{Foil element of the BODY2 fluke. The relative flow is taken at the
+three-quarter-chord point, the aerodynamic force acts at the quarter-chord point, and
+the pitching moment about the pin that drives the passive rotation $\theta$ follows
+from the lever arm between the two.}
+\label{fig:mj-foil-sketch}
+\end{figure}
+
+Following the quasi-steady reduction of Theodorsen's theory \cite{Theodorsen1935},
+the relative flow is evaluated at the three-quarter-chord point, where the
+translational and rotational velocity contributions combine:
+$\bm w=-\bm v_{3/4}$, with $w_x=\bm w\cdot\hat{\bm x}$ and $w_z=\bm w\cdot\hat{\bm z}$.
+The angle of attack and dynamic pressure are
+\begin{equation}
+  \alpha=\operatorname{atan2}(w_z,w_x),\qquad q=\tfrac12\rho\,(w_x^2+w_z^2)\,S\,f .
+\end{equation}
+Lift acts normal to the in-plane flow and drag along it,
+$\bm F=q\,(C_L\,\hat{\bm l}+C_D\,\hat{\bm w})$, applied at the quarter-chord point. The
+coefficients blend attached-flow thin-wing values with a post-stall flat-plate model:
+\begin{align}
+  C_L(\alpha)&=\big[\sigma\,C_{L\alpha}+(1-\sigma)\,C_N\big]\sin\alpha\cos\alpha, \\
+  C_D(\alpha)&=\sigma\Big(C_{D0}+\frac{(C_{L\alpha}\sin\alpha\cos\alpha)^2}{\pi e\,\mathit{AR}}\Big)+(1-\sigma)\,C_N\sin^2\alpha,\\
+  \sigma(\alpha)&=\operatorname{clip}\!\left(\frac{1.6\,\alpha_s-|\alpha|}{0.6\,\alpha_s},0,1\right),
+  \qquad C_{L\alpha}=\frac{2\pi\,\mathit{AR}}{\mathit{AR}+2}.
+\end{align}
+The lift slope is Helmbold's low-aspect-ratio correction \cite{Helmbold1942}. The
+weight $\sigma$ is one for $|\alpha|\le\alpha_s$ and zero beyond $1.6\,\alpha_s$
+(\cref{fig:mj-foil-coeffs}). Buoyancy and added mass
+($m_a=C_a\rho\pi(c/2)^2b$) are handled as for Morison elements. The passive hinge is a
+MuJoCo joint with the leaf-spring stiffness $k$, a small damping, and a
+$\pm\SI{40}{\degree}$ range limit.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_foil_coeffs}
+  \caption{Foil coefficients for the BODY2 fluke ($\mathit{AR}=3.13$,
+  $C_{L\alpha}=\SI{3.83}{\per\radian}$, $\alpha_s=\SI{15}{\degree}$, $C_N=1.8$). Left:
+  lift and drag coefficients; the grey bands are the blending ranges. Right:
+  attached-flow weight $\sigma$.}
+  \label{fig:mj-foil-coeffs}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Hydrodynamic parameters used in this chapter. None has been calibrated
+against the physical robot yet, except the hull's surge coefficients, which were
+fitted to the bare-hull CFD at $0.1$ and $\SI{0.2}{\metre\per\second}$ (\chCFD).}
+\label{tab:mj-params}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+robot & element (name rule) & $C_d$ $(x,y,z)$ & $C_a$ & $c_v$ [\si{\newton\second\per\metre}] \\
+\midrule
+toy     & flipper (\texttt{flip})   & $(2.2,\;0.10,\;0.10)$ & 1.0  & 0.05 \\
+        & leg link (\texttt{link})  & $(0.5,\;0.50,\;0.25)$ & 0.3  & 0.02 \\
+        & trunk (\texttt{trunk})    & $(0.9,\;1.60,\;1.80)$ & 0.2  & 0.10 \\
+\midrule
+BODY2   & thigh, shank (\texttt{link}) & $(0.6,\;0.6,\;0.25)$ & 0.3 & 0.02 \\
+fluke   & hull (\texttt{trunk})     & $(0.093,\;1.2,\;1.5)$ & 0.15 & 0.0154 \\
+\cmidrule(l){2-5}
+        & fluke foil (\texttt{foil}) & \multicolumn{3}{l}{$c=\SI{19.2}{mm}$, $b=\SI{60}{mm}$, $\alpha_s=\SI{15}{\degree}$, $C_{D0}=0.02$,} \\
+        & & \multicolumn{3}{l}{$e=0.9$, $C_N=1.8$, $C_a=1.0$} \\
+        & passive hinge & \multicolumn{3}{l}{$k=\SI{2.5}{mN.m/rad}$, range $\pm\SI{40}{\degree}$} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Gait parameterisation and optimisation}
+\label{sec:mj-gait}
+
+\subsection{Truncated Fourier series with duty-cycle warp}
+Every position actuator $i$ follows
+\begin{equation}
+  q_i(t)=o_i+r(t)\sum_{h=1}^{H}A_{i,h}\sin\!\big(h\,\vartheta(t)+\varphi_{i,h}\big),
+  \label{eq:mj-gait}
+\end{equation}
+with offset $o_i$, amplitudes $A_{i,h}$, phases $\varphi_{i,h}$ and a start-up ramp
+$r(t)=\min(1,t/\SI{1.5}{s})$. The phase variable $\vartheta$ is warped so that a
+fraction $d$ of the period (the power-stroke duty cycle) covers the first half-wave:
+with $\tau=(ft)\bmod 1$,
+\begin{equation}
+  \vartheta=\begin{cases}\pi\,\tau/d, & \tau<d,\\[2pt] \pi+\pi\,(\tau-d)/(1-d), & \tau\ge d.\end{cases}
+\end{equation}
+For $d=0.5$ this is the ordinary sinusoid. Actuators can be grouped so that they share
+amplitude and offset (for example all hip joints), while phases stay individual. With
+$n_u$ actuators, $n_A$ amplitude groups and $n_o$ offset groups, the parameter
+vector has
+\begin{equation}
+  n = 2 + H\,(n_A+n_u) + n_o
+\end{equation}
+entries (frequency, duty, amplitudes, phases, offsets), each mapped linearly from $[0,1]$
+to a physical range. For the toy robot ($n_u=12$, three shared groups, $H=2$) this
+gives $n=35$; for BODY2 ($n_u=4$, one group, $H=1$, duty fixed) it gives $n=8$, of
+which seven are optimised.
+
+\subsection{Why the flipper needs a second harmonic}
+\label{sec:mj-harmonic}
+For $H=1$ every joint satisfies $q_i(t+T/2)-o_i=-(q_i(t)-o_i)$: the second half
+of each cycle is the first half reflected about the offset posture. For the toy robot,
+whose legs hang vertically and are fore--aft symmetric about their hips at zero
+offset, this reflects each leg's stroke about the vertical, so quasi-steady forces from
+the two half-cycles cancel. A real paddle breaks the symmetry by feathering: it
+opens on the power stroke and closes on the recovery stroke, which is an effect at
+twice the stroke frequency. The term $A_{i,2}\sin(2\vartheta+\varphi_{i,2})$ is
+unchanged by the half-period shift and represents exactly this.
+
+\Cref{fig:mj-harmonic} tests the argument on the toy robot with a fixed diagonal
+gait (hip, knee and flipper first harmonics fixed, zero offsets), sweeping only the
+flipper's second-harmonic amplitude $A_2$ and phase $\psi$. Without the second
+harmonic the speed is below \SI{0.2}{mm/s} (numerical noise of the settling
+transient). With it, the speed follows a sinusoid in $\psi$ whose amplitude grows
+with $A_2$ up to \SI{9.1}{cm/s}. Shifting $\psi$ by \SI{180}{\degree} reverses the
+speed exactly (to $10^{-13}$\,\si{mm/s}): the phase of the feathering relative to the
+stroke decides the swimming direction. A first-harmonic-only parameterisation would
+therefore search a space that contains no thrust at all for this robot.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_harmonic_map}
+  \caption{Toy robot, diagonal gait with all first harmonics fixed: forward speed as a
+  function of the flipper's second-harmonic amplitude $A_2$ and phase $\psi$. Left: map;
+  right: sections. The row $A_2=0$ is zero everywhere, and $v(\psi+\SI{180}{\degree})=-v(\psi)$.}
+  \label{fig:mj-harmonic}
+\end{figure}
+
+\paragraph{Structured reduction.}
+In the 35-dimensional toy space most phase combinations are not recognisable gaits. A
+reduced space fixes the inter-leg first-harmonic phases to a named pattern (diagonal,
+front--back, left--right, wave, in-phase) and couples the second-harmonic phases by
+$\varphi_{i,2}=\psi+2\varphi_{i,1}$. The coupling gives every leg the same feathering
+timing relative to its own stroke. The remaining search variables are frequency, duty,
+three first- and three second-harmonic group amplitudes, $\psi$ and three offsets:
+12 dimensions.
+
+\subsection{Objective and feasibility}
+One evaluation (``rollout'') resets the robot, lets it settle in its initial posture for
+$t_s$ (\SIrange{1.0}{1.5}{s}), and then runs the gait for $T=\SI{8}{s}$ with
+$\Delta t=\SI{2}{ms}$. The score is
+\begin{equation}
+  J(\bm x)=\bar u-w_\psi\frac{|\Delta\psi|}{T}-w_E\bar P-w_\theta\,\mathrm{std}(\theta_{\text{pitch}})
+  -w_z\,\mathrm{std}(z)-w_{\dot q}\,\Big(\frac{\max|\dot q_{\text{cmd}}|}{\dot q_{\max}}-1\Big)^{+},
+  \label{eq:mj-objective}
+\end{equation}
+where $\bar u$ is the displacement along the initial heading divided by $T$,
+$\Delta\psi$ the net yaw change, $\bar P$ the mean absolute actuator power, and the
+standard deviations of trunk pitch and heave are taken over the second half of the run.
+The fitness is a ruler, not a result: its value depends on the weights and is not
+compared across settings. Only physical quantities are reported.
+
+For BODY2 the objective includes $w_\theta=0.5$, $w_z=2.0$, $w_\psi=0.3$ and a servo
+speed limit $\dot q_{\max}=\SI{14}{rad/s}$. Before a rollout, both extreme shank angles
+$q_r=o\pm A$ are checked against the four-bar inverse kinematics of the real leg
+(transmission angle $\ge\SI{10}{\degree}$, knee angle $\ge\SI{45}{\degree}$) and against
+the fluke--hull clearance limit $q_r\ge\SI{15}{\degree}$. Infeasible candidates score
+$-1$ without being simulated. Rollouts whose trunk speed exceeds \SI{5}{m/s} or whose
+joint speeds exceed \SI{100}{rad/s} are aborted and score $-1000$.
+
+\subsection{CMA-ES}
+The covariance matrix adaptation evolution strategy \cite{Hansen2001,Hansen2016}
+samples $\lambda$ candidates $\bm x_k\sim\bm m+\sigma\,\mathcal N(\bm 0,\bm C)$, ranks them
+by $J$, moves the mean $\bm m$ to a weighted average of the best $\mu$, and adapts the
+step size $\sigma$ (cumulative step-size adaptation) and the covariance $\bm C$ (rank-one
+and rank-$\mu$ updates). Only ranks are used, so the scale of $J$ does not matter, and
+no gradient is needed. The latter is essential here because contact with joint limits,
+feasibility checks and the divergence guard make $J$ discontinuous. Box bounds
+$[0,1]^n$ are handled by the \texttt{cma} package. Settings: $\lambda=12$ for the full
+toy space and BODY2, $\lambda=10$ for the 12-D reduced space, $\sigma_0=0.25$ (toy) and
+$0.3$ (BODY2). A comparable CMA-ES workflow for gait selection of a fish-like robot
+is reported in \cite{FishCMAES2021}. The overall workflow (parameterise, simulate,
+optimise) follows Lee et al.\ \cite{Lee2025}. They used a differentiable simulator and a
+gradient method; MuJoCo with the forces above is not differentiable, so a
+derivative-free optimiser is used.
+
+% ---------------------------------------------------------------------
+\section{Implementation and verification}
+\label{sec:mj-verify}
+
+\paragraph{Numerical checks.}
+\Cref{tab:mj-verify} summarises the checks. The vectorised force routine agrees with a
+per-geometry reference loop to \SI{1.8e-15}{N} over 1500 steps of a moving gait and is
+4.8 times faster (\SI{0.15}{ms} vs.\ \SI{0.73}{ms} per step for 13 elements). This
+comparison exposed an error in the reference loop itself: a NumPy integer compared
+with a MuJoCo enum inside a Python \texttt{in} test evaluates false, so capsules were
+treated as spheres. The production path was not affected; the reference was corrected
+before the comparison. A second vectorised implementation of the foil routine, used for
+the parameter sweeps, agrees with the original to $10^{-14}$ in all reported metrics.
+
+\paragraph{Flotation.}
+With the legs held still, the time-averaged buoyancy after settling equals the weight
+to within \SI{0.06}{\percent} (toy) and \SI{0.03}{\percent} (BODY2)
+(\cref{fig:mj-checks}, left). The heave oscillation is lightly damped and still has a
+peak-to-peak amplitude of about \SI{3}{mm} after \SI{8}{s}. BODY2 settles with its
+reference point O2 at \SI{-6.4}{mm} and a bow-up trim of \SI{1.3}{\degree}. The target
+waterline from the hull design is \SI{-11}{mm}, so the provisional ballast
+(\SI{0.85}{kg}) is too light. This is one of the calibration items in
+\cref{sec:mj-discussion}.
+
+\paragraph{Virtual coast-down.}
+The robot is launched at \SI{0.25}{m/s} with the legs held at \SI{40}{\degree}, and
+$m_{\text{eff}}\dot u=-a u^2-b u$ is fitted to the simulated deceleration
+(\cref{fig:mj-checks}, right). The fit recovers $a=\SI{1.93}{N.s^2/m^2}$ and
+$b=\SI{0.144}{N.s/m}$ with $m_{\text{eff}}=\SI{1.65}{kg}$ (including added mass). The
+hull's own coefficients, weighted by its immersed fraction ($0.91$), are $a=0.24$ and
+$b=0.014$. In the model the appendages, above all the flukes held at a large angle,
+therefore account for about \SI{87}{\percent} of the quadratic and \SI{90}{\percent} of the
+linear surge resistance at rest posture. Hull CFD alone would
+underestimate the robot's drag, and the physical coast-down test should be done with
+the legs attached.
+
+\paragraph{Evaluation protocol.}
+Three errors in the evaluation protocol were found during this work. All results in
+this chapter were computed after correcting them.
+\begin{enumerate}
+  \item \emph{Start-up step.} The settling phase commanded zero joint angles, and the
+    gait started from its offset angles. The stiff toy servos then moved the light
+    joints at more than \SI{100}{rad/s} in the first step, which triggered the
+    divergence guard. Of 24 random candidates, 16 were rejected for this reason. After
+    commanding the offset posture during settling, none were.
+  \item \emph{Settling stroke.} Even with a slow servo, moving the legs from zero to
+    the offset posture during settling is itself a stroke. On BODY2 the resulting glide
+    persisted into the scored interval. With zero stroke amplitude the robot still
+    covered \SI{1.6}{cm/s}. The joints are now placed directly in the start posture at
+    reset. The same zero-amplitude \emph{null test} then gives \SI{-0.12}{mm/s}
+    (BODY2) and \SI{-3.5}{mm/s} (toy).
+  \item \emph{Pitch metric.} The pitch penalty originally used the RMS of the pitch
+    angle, which is dominated by the static trim (\SI{1.3}{\degree}) rather than the
+    nodding it was meant to measure (\SIrange{0.1}{0.4}{\degree}). It now uses the
+    standard deviation, like the heave term.
+\end{enumerate}
+Errors 1 and 2 had affected all earlier results. The earlier BODY2 optimum of
+\SI{3.2}{cm/s} contained about \SI{1.6}{cm/s} of settling glide. The earlier toy result
+had in addition been obtained with joint ranges interpreted in degrees (MJCF default)
+instead of radians.
+
+\begin{table}[t]
+\centering
+\caption{Verification checks of the implementation.}
+\label{tab:mj-verify}
+\small
+\begin{tabularx}{\linewidth}{@{}lXl@{}}
+\toprule
+check & criterion & result \\
+\midrule
+vectorised vs.\ reference forces & max.\ difference over 1500 steps & \SI{1.8e-15}{N} \\
+determinism & two rollouts, same $\bm x$ & bit-identical \\
+buoyancy balance & mean buoyancy / weight, legs still & $1.0006$ (toy), $1.0003$ (BODY2) \\
+null test & speed at zero stroke amplitude & \SI{-3.5}{mm/s} (toy), \SI{-0.12}{mm/s} (BODY2) \\
+second-harmonic symmetry & $v(\psi)+v(\psi+\SI{180}{\degree})$ & $<10^{-13}$\,\si{mm/s} \\
+cost per rollout & \SI{9}{s} simulated, one CPU core & $\approx\SI{1.2}{s}$ (toy), $\approx\SI{2.2}{s}$ (BODY2) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_model_checks}
+  \caption{Left: settling from the design height with the legs held still. Right:
+  simulated coast-down of BODY2 from \SI{0.25}{m/s}, the fitted quadratic-plus-linear
+  resistance, and the deceleration that the hull coefficients alone would give.}
+  \label{fig:mj-checks}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Case A: toy quadruped with drag-type flippers}
+\label{sec:mj-toy}
+
+\begin{figure}[t]
+  \centering
+  \shot{shot_toy_quad.png}{0.48\linewidth}{\texttt{python view.py config.json --demo}\\ with \texttt{"model": "robots/toy\_quad.xml"};\\ oblique side view, water plane visible}\hfill
+  \shot{shot_body2_fluke.png}{0.48\linewidth}{\texttt{python view.py config\_fluke.json}\\ close-up of one leg: fixed thigh,\\ shank, pin and fluke}
+  \caption{The two models. Left: toy quadruped, three pitch joints per leg (hip, knee,
+  flipper wrist), \SI{0.78}{kg}. Right: BODY2 with passive-pitch flukes, one actuated
+  shank per leg, \SI{1.35}{kg} including ballast.}
+  \label{fig:mj-models}
+\end{figure}
+
+The toy robot (\cref{fig:mj-models}, left) has a $200\times100\times\SI{50}{mm}$ trunk
+and four legs with hip, knee and wrist joints driven by position servos
+($k_p=\SI{60}{N.m/rad}$, $|\tau|\le\SI{12}{N.m}$), and a
+$52\times\SI{36}{mm}$ flipper on each wrist. These actuators are far stronger than any
+servo of a robot this size. The toy is therefore used for methodological questions
+only: which parameterisation, which search space, and which propulsion mode the optimiser
+chooses. Its speeds are not a prediction for BODY2. All toy runs use $w_\psi=1.0$ and no
+energy, pitch or heave penalty.
+
+\subsection{Search space: full versus structured}
+\Cref{fig:mj-convergence} compares CMA-ES on the full 35-dimensional space (two seeds,
+480 rollouts each) with the structured 12-dimensional space (two seeds per pattern, 150
+rollouts each). In the full space the best speeds were \SI{12.5}{cm/s} and
+\SI{4.9}{cm/s} for the two seeds. Both incumbents were found within 72 rollouts and never
+improved afterwards, and the step size did not contract ($\sigma\approx0.18$--$0.25$ at the
+end). The search had not converged, and the two seeds disagree by a factor of 2.5.
+The structured space reached \SIrange{20.2}{22.2}{cm/s} with the diagonal pattern and
+\SIrange{14.2}{26.8}{cm/s} with the front--back pattern within 150 rollouts. Fixing the inter-leg phases and tying the feathering phase
+to the stroke removes directions that only rotate the robot or cancel thrust between legs,
+and this helps the optimiser more than the extra freedom of the full space.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_convergence}
+  \caption{Toy robot. Left: speed of the best candidate found so far. Right: CMA-ES step
+  size. Grey: full 35-D space; blue, red: structured 12-D space with diagonal and
+  front--back phase patterns. Solid and dashed lines are two random seeds.}
+  \label{fig:mj-convergence}
+\end{figure}
+
+\subsection{Gait patterns}
+\Cref{fig:mj-gait-patterns} lists the best result per pattern. Diagonal
+(\SIrange{20.2}{22.2}{cm/s}) and front--back (\SIrange{14.2}{26.8}{cm/s}) are the
+fastest, followed by in-phase (\SIrange{15.0}{16.4}{cm/s}), wave
+(\SIrange{5.8}{9.8}{cm/s}) and left--right (\SIrange{2.0}{8.6}{cm/s}). The
+seed-to-seed spread is as large as some differences between patterns, so with two seeds
+only the grouping ``diagonal and front--back fast, wave and left--right slow'' is
+supported. All of these gaits are violent: the trunk pitch standard deviation is
+\SIrange{16}{57}{\degree}, and the servos deliver up to \SI{58}{W}. Patterns that are
+symmetric about the sagittal plane (front--back, in-phase) have zero yaw by
+construction; the best diagonal gaits drifted by \SIrange{2}{13}{\degree} in \SI{8}{s}.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_gait_patterns}
+  \caption{Toy robot, best gait per phase pattern after 150 rollouts in the 12-D space.
+  Bars: mean of two seeds; dot and cross: seeds 1 and 2.}
+  \label{fig:mj-gait-patterns}
+\end{figure}
+
+\paragraph{Duty cycle.}
+Varying only the duty cycle of the best diagonal gait (optimum $d=0.54$) leaves the speed
+between \SI{21.6}{cm/s} and \SI{22.4}{cm/s} over $d\in[0.35,0.65]$. It halves at the ends
+of the range (\cref{fig:mj-duty}). The best front--back gait ($d=0.56$) is fragile: five of
+the eleven duty values of the sweep lead to diverged rollouts. A robust optimum is preferable to a slightly
+faster one on the edge of instability, and the diagonal pattern is the better candidate.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.55\linewidth]{fig_duty}
+  \caption{Speed versus power-stroke duty cycle for the best diagonal and front--back
+  gaits, all other parameters fixed. Crosses: diverged rollouts. Dotted lines: optimised
+  duty.}
+  \label{fig:mj-duty}
+\end{figure}
+
+\subsection{The optimiser chooses lift-based thrust}
+\label{sec:mj-liftdrag}
+The flipper forces of the optimised gaits were decomposed along the relative flow. With
+$\hat{\bm w}=-\bm v/|\bm v|$, the component $(\bm F\cdot\hat{\bm w})\hat{\bm w}$ is the
+drag part and the remainder the lift part. Their cycle-averaged forward components are
+shown in \cref{fig:mj-liftdrag}. In all six structured optima the forward thrust comes
+entirely from the lift part (\SIrange{0.47}{1.77}{N} for four flippers), while the drag
+part points backwards (\SIrange{-0.16}{-1.07}{N}). This is the signature of lift-based
+propulsion in the sense of Fish \cite{Fish1996}. It is not how a drag-based paddler such
+as the muskrat works, whose power stroke pushes water backwards \cite{Fish1984}. The
+flippers sweep sideways and vertically as much as backwards (transverse path share
+\numrange{0.38}{0.63}).
+
+Two points qualify the result. First, the thrust-weighted incidence is
+\SIrange{58}{71}{\degree}, far above stall. The ``lift'' here is the flow-normal
+component of a flat-plate normal force, not attached-flow lift, which a Morison element
+cannot represent. Second, the two unconverged full-space results do not show the pattern
+(one is drag-dominated, the other produces almost no thrust). The result holds for the
+good gaits, not for every gait.
+
+The same behaviour had been observed when running the toy model: all four legs swam in
+a lift-type manner. This was the reason for building BODY2's lift-type fluke leg, and
+the reason for adding a foil element that represents attached-flow lift and stall
+explicitly (\cref{sec:mj-foil}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_liftdrag}
+  \caption{Left: cycle-mean forward force of the four flippers, split into the part
+  normal to the relative flow (lift) and the part along it (drag), for the structured
+  optima and the two full-space runs. Right: transverse share of the flipper path and
+  thrust-weighted incidence (colours as in \cref{fig:mj-gait-patterns}; grey: full space).}
+  \label{fig:mj-liftdrag}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Case B: BODY2 with passive-pitch flukes}
+\label{sec:mj-fluke}
+
+\paragraph{Model.}
+The BODY2 model (\cref{fig:mj-models}, right) consists of a $262\times116\times\SI{50}{mm}$
+hull (\SI{0.45}{kg}) with a low ballast block (\SI{0.85}{kg}) that places the centre
+of mass below the centre of buoyancy. Each leg has a fixed thigh at
+$\gamma=\SI{-85}{\degree}$, an actuated shank of \SI{47}{mm} whose angle $q_r$ is the
+firmware's rocker angle, and a fluke on a pin with a passive pitch joint
+(\cref{tab:mj-params}). The four-bar that drives the shank is not simulated; its
+inverse kinematics are used only for feasibility and for converting the result to servo
+angles. The shank servos are modelled as position actuators with $k_p=\SI{3}{N.m/rad}$
+and $|\tau|\le\SI{0.8}{N.m}$. The gait uses one harmonic per shank: the passive pitch
+joint supplies the stroke asymmetry that the second harmonic had to supply on the toy
+robot. As reference, the gait exported to the firmware from an earlier run is used:
+$f=\SI{1.4}{Hz}$, $q_r=\SI{38.2}{\degree}\pm\SI{23.1}{\degree}$, diagonal.
+
+\subsection{Phase pattern}
+At the reference frequency and amplitude, the diagonal pattern is the fastest
+(\SI{1.59}{cm/s}) and also by far the calmest: pitch standard deviation
+\SI{0.12}{\degree} and heave \SI{0.3}{mm} (\cref{fig:mj-fluke-phase}). Front--back and
+in-phase strokes make the hull nod (\SIrange{3.1}{3.3}{\degree}, 25 times more) and heave
+(\SIrange{4.4}{5.4}{mm}). This is consistent with the nodding reported from videos of the
+physical robot, whose hind legs currently stroke in phase. In the diagonal pattern the vertical fluke forces of the two
+diagonals cancel in pitch. The wave pattern turns the robot (\SI{47}{\degree} in
+\SI{8}{s}), and left--right swims backwards with \SI{17}{\degree} roll. All further BODY2
+results use the diagonal pattern.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_fluke_phase}
+  \caption{BODY2 at the reference stroke ($f=\SI{1.4}{Hz}$, $q_r=\SI{38.2}{\degree}\pm\SI{23.1}{\degree}$):
+  speed, pitch standard deviation and heave standard deviation for five phase patterns.}
+  \label{fig:mj-fluke-phase}
+\end{figure}
+
+\subsection{Hinge stiffness}
+\Cref{fig:mj-fluke-stiffness} varies the leaf-spring stiffness. With a rigid fluke the
+robot does not move ($|\bar u|<\SI{0.05}{cm/s}$). The passive pitch is what produces
+thrust. A very soft hinge lets the fluke swing onto its \SI{40}{\degree} stop, and
+thrust falls again. The optimum lies at $k\approx\SI{2.5}{mN.m/rad}$ for
+\SI{1.4}{Hz} (the current spring) and at $k\approx\SI{1}{mN.m/rad}$ for \SI{1.0}{Hz}. The
+optimal stiffness rises with frequency. This is consistent with the hydrodynamic moment
+on the fluke growing with the square of the stroke speed, so that a stiffer spring is
+needed for the same deflection.
+If the stroke frequency is changed, the spring should be changed with it.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_fluke_stiffness}
+  \caption{BODY2, diagonal reference stroke: speed (left) and maximum passive pitch
+  (right) versus hinge stiffness at two stroke frequencies. Dotted lines: rigid fluke.}
+  \label{fig:mj-fluke-stiffness}
+\end{figure}
+
+\subsection{Frequency and amplitude}
+\Cref{fig:mj-fluke-map} maps speed over stroke frequency and shank amplitude. For
+amplitudes above \SI{22.6}{\degree} the mean shank angle is raised so that the lower
+extreme stays at the \SI{15}{\degree} clearance limit. Speed rises monotonically with
+amplitude, so the best stroke lies on the clearance constraint. Over frequency it peaks
+near \SI{1.8}{Hz}. The best grid point, $f=\SI{1.8}{Hz}$ and $q_r=\SI{43.5}{\degree}\pm\SI{28}{\degree}$,
+scores \SI{2.85}{cm/s}, against \SI{1.59}{cm/s} for the reference stroke. Power grows
+faster than speed: going from the reference stroke to the best grid point raises the
+speed by a factor of 1.8 and the servo power by a factor of 2.3 (right panel).
+
+\paragraph{Transient bias of the score.}
+The score is the mean speed over the first \SI{8}{s} of stroking and includes the
+acceleration from rest. The surge time constant of BODY2 is several seconds, so this
+underestimates the cruising speed. Rerunning both strokes for \SI{30}{s} and fitting
+the last \SI{10}{s} gives steady speeds of \SI{3.28}{cm/s} (reference, \SI{67}{mW}) and
+\SI{4.99}{cm/s} (best grid point, \SI{168}{mW}, \SI{0.17}{BL/s}), i.e.\ 2.1 and 1.75 times
+the scored values. The ranking is unchanged. Absolute speeds should be quoted from long
+runs, and the scored interval should be lengthened or restricted to the last cycles in
+future searches.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_fluke_map}
+  \caption{BODY2, diagonal pattern. Left: scored speed over frequency and shank amplitude;
+  white contours: maximum passive pitch; star: reference firmware stroke; circle: best
+  grid point. Above the dashed line the mean angle is raised to respect the clearance
+  limit. Right: speed versus mean servo power for each amplitude.}
+  \label{fig:mj-fluke-map}
+\end{figure}
+
+\subsection{What the fluke actually does}
+\Cref{fig:mj-fluke-history} shows two cycles of the best grid stroke after \SI{6}{s}.
+The fluke pitches passively by $\pm\SI{26}{\degree}$, lagging the shank. Its angle of
+attack still stays near $\pm\SIrange{60}{80}{\degree}$ for most of the stroke. The
+attached-flow branch of the foil model ($\sigma=1$) is active in only
+\SI{1.1}{\percent} of the time, and the model is fully stalled in
+\SI{98.2}{\percent}. The reason is the low advance ratio: the three-quarter-chord point
+moves at up to \SI{0.36}{m/s} while the robot cruises at \SI{0.05}{m/s}, so the inflow
+arrives at about \SI{82}{\degree} to the stroke path. A passive pitch of more than
+\SI{60}{\degree} would be needed to bring $\alpha$ into the attached range, beyond the
+\SI{40}{\degree} stop. Each fluke produces a mean thrust of \SI{3.5}{mN} but a mean upward
+force of \SI{11}{mN}, three times larger. Flapping foils operate efficiently at moderate
+angles of attack and higher advance ratios \cite{Anderson1998}; at BODY2's speeds the
+fluke works as a feathering flat plate, and its thrust depends on the post-stall
+normal-force coefficient $C_N$, the least certain parameter of the model.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_fluke_history}
+  \caption{BODY2, best grid stroke ($f=\SI{1.8}{Hz}$, $q_r=\SI{43.5}{\degree}\pm\SI{28}{\degree}$),
+  front-left leg over two cycles: shank angle and passive fluke pitch, angle of attack at
+  the three-quarter chord (grey band: attached flow), fluke force components, and trunk
+  surge speed.}
+  \label{fig:mj-fluke-history}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \shot{shot_fluke_filmstrip.png}{\linewidth}{Four frames over one stroke of the best grid gait\\ ($f=1.8$\,Hz, $q_r=43.5^\circ\pm28^\circ$, diagonal), side view at water level,\\ frames at $t/T=0,\,0.25,\,0.5,\,0.75$}
+  \caption{BODY2 swimming with the best grid stroke. The diagonal leg pairs stroke in
+  antiphase; the flukes feather passively on the pin.}
+  \label{fig:mj-filmstrip}
+\end{figure}
+
+\subsection{CMA-ES on BODY2}
+CMA-ES was run on the seven-dimensional BODY2 space (frequency, amplitude, offset, four
+phases) with the objective of \cref{eq:mj-objective}, three seeds and 144 rollouts each
+(\cref{tab:mj-fluke-cma}). With infeasible candidates scored $-1$, 25--37\,\% of all
+candidates were infeasible, and the incumbents reached at most \SI{2.1}{cm/s}, below the
+best grid point. A repair step that shifts the mean shank angle into the feasible
+interval raised feasibility to 93--95\,\% and produced candidates up to \SI{3.0}{cm/s}.
+The incumbents were still slow gaits, because at speeds of 1--3\,cm/s the yaw and heave
+penalties are as large as the speed term: a gait with free phases that swims faster but
+turns by a few degrees scores worse than one that barely moves. The step size grew
+instead of shrinking in the repaired runs.
+
+For BODY2 the useful sequence is therefore: fix the phases to the diagonal pattern,
+which is justified independently by \cref{fig:mj-fluke-phase}; handle the clearance
+constraint by repair; and rescale the penalties to the speed range of the robot. The
+remaining space (frequency, amplitude, offset, and optionally hinge stiffness) is small
+enough for the sweeps above to cover it directly.
+
+\begin{table}[t]
+\centering
+\caption{CMA-ES on BODY2, 144 rollouts per run. ``Best'' is the incumbent under
+\cref{eq:mj-objective}; ``max.'' is the fastest feasible candidate sampled.}
+\label{tab:mj-fluke-cma}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+constraint handling & seed & feasible & best: speed [cm/s] & max.\ speed [cm/s] \\
+\midrule
+penalty ($-1$)      & 1 & 63\,\% & 2.11 & 2.14 \\
+                    & 2 & 73\,\% & 0.02 & 1.27 \\
+                    & 3 & 75\,\% & 0.17 & 1.33 \\
+repair (shift mean) & 1 & 95\,\% & 1.30 & 2.28 \\
+                    & 2 & 93\,\% & $-0.01$ & 3.03 \\
+\midrule
+grid, diagonal (\cref{fig:mj-fluke-map}) & -- & -- & 2.85 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ---------------------------------------------------------------------
+\section{Discussion and limitations}
+\label{sec:mj-discussion}
+
+\paragraph{What the model can and cannot say.}
+The reduced-order model is useful for questions whose answer depends on symmetry and
+kinematics: whether a parameterisation can produce thrust at all, which phase patterns
+cancel pitch, whether a passive hinge is needed, and where constraints bind. These
+conclusions hold for any reasonable coefficient values. Absolute speeds, the optimal
+stiffness and the optimal frequency depend directly on uncalibrated coefficients and
+should be treated as hypotheses for experiments.
+
+\paragraph{Main modelling limitations.}
+\begin{itemize}
+  \item \emph{Quasi-steady forces.} Wake, vortex shedding and the delayed-stall lift of
+    impulsively started plates are absent. The single-leg CFD in \chCFD{} found unsteady
+    forces about three times larger than the quasi-steady estimate for the paddle leg.
+    Since the fluke operates almost entirely post-stall, its force level hinges on $C_N$
+    and must be calibrated against CFD, UVLM or a thrust measurement at matching
+    geometry, frequency and stiffness.
+  \item \emph{Isotropic added mass.} The mass trick adds the same inertia in all
+    directions and independent of immersion. For thin paddles and flukes this
+    overestimates the inertia along the plate and underestimates the reaction normal to
+    it during stroke reversal.
+  \item \emph{No free surface.} Waves, spray and the change of immersion within an
+    element are not modelled beyond \cref{eq:mj-immersion}. Strokes that leave the
+    water are penalised only through the loss of immersion.
+  \item \emph{Unmodelled mechanism.} The BODY2 four-bar and servo dynamics are replaced by
+    a position servo on the shank; backlash and velocity-dependent torque limits are
+    missing.
+  \item \emph{Transient score.} The \SI{8}{s} score underestimates cruising speed by a
+    factor of about two for BODY2 (\cref{sec:mj-fluke}).
+\end{itemize}
+
+\paragraph{Calibration plan.}
+In order of expected effect: (i) weigh the assembled robot with ballast and set the
+still-water height of O2 to \SI{-11}{mm}; (ii) a coast-down of the \emph{complete}
+robot with legs at rest posture, fitted as in \cref{fig:mj-checks}, which calibrates the
+resistance including appendages; (iii) the mean thrust and passive pitch amplitude of a
+single fluke at known frequency, amplitude and stiffness, used to fit $C_N$ and $\alpha_s$;
+(iv) a free-swimming run of the reference stroke, as an independent validation (target:
+speed within \SI{20}{\percent}).
+
+% ---------------------------------------------------------------------
+\section{Summary}
+\label{sec:mj-summary}
+A robot-agnostic reduced-order simulation of paddling was built in MuJoCo from Morison
+elements for hull and links and a quasi-steady foil element for passively pitching
+flukes. It evaluates a whole-robot gait in about one to two seconds. Verification found
+and removed three protocol errors that had inflated earlier results. On the toy robot,
+the analysis showed that a first-harmonic gait cannot produce thrust with rigid
+flippers, that a structured 12-dimensional search outperforms the full 35-dimensional
+one, and that the optimiser drives the flippers into lift-based rather than drag-based
+propulsion. On BODY2, the diagonal pattern is the fastest and suppresses nodding by a
+factor of 25, the passive hinge is necessary and its best stiffness depends on
+frequency, and the best stroke lies on the fluke--hull clearance limit. At the robot's
+low advance ratio the flukes work almost entirely post-stall. Calibrating the
+post-stall normal force and the whole-robot resistance is therefore the next step before
+any predicted speed can be compared with the physical robot.
